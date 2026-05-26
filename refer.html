@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refer & Earn – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root {
+  --primary: #1a6fe8;
+  --primary-dark: #1558c0;
+  --primary-light: #EBF2FF;
+  --gold: #f59e0b;
+  --gold-light: #fef3c7;
+  --green: #10b981;
+  --green-light: #d1fae5;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --dark2: #f8fafc;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--dark2); }
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+.topnav {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+  background: white; border-bottom: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 64px;
+}
+.logo {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
+  color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.4rem;
+}
+.logo span { color: var(--text); }
+.nav-links { display: flex; gap: 1.5rem; }
+.nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.nav-btn { padding: 0.5rem 1.2rem; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; text-decoration: none; transition: all 0.2s; }
+.nav-btn.outline { border: 1.5px solid var(--border); color: var(--text); }
+.nav-btn:not(.outline) { background: var(--primary); color: white; }
+
+/* ── HERO BANNER ─────────────────────────────────────────────── */
+.refer-hero {
+  margin-top: 64px;
+  background: linear-gradient(135deg, #0f172a 0%, #1a3a6e 60%, #1a6fe8 100%);
+  padding: 4rem 5% 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.refer-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(96,180,255,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(245,158,11,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4);
+  color: #fbbf24; padding: 0.4rem 1rem; border-radius: 100px;
+  font-size: 0.8rem; font-weight: 700; margin-bottom: 1.5rem;
+  animation: pulse-badge 2s infinite;
+}
+@keyframes pulse-badge {
+  0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+}
+.refer-hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800; color: white; line-height: 1.15;
+  letter-spacing: -1px; margin-bottom: 1rem;
+}
+.refer-hero h1 em { color: #fbbf24; font-style: normal; }
+.refer-hero p {
+  color: rgba(255,255,255,0.75); font-size: 1rem;
+  max-width: 500px; margin: 0 auto 2rem; line-height: 1.7;
+}
+
+/* ── EARN COUNTER ─────────────────────────────────────────────── */
+.earn-pill {
+  display: inline-flex; align-items: center; gap: 1.5rem;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 100px; padding: 0.7rem 2rem;
+  backdrop-filter: blur(8px); flex-wrap: wrap; justify-content: center;
+}
+.earn-item { text-align: center; }
+.earn-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: #fbbf24; }
+.earn-lbl { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.earn-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.15); }
+
+/* ── MAIN CONTENT ─────────────────────────────────────────────── */
+.refer-main {
+  max-width: 960px; margin: 0 auto;
+  padding: 2.5rem 5% 4rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+}
+@media(max-width:700px) { .refer-main { grid-template-columns: 1fr; } }
+
+/* ── CARD BASE ───────────────────────────────────────────────── */
+.r-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 20px; padding: 1.8rem;
+  box-shadow: var(--shadow-sm);
+}
+.r-card-title {
+  font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800;
+  margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;
+}
+
+/* ── REFERRAL CODE CARD ───────────────────────────────────────── */
+.code-card { grid-column: 1 / -1; }
+.code-display {
+  background: linear-gradient(135deg, #EBF2FF, #f0f9ff);
+  border: 2px dashed #93c5fd; border-radius: 14px;
+  padding: 1.5rem; text-align: center; margin-bottom: 1.2rem;
+}
+.code-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+.code-value {
+  font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800;
+  color: var(--primary); letter-spacing: 4px;
+  cursor: pointer; user-select: all;
+  transition: transform 0.15s;
+}
+.code-value:active { transform: scale(0.97); }
+.code-hint { font-size: 0.78rem; color: var(--muted); margin-top: 0.4rem; }
+.code-actions { display: flex; gap: 0.7rem; }
+.code-btn {
+  flex: 1; padding: 0.7rem; border-radius: 10px; border: none;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+}
+.code-btn.copy { background: var(--primary); color: white; }
+.code-btn.copy:hover { background: var(--primary-dark); }
+.code-btn.whatsapp { background: #25D366; color: white; }
+.code-btn.whatsapp:hover { background: #1da851; }
+
+/* Referral Link share */
+.share-link-row {
+  display: flex; gap: 0.5rem; margin-top: 1rem;
+}
+.share-link-input {
+  flex: 1; background: var(--dark2); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 0.6rem 0.9rem; font-size: 0.82rem;
+  color: var(--muted); outline: none; font-family: 'DM Sans', sans-serif;
+}
+.share-link-btn {
+  background: var(--primary-light); color: var(--primary);
+  border: 1.5px solid #93c5fd; border-radius: 8px;
+  padding: 0.6rem 1rem; font-weight: 700; font-size: 0.82rem;
+  cursor: pointer; font-family: 'Syne', sans-serif; white-space: nowrap;
+  transition: all 0.2s;
+}
+.share-link-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* ── HOW IT WORKS CARD ───────────────────────────────────────── */
+.steps-list { display: flex; flex-direction: column; gap: 1rem; }
+.step-row {
+  display: flex; align-items: flex-start; gap: 1rem;
+}
+.step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--primary-light); color: var(--primary);
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  border: 2px solid #93c5fd;
+}
+.step-text { flex: 1; }
+.step-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.2rem; }
+.step-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+/* ── REWARDS CARD ─────────────────────────────────────────────── */
+.reward-tiers { display: flex; flex-direction: column; gap: 0.7rem; }
+.reward-tier {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 1rem; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--dark2);
+  transition: all 0.2s;
+}
+.reward-tier:hover { border-color: var(--gold); background: var(--gold-light); }
+.reward-tier-left { display: flex; align-items: center; gap: 0.7rem; }
+.reward-icon { font-size: 1.4rem; }
+.reward-count { font-size: 0.8rem; color: var(--muted); }
+.reward-count strong { color: var(--text); font-weight: 700; }
+.reward-amount {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;
+  color: var(--gold);
+}
+
+/* ── STATS CARD ───────────────────────────────────────────────── */
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;
+}
+.stat-box {
+  background: var(--dark2); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 1rem; text-align: center;
+}
+.stat-box .num {
+  font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+  color: var(--primary);
+}
+.stat-box .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.earnings-total {
+  margin-top: 1rem; background: linear-gradient(135deg, var(--gold-light), #fff7ed);
+  border: 1.5px solid #fcd34d; border-radius: 12px; padding: 1rem; text-align: center;
+}
+.earnings-total .num {
+  font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: #d97706;
+}
+.earnings-total .lbl { font-size: 0.8rem; color: #92400e; margin-top: 2px; font-weight: 600; }
+
+/* ── REFERRAL HISTORY ─────────────────────────────────────────── */
+.history-card { grid-column: 1 / -1; }
+.history-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.history-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 1rem; background: var(--dark2); border: 1.5px solid var(--border);
+  border-radius: 12px; transition: border-color 0.2s;
+}
+.history-row:hover { border-color: var(--primary); }
+.history-left { display: flex; align-items: center; gap: 0.8rem; }
+.history-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--primary); color: white;
+  font-weight: 800; font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.history-name { font-weight: 700; font-size: 0.9rem; }
+.history-date { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+.history-status {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.7rem;
+  border-radius: 20px;
+}
+.history-status.paid { background: var(--green-light); color: #065f46; }
+.history-status.pending { background: var(--gold-light); color: #92400e; }
+.history-amount {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.95rem;
+  color: var(--green);
+}
+.empty-history {
+  text-align: center; padding: 2.5rem 1rem; color: var(--muted);
+}
+.empty-history .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.empty-history p { font-size: 0.88rem; }
+
+/* ── REGISTER CARD ────────────────────────────────────────────── */
+.register-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #0f172a, #1a3a6e);
+  border: none; color: white;
+}
+.register-card .r-card-title { color: white; }
+.reg-form { display: flex; flex-direction: column; gap: 0.8rem; }
+.reg-row { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.reg-field { flex: 1; min-width: 160px; }
+.reg-field label {
+  display: block; font-size: 0.75rem; font-weight: 600;
+  color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;
+}
+.reg-field input, .reg-field select {
+  width: 100%; background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.15); color: white;
+  padding: 0.7rem 1rem; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;
+  transition: border-color 0.2s;
+}
+.reg-field input::placeholder { color: rgba(255,255,255,0.35); }
+.reg-field input:focus, .reg-field select:focus { border-color: #60b4ff; }
+.reg-field select option { background: #1a1a2e; color: white; }
+.reg-btn {
+  background: #fbbf24; color: #1a1a2e;
+  border: none; padding: 0.85rem 2rem; border-radius: 10px;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;
+  cursor: pointer; transition: all 0.2s; width: 100%;
+  box-shadow: 0 4px 16px rgba(251,191,36,0.35);
+}
+.reg-btn:hover { background: #f59e0b; transform: translateY(-1px); }
+.reg-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ── TERMS CARD ───────────────────────────────────────────────── */
+.terms-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.terms-list li {
+  display: flex; gap: 0.6rem; font-size: 0.82rem;
+  color: var(--muted); line-height: 1.5;
+}
+.terms-list li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+
+/* ── TOAST ────────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%);
+  background: #1a1a2e; color: white; padding: 0.8rem 1.5rem;
+  border-radius: 12px; font-weight: 600; font-size: 0.9rem;
+  z-index: 9999; transition: transform 0.3s ease; white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.error { background: #dc2626; }
+.toast.success { background: var(--green); }
+
+/* ── LOADING SPINNER ──────────────────────────────────────────── */
+.spinner {
+  width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite;
+  display: inline-block; vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── WHATSAPP FLOAT ───────────────────────────────────────────── */
+.whatsapp-float {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  background: #25D366; border-radius: 50%; width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+  animation: wa-pulse 2s infinite; text-decoration: none; transition: transform 0.2s;
+}
+.whatsapp-float:hover { transform: scale(1.1); }
+@keyframes wa-pulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); }
+  50% { box-shadow: 0 4px 30px rgba(37,211,102,0.85); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+    <a href="refer.html" class="active" style="color:var(--primary);font-weight:700;">🎁 Refer & Earn</a>
+  </div>
+  <a href="login.html" class="nav-btn">Login / Sign Up</a>
+</nav>
+
+<!-- HERO -->
+<div class="refer-hero">
+  <div class="hero-badge">🎁 Refer & Earn Program</div>
+  <h1>Refer Friends,<br>Earn <em>Real Cash</em></h1>
+  <p>Share Flatzy with your friends. When they find a home through your link, you get paid. Simple!</p>
+  <div class="earn-pill">
+    <div class="earn-item">
+      <div class="earn-num">₹500</div>
+      <div class="earn-lbl">Per Referral</div>
+    </div>
+    <div class="earn-divider"></div>
+    <div class="earn-item">
+      <div class="earn-num">₹2,000</div>
+      <div class="earn-lbl">Max/Month</div>
+    </div>
+    <div class="earn-divider"></div>
+    <div class="earn-item">
+      <div class="earn-num" id="heroTotalReferrals">0+</div>
+      <div class="earn-lbl">Happy Referrers</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="refer-main">
+
+  <!-- YOUR REFERRAL CODE -->
+  <div class="r-card code-card">
+    <div class="r-card-title">🔗 Your Referral Code & Link</div>
+    <div class="code-display">
+      <div class="code-label">Your unique code</div>
+      <div class="code-value" id="myCode" onclick="copyCode()">FLATZY••••</div>
+      <div class="code-hint">Tap to copy · Share with friends</div>
+    </div>
+    <div class="code-actions">
+      <button class="code-btn copy" onclick="copyCode()">📋 Copy Code</button>
+      <button class="code-btn whatsapp" onclick="shareWhatsApp()">💬 Share on WhatsApp</button>
+    </div>
+    <div class="share-link-row">
+      <input type="text" class="share-link-input" id="shareLink" readonly placeholder="Your referral link will appear here…">
+      <button class="share-link-btn" onclick="copyLink()">Copy Link</button>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="r-card">
+    <div class="r-card-title">⚡ How It Works</div>
+    <div class="steps-list">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <div class="step-title">Share Your Code</div>
+          <div class="step-desc">Send your unique referral code or link to friends looking for a flat in Nagpur.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <div class="step-title">Friend Signs Up</div>
+          <div class="step-desc">Your friend registers on Flatzy using your referral code during signup.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <div class="step-title">They Find a Home</div>
+          <div class="step-desc">Your friend successfully finds and moves into a property through Flatzy.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <div class="step-title">You Get Paid 💰</div>
+          <div class="step-desc">₹500 credited to your UPI/bank within 7 working days. No questions asked!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REWARD TIERS -->
+  <div class="r-card">
+    <div class="r-card-title">🏆 Reward Tiers</div>
+    <div class="reward-tiers">
+      <div class="reward-tier">
+        <div class="reward-tier-left">
+          <div class="reward-icon">🥉</div>
+          <div class="reward-count"><strong>1–2</strong> referrals</div>
+        </div>
+        <div class="reward-amount">₹500 each</div>
+      </div>
+      <div class="reward-tier">
+        <div class="reward-tier-left">
+          <div class="reward-icon">🥈</div>
+          <div class="reward-count"><strong>3–5</strong> referrals</div>
+        </div>
+        <div class="reward-amount">₹600 each</div>
+      </div>
+      <div class="reward-tier">
+        <div class="reward-tier-left">
+          <div class="reward-icon">🥇</div>
+          <div class="reward-count"><strong>6–10</strong> referrals</div>
+        </div>
+        <div class="reward-amount">₹750 each</div>
+      </div>
+      <div class="reward-tier" style="border-color:var(--gold);background:var(--gold-light);">
+        <div class="reward-tier-left">
+          <div class="reward-icon">👑</div>
+          <div class="reward-count"><strong>10+</strong> referrals</div>
+        </div>
+        <div class="reward-amount" style="color:#d97706;">₹1,000 each</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YOUR STATS -->
+  <div class="r-card" id="statsCard" style="display:none;">
+    <div class="r-card-title">📊 Your Stats</div>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="num" id="statTotal">0</div>
+        <div class="lbl">Total Referrals</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="statPaid">0</div>
+        <div class="lbl">Paid Out</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="statPending">0</div>
+        <div class="lbl">Pending</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="statThisMonth">0</div>
+        <div class="lbl">This Month</div>
+      </div>
+    </div>
+    <div class="earnings-total">
+      <div class="num" id="statEarnings">₹0</div>
+      <div class="lbl">🎉 Total Earnings</div>
+    </div>
+  </div>
+
+  <!-- REGISTER FOR PROGRAM -->
+  <div class="r-card register-card" id="registerCard">
+    <div class="r-card-title">🚀 Join the Refer & Earn Program</div>
+    <p style="color:rgba(255,255,255,0.65);font-size:0.88rem;margin-bottom:1.2rem;">
+      Enter your details to get your unique referral code and start earning!
+    </p>
+    <div class="reg-form">
+      <div class="reg-row">
+        <div class="reg-field">
+          <label>Full Name</label>
+          <input type="text" id="regName" placeholder="Your full name">
+        </div>
+        <div class="reg-field">
+          <label>WhatsApp Number</label>
+          <input type="tel" id="regPhone" placeholder="10-digit number" maxlength="10">
+        </div>
+      </div>
+      <div class="reg-row">
+        <div class="reg-field">
+          <label>City / Area (Nagpur)</label>
+          <select id="regArea">
+            <option value="">Select your area</option>
+            <option>Wandgori</option><option>Higna</option><option>Digdoh</option>
+            <option>Kalamna</option><option>Butibori</option><option>Besa</option>
+            <option>Other Nagpur Area</option>
+          </select>
+        </div>
+        <div class="reg-field">
+          <label>UPI ID (for payment)</label>
+          <input type="text" id="regUpi" placeholder="yourname@upi">
+        </div>
+      </div>
+      <button class="reg-btn" id="regBtn" onclick="registerReferrer()">🎁 Get My Referral Code</button>
+    </div>
+  </div>
+
+  <!-- REFERRAL HISTORY -->
+  <div class="r-card history-card">
+    <div class="r-card-title">📋 Referral History</div>
+    <div class="history-list" id="historyList">
+      <div class="empty-history">
+        <div class="empty-icon">🔍</div>
+        <p>No referrals yet. Share your code to start earning!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERMS -->
+  <div class="r-card" style="grid-column:1/-1;">
+    <div class="r-card-title">📜 Terms & Conditions</div>
+    <ul class="terms-list">
+      <li>Referral reward is paid only after the referred friend successfully finds a property through Flatzy.</li>
+      <li>The referred person must sign up using your referral code at the time of registration.</li>
+      <li>Rewards are credited to your UPI ID within 7 working days of confirmation.</li>
+      <li>Maximum earnings are capped at ₹2,000 per calendar month per referrer.</li>
+      <li>Self-referrals or fake accounts are strictly not allowed and will result in disqualification.</li>
+      <li>Flatzy reserves the right to modify or discontinue the program at any time.</li>
+      <li>Any disputes will be settled at Flatzy's discretion. Decision is final.</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/917387798079" target="_blank" class="whatsapp-float" title="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" width="30" height="30" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 0C7.163 0 0 7.163 0 16c0 2.827.738 5.476 2.027 7.776L0 32l8.443-2.013A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.07 22.243c-.334.937-1.95 1.793-2.7 1.907-.694.106-1.574.15-2.54-.16-.587-.19-1.34-.443-2.3-.868-4.042-1.746-6.68-5.835-6.88-6.108-.193-.273-1.573-2.094-1.573-3.993 0-1.9.994-2.834 1.347-3.22a1.42 1.42 0 011.02-.476c.254 0 .508.003.73.014.234.012.548-.089.858.654.32.766 1.087 2.665 1.183 2.858.097.193.16.42.032.677-.128.257-.193.416-.386.64-.193.224-.407.5-.58.672-.194.193-.395.4-.17.784.226.384.1 1.573 2.1 2.57 2.1 1 2.73 1.52 3.114 1.72.384.193.608.16.832-.096.224-.257.96-1.12 1.216-1.504.256-.384.512-.32.864-.192.352.128 2.24 1.056 2.624 1.248.384.193.64.288.736.448.096.16.096.928-.238 1.866z"/>
+  </svg>
+</a>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── FIREBASE + LOGIC ──────────────────────────────────────────── -->
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, doc, getDoc, setDoc, addDoc,
+  getDocs, query, where, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+};
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let myReferralCode = null;
+let myPhone = null;
+
+// ── Generate code from phone ──────────────────────────────────────
+function generateCode(phone) {
+  return 'FLZ' + phone.slice(-4).toUpperCase();
+}
+
+// ── Load total referrers count (hero stat) ────────────────────────
+async function loadHeroStat() {
+  try {
+    const snap = await getDocs(collection(db, 'referrers'));
+    document.getElementById('heroTotalReferrals').textContent = snap.size + '+';
+  } catch(e) {}
+}
+
+// ── Init: check if user is logged in / registered ─────────────────
+async function init() {
+  loadHeroStat();
+
+  const user = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
+  const phone = user.phone || localStorage.getItem('flatzy_refer_phone');
+  if(!phone) return; // not registered, show form
+
+  myPhone = phone;
+  try {
+    const ref = doc(db, 'referrers', phone);
+    const snap = await getDoc(ref);
+    if(snap.exists()) {
+      const data = snap.data();
+      setupUI(data.code, phone);
+      loadStats(phone);
+      loadHistory(phone);
+    }
+  } catch(e) {
+    console.warn('Firestore init error:', e.message);
+  }
+}
+
+// ── Setup UI with code ────────────────────────────────────────────
+function setupUI(code, phone) {
+  myReferralCode = code;
+  document.getElementById('myCode').textContent = code;
+  const link = `${location.origin}${location.pathname.replace('refer.html','login.html')}?ref=${code}`;
+  document.getElementById('shareLink').value = link;
+  document.getElementById('registerCard').style.display = 'none';
+  document.getElementById('statsCard').style.display = 'block';
+}
+
+// ── Load stats ────────────────────────────────────────────────────
+async function loadStats(phone) {
+  try {
+    const q = query(collection(db, 'referrals'), where('referrerPhone', '==', phone));
+    const snap = await getDocs(q);
+    const refs = snap.docs.map(d => d.data());
+
+    const total = refs.length;
+    const paid = refs.filter(r => r.status === 'paid').length;
+    const pending = refs.filter(r => r.status === 'pending').length;
+    const now = new Date();
+    const thisMonth = refs.filter(r => {
+      const d = new Date(r.createdAt);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
+
+    // Calculate earnings based on tier
+    let earnings = 0;
+    refs.filter(r => r.status === 'paid').forEach((r, i) => {
+      const n = i + 1;
+      if(n >= 10) earnings += 1000;
+      else if(n >= 6) earnings += 750;
+      else if(n >= 3) earnings += 600;
+      else earnings += 500;
+    });
+
+    document.getElementById('statTotal').textContent    = total;
+    document.getElementById('statPaid').textContent     = paid;
+    document.getElementById('statPending').textContent  = pending;
+    document.getElementById('statThisMonth').textContent= thisMonth;
+    document.getElementById('statEarnings').textContent = '₹' + earnings.toLocaleString('en-IN');
+  } catch(e) {
+    console.warn('Stats load error:', e.message);
+  }
+}
+
+// ── Load history ──────────────────────────────────────────────────
+async function loadHistory(phone) {
+  try {
+    const q = query(
+      collection(db, 'referrals'),
+      where('referrerPhone', '==', phone),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    const list = document.getElementById('historyList');
+
+    if(snap.empty) return; // keep empty state
+
+    list.innerHTML = snap.docs.map(d => {
+      const r = d.data();
+      const initials = r.refereeName ? r.refereeName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) : '??';
+      const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
+      const statusClass = r.status === 'paid' ? 'paid' : 'pending';
+      const statusText  = r.status === 'paid' ? '✓ Paid' : '⏳ Pending';
+      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹500';
+      return `
+        <div class="history-row">
+          <div class="history-left">
+            <div class="history-avatar">${initials}</div>
+            <div>
+              <div class="history-name">${r.refereeName || 'Anonymous'}</div>
+              <div class="history-date">📅 ${date}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.7rem;">
+            <span class="history-status ${statusClass}">${statusText}</span>
+            <span class="history-amount">${amt}</span>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    console.warn('History load error:', e.message);
+  }
+}
+
+// ── Register referrer ─────────────────────────────────────────────
+window.registerReferrer = async function() {
+  const name  = document.getElementById('regName').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const area  = document.getElementById('regArea').value;
+  const upi   = document.getElementById('regUpi').value.trim();
+
+  if(!name)  { showToast('Enter your full name ❌', 'error'); return; }
+  if(!phone || phone.length !== 10 || !/^\d+$/.test(phone)) {
+    showToast('Enter valid 10-digit WhatsApp number ❌', 'error'); return;
+  }
+  if(!area)  { showToast('Select your area ❌', 'error'); return; }
+  if(!upi)   { showToast('Enter your UPI ID for payment ❌', 'error'); return; }
+
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating your code…';
+
+  const code = generateCode(phone);
+  const data = {
+    name, phone, area, upi, code,
+    createdAt: new Date().toISOString(),
+    totalReferrals: 0
+  };
+
+  try {
+    await setDoc(doc(db, 'referrers', phone), data, { merge: true });
+    localStorage.setItem('flatzy_refer_phone', phone);
+    myPhone = phone;
+    setupUI(code, phone);
+    loadStats(phone);
+    loadHistory(phone);
+    showToast('🎉 Referral code created! Start sharing!', 'success');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = '🎁 Get My Referral Code';
+  }
+};
+
+// ── Copy code ─────────────────────────────────────────────────────
+window.copyCode = function() {
+  if(!myReferralCode) { showToast('Register first to get your code!', 'error'); return; }
+  navigator.clipboard.writeText(myReferralCode).then(() => {
+    showToast('Code copied: ' + myReferralCode + ' ✅', 'success');
+  }).catch(() => {
+    // Fallback
+    const el = document.getElementById('myCode');
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    showToast('Code copied! ✅', 'success');
+  });
+};
+
+// ── Copy link ─────────────────────────────────────────────────────
+window.copyLink = function() {
+  const link = document.getElementById('shareLink').value;
+  if(!link || link.includes('••••')) { showToast('Register first to get your link!', 'error'); return; }
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('Link copied! ✅', 'success');
+  });
+};
+
+// ── Share on WhatsApp ─────────────────────────────────────────────
+window.shareWhatsApp = function() {
+  const code = myReferralCode || 'FLATZY••••';
+  const link = document.getElementById('shareLink').value || 'https://flatzyhomes.netlify.app';
+  const msg = encodeURIComponent(
+    `🏠 *Flatzy Nagpur* — Find flats, PGs & hostels with ZERO brokerage!\n\n` +
+    `Use my referral code *${code}* when you sign up and get priority support.\n\n` +
+    `👉 ${link}\n\n` +
+    `Nagpur mein ghar dhundh raho? Flatzy try karo! 🔥`
+  );
+  window.open('https://wa.me/?text=' + msg, '_blank');
+};
+
+// ── Toast ─────────────────────────────────────────────────────────
+window.showToast = function(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+};
+
+// ── Boot ──────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
