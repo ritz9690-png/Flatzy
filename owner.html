@@ -331,9 +331,13 @@ async function renderListings() {
     return;
   }
 
-  list.innerHTML = props.map(p => `
+  list.innerHTML = props.map(p => {
+    const thumbHtml = (p.mainPhoto)
+      ? `<img src="${p.mainPhoto}" alt="" style="width:54px;height:54px;object-fit:cover;border-radius:8px;flex-shrink:0;">`
+      : `<div class="listing-emoji">${p.emoji||'🏠'}</div>`;
+    return `
     <div class="listing-row">
-      <div class="listing-emoji">${p.emoji||'🏠'}</div>
+      ${thumbHtml}
       <div class="listing-info">
         <div class="listing-title">${p.title}</div>
         <div class="listing-meta">
@@ -350,7 +354,8 @@ async function renderListings() {
         <button class="act-btn del" onclick="deletePropFn('${p.id}')">Del</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // ── Analytics (uses cached props) ────────────────────────────────
@@ -406,6 +411,8 @@ window.submitProperty = async function() {
     ownerUid: currentUser ? currentUser.uid : '',
     ownerEmail: currentUser ? currentUser.email : '',
     emoji: ['🏠','🏡','🏢','🏘️','🏨'][Math.floor(Math.random()*5)],
+    photos: uploadedPhotoUrls,
+    mainPhoto: uploadedPhotoUrls[0] || null,
     views: 0, inquiries: 0,
     postedAt: new Date().toISOString()
   };
@@ -417,6 +424,7 @@ window.submitProperty = async function() {
     ['pTitle','pRent','pDeposit','pAddress','pDesc'].forEach(id=>document.getElementById(id).value='');
     document.querySelectorAll('.amenity-item.checked').forEach(el=>el.classList.remove('checked'));
     document.getElementById('photoThumbs').innerHTML='';
+    uploadedPhotoUrls = [];
     setTimeout(async ()=>{
       switchOTab('listings');
       await renderListings();
@@ -429,19 +437,51 @@ window.submitProperty = async function() {
   }
 };
 
-// ── Photo Preview ─────────────────────────────────────────────────
-window.previewPhotos = function(input) {
+// ── Cloudinary Config ─────────────────────────────────────────────
+const CLOUD_NAME = 'dhi8byas2';
+const UPLOAD_PRESET = 'Flatzy_upload';
+let uploadedPhotoUrls = [];
+
+// ── Photo Upload to Cloudinary ────────────────────────────────────
+window.previewPhotos = async function(input) {
   const thumbs = document.getElementById('photoThumbs');
-  thumbs.innerHTML = '';
-  Array.from(input.files).slice(0,6).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = document.createElement('img');
-      img.className = 'photo-thumb'; img.src = e.target.result;
-      thumbs.appendChild(img);
-    };
-    reader.readAsDataURL(file);
+  const files = Array.from(input.files).slice(0, 6);
+  if (!files.length) return;
+
+  thumbs.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:0.5rem;">⏳ Uploading photos...</div>';
+  uploadedPhotoUrls = [];
+
+  const uploadPromises = files.map(file => {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+      formData.append('folder', 'flatzy');
+
+      fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.secure_url) resolve(data.secure_url);
+        else reject('Upload failed');
+      })
+      .catch(reject);
+    });
   });
+
+  try {
+    const urls = await Promise.all(uploadPromises);
+    uploadedPhotoUrls = urls;
+    thumbs.innerHTML = urls.map(url =>
+      `<img class="photo-thumb" src="${url}" alt="Property photo">`
+    ).join('');
+    showToast(`✅ ${urls.length} photo(s) uploaded!`);
+  } catch(e) {
+    thumbs.innerHTML = '<div style="color:#DC2626;font-size:0.85rem;">❌ Upload failed. Check internet & try again.</div>';
+    showToast('Photo upload failed', true);
+  }
 };
 
 // ── Edit / Delete ─────────────────────────────────────────────────
