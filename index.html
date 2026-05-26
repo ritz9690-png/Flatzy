@@ -17,14 +17,23 @@
   background: white;
 }
 .hero{
-  margin-top: 80px;
-  height: 85vh;
+  margin-top: var(--nav-h);
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 6rem 5% 4%;
+  padding: 4rem 5% 3rem;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
+}
+@media(max-width:768px) {
+  .hero { min-height: 65vh; padding: 2.5rem 5% 2.5rem; }
+  .hero h1 { font-size: 2.3rem; letter-spacing: -1.5px; }
+  .hero p { font-size: 0.95rem; }
+  .hero-btns { gap: 0.8rem; }
+  .hero-btns a { padding: 0.75rem 1.2rem; font-size: 0.9rem; }
+  .hero-stats { gap: 1.5rem; }
+  .stat-num { font-size: 1.4rem; }
 }
 .hero-video{
   position:absolute;
@@ -61,11 +70,17 @@
 .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
 
 /* SEARCH */
-.search-section { padding: 3rem 5%; background: white; }
+.search-section { padding: 2rem 5%; background: white; }
 .search-box {
   background: white; border: 1.5px solid var(--border); border-radius: 16px;
-  padding: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;
+  padding: 1.2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: flex-end;
   box-shadow: var(--shadow-md);
+}
+@media(max-width:768px) {
+  .search-section { padding: 1rem 4%; }
+  .search-box { padding: 1rem; gap: 0.7rem; }
+  .search-field { min-width: calc(50% - 0.35rem); }
+  .search-btn { width: 100%; }
 }
 .search-field { flex: 1; min-width: 160px; }
 .search-field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
@@ -189,7 +204,7 @@
 }
 </style>
 </head>
-<body>
+<body class="has-bottom-nav">
 
 <!-- NAV -->
 <nav class="topnav">
@@ -204,9 +219,16 @@
     <a href="owner.html">List Property</a>
     <a href="refer.html" style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🎁 Refer &amp; Earn</a>
   </div>
-  <div style="display:flex;gap:0.5rem;align-items:center;">
+  <!-- Nav: shown when logged out -->
+  <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
     <a href="login.html" class="nav-btn outline">Login</a>
-    <a href="login.html?signup=1" class="nav-btn">Sign Up Free</a>
+    <a href="login.html" class="nav-btn">Sign Up Free</a>
+  </div>
+  <!-- Nav: shown when logged in -->
+  <div id="navUser" style="display:none;flex;gap:0.5rem;align-items:center;">
+    <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
+    <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
+    <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
   </div>
 </nav>
 
@@ -235,8 +257,8 @@
       <label>Area</label>
       <select id="srchArea">
         <option value="">All Areas</option>
-        <option>Wandgori</option><option>Higna</option><option>Digdoh</option><option>Kalamna</option>
-        <option>Butibori</option><option>Besa</option>
+        <option>Wandongri</option><option>Higna</option><option>Lokmanya Nagar</option><option>Digdoh</option>
+        <option>Kalamna</option><option>Butibori</option><option>Koradi</option>
       </select>
     </div>
     <div class="search-field">
@@ -324,12 +346,12 @@
     <div class="section-title">Browse by Area</div>
   </div>
   <div class="areas-grid">
-    <div class="area-card" onclick="browseArea('Wandgori')"><div class="area-icon">🏘️</div><div class="area-name">Wandgori</div><div class="area-count" id="cnt-Wandgori">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Wandgori')"><div class="area-icon">🏘️</div><div class="area-name">Wandongri</div><div class="area-count" id="cnt-Wandgori">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Higna')"><div class="area-icon">🌆</div><div class="area-name">Higna</div><div class="area-count" id="cnt-Higna">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Digdoh')"><div class="area-icon">🏙️</div><div class="area-name">Digdoh</div><div class="area-count" id="cnt-Digdoh">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Kalamna')"><div class="area-icon">🏗️</div><div class="area-name">Kalamna</div><div class="area-count" id="cnt-Kalamna">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Butibori')"><div class="area-icon">🌿</div><div class="area-name">Butibori</div><div class="area-count" id="cnt-Butibori">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Besa')"><div class="area-icon">🏢</div><div class="area-name">Besa</div><div class="area-count" id="cnt-Besa">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Besa')"><div class="area-icon">🏢</div><div class="area-name">Koradi</div><div class="area-count" id="cnt-Besa">0 listings</div></div>
   </div>
 </section>
 
@@ -485,12 +507,12 @@
     </div>
     <div class="footer-col">
       <h4>Areas</h4>
-      <a href="rent.html?area=Wandgori">Wandgori</a>
+      <a href="rent.html?area=Wandgori">Wandongri</a>
       <a href="rent.html?area=Higna">Higna</a>
       <a href="rent.html?area=Digdoh">Digdoh</a>
       <a href="rent.html?area=Kalamna">Kalamna</a>
       <a href="rent.html?area=Butibori">Butibori</a>
-      <a href="rent.html?area=Besa">Besa</a>
+      <a href="rent.html?area=Besa">Koradi</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -498,6 +520,25 @@
     <div class="footer-copy">Made with ❤️ for Nagpur</div>
   </div>
 </footer>
+
+<!-- BOTTOM NAV (Mobile) -->
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item active">
+    <span class="bn-icon">🏠</span>Home
+  </a>
+  <a href="rent.html" class="bn-item">
+    <span class="bn-icon">🔍</span>Browse
+  </a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item">
+    <span class="bn-icon">🎁</span>Refer
+  </a>
+  <a href="login.html" class="bn-item" id="bnProfileLink">
+    <span class="bn-icon">👤</span>Profile
+  </a>
+</nav>
 
 <div class="toast" id="toast"></div>
 
@@ -511,8 +552,8 @@
 <style>
 .whatsapp-float {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  bottom: calc(var(--bottom-nav-h) + 12px);
+  right: 16px;
   z-index: 9999;
   background: #25D366;
   border-radius: 50%;
@@ -527,6 +568,9 @@
   transition: transform 0.2s;
 }
 .whatsapp-float:hover { transform: scale(1.1); }
+@media(min-width: 769px) {
+  .whatsapp-float { bottom: 28px; right: 28px; }
+}
 @keyframes wa-pulse {
   0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); }
   50% { box-shadow: 0 4px 30px rgba(37,211,102,0.85); }
@@ -567,7 +611,8 @@
 <script type="module">
 // ── Firebase Imports ──────────────────────────────────────────────
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -579,15 +624,48 @@ const firebaseConfig = {
 };
 
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
+
+// ── Nav Auth State ────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  const guestEl = document.getElementById('navGuest');
+  const userEl  = document.getElementById('navUser');
+  const nameEl  = document.getElementById('navName');
+  const photoEl = document.getElementById('navPhoto');
+  if (user) {
+    guestEl.style.display = 'none';
+    userEl.style.display  = 'flex';
+    nameEl.textContent    = user.displayName ? user.displayName.split(' ')[0] : '';
+    if (user.photoURL) { photoEl.src = user.photoURL; photoEl.style.display = 'block'; }
+    // Update bottom nav profile link
+    const bnProfile = document.getElementById('bnProfileLink');
+    if(bnProfile) bnProfile.href = 'owner.html';
+    localStorage.setItem('flatzy_user', JSON.stringify({
+      name: user.displayName, email: user.email,
+      uid: user.uid, photo: user.photoURL,
+      role: JSON.parse(localStorage.getItem('flatzy_user')||'{}').role || 'tenant'
+    }));
+  } else {
+    guestEl.style.display = 'flex';
+    userEl.style.display  = 'none';
+    localStorage.removeItem('flatzy_user');
+  }
+});
+
+window.logoutUser = async function() {
+  await signOut(auth);
+  localStorage.removeItem('flatzy_user');
+  window.location.reload();
+};
 
 // ── Demo properties (fallback / always shown) ─────────────────────
 const DEMO_PROPS = [
-  {id:'demo1',title:'Spacious 2BHK Flat',area:'Wandgori',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
+  {id:'demo1',title:'Spacious 2BHK Flat',area:'Wandongri',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
   {id:'demo2',title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
   {id:'demo3',title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
   {id:'demo4',title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
-  {id:'demo5',title:'3BHK Family Flat',area:'Wandgori',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
+  {id:'demo5',title:'3BHK Family Flat',area:'Wandongri',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
   {id:'demo6',title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
 ];
 
@@ -625,8 +703,7 @@ async function init() {
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-size:0.95rem;">⏳ Loading properties...</div>';
 
   try {
-    const q = query(collection(db, 'properties'), orderBy('postedAt', 'desc'));
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocs(collection(db, 'properties'));
     const firestoreProps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     ALL_PROPS = [...DEMO_PROPS, ...firestoreProps];
   } catch(e) {
@@ -642,7 +719,7 @@ async function init() {
   grid.innerHTML = ALL_PROPS.slice(0,6).map(renderCard).join('');
 
   // Area counts
-  ['Wandgori','Higna','Digdoh','Kalamna','Butibori','Besa'].forEach(a => {
+  ['Wandongri','Higna','Lokmanya Nagar','Digdoh','Kalamna','Butibori'].forEach(a => {
     const el = document.getElementById('cnt-'+a);
     if(el) el.textContent = ALL_PROPS.filter(p=>p.area===a).length + ' listings';
   });

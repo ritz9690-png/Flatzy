@@ -345,7 +345,15 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
     <a href="owner.html">List Property</a>
     <a href="refer.html" class="active" style="color:var(--primary);font-weight:700;">🎁 Refer & Earn</a>
   </div>
-  <a href="login.html" class="nav-btn">Login / Sign Up</a>
+  <div id="navGuest" style="display:none;gap:0.5rem;align-items:center;">
+    <a href="login.html" class="nav-btn outline">Login</a>
+    <a href="login.html" class="nav-btn">Sign Up Free</a>
+  </div>
+  <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
+    <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
+    <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
+    <button id="navLogoutBtn" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -490,7 +498,7 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
   </div>
 
   <!-- REGISTER FOR PROGRAM -->
-  <div class="r-card register-card" id="registerCard">
+  <div class="r-card register-card" id="registerCard" style="display:block;">
     <div class="r-card-title">🚀 Join the Refer & Earn Program</div>
     <p style="color:rgba(255,255,255,0.65);font-size:0.88rem;margin-bottom:1.2rem;">
       Enter your details to get your unique referral code and start earning!
@@ -601,9 +609,20 @@ async function loadHeroStat() {
 async function init() {
   loadHeroStat();
 
+  // Auto-fill name from Google login
   const user = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
-  const phone = user.phone || localStorage.getItem('flatzy_refer_phone');
-  if(!phone) return; // not registered, show form
+  if(user.name) {
+    const nameInput = document.getElementById('regName');
+    if(nameInput && !nameInput.value) nameInput.value = user.name;
+  }
+
+  // Check if already registered via localStorage
+  const phone = localStorage.getItem('flatzy_refer_phone');
+  if(!phone) {
+    // Show registration form — registerCard is visible by default
+    document.getElementById('registerCard').style.display = 'block';
+    return;
+  }
 
   myPhone = phone;
   try {
@@ -613,10 +632,14 @@ async function init() {
       const data = snap.data();
       setupUI(data.code, phone);
       loadStats(phone);
-      loadHistory(phone);
+      loadHistorySimple(phone); // use simple version without orderBy
+    } else {
+      // Phone in localStorage but no Firestore doc — show form
+      document.getElementById('registerCard').style.display = 'block';
     }
   } catch(e) {
     console.warn('Firestore init error:', e.message);
+    document.getElementById('registerCard').style.display = 'block';
   }
 }
 
@@ -663,6 +686,49 @@ async function loadStats(phone) {
     document.getElementById('statEarnings').textContent = '₹' + earnings.toLocaleString('en-IN');
   } catch(e) {
     console.warn('Stats load error:', e.message);
+  }
+}
+
+// ── Load history (simple — no orderBy, avoids index requirement) ──
+async function loadHistorySimple(phone) {
+  try {
+    const q = query(
+      collection(db, 'referrals'),
+      where('referrerPhone', '==', phone)
+    );
+    const snap = await getDocs(q);
+    const list = document.getElementById('historyList');
+
+    if(snap.empty) return;
+
+    // Sort client-side by createdAt desc
+    const docs = snap.docs.map(d => d.data()).sort((a,b) => {
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
+
+    list.innerHTML = docs.map(r => {
+      const initials = r.refereeName ? r.refereeName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) : '??';
+      const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
+      const statusClass = r.status === 'paid' ? 'paid' : 'pending';
+      const statusText  = r.status === 'paid' ? '✓ Paid' : '⏳ Pending';
+      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹500';
+      return `
+        <div class="history-row">
+          <div class="history-left">
+            <div class="history-avatar">${initials}</div>
+            <div>
+              <div class="history-name">${r.refereeName || 'Anonymous'}</div>
+              <div class="history-date">📅 ${date}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.7rem;">
+            <span class="history-status ${statusClass}">${statusText}</span>
+            <span class="history-amount">${amt}</span>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    console.warn('History load error:', e.message);
   }
 }
 
@@ -737,7 +803,7 @@ window.registerReferrer = async function() {
     myPhone = phone;
     setupUI(code, phone);
     loadStats(phone);
-    loadHistory(phone);
+    loadHistorySimple(phone);
     showToast('🎉 Referral code created! Start sharing!', 'success');
   } catch(e) {
     showToast('Error: ' + e.message, 'error');
@@ -799,3 +865,31 @@ init();
 </script>
 </body>
 </html>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const app = getApps().length ? getApps()[0] : initializeApp({
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+});
+const auth = getAuth(app);
+onAuthStateChanged(auth, user => {
+  document.getElementById('navGuest').style.display = user ? 'none' : 'flex';
+  document.getElementById('navUser').style.display  = user ? 'flex' : 'none';
+  if (user) {
+    document.getElementById('navName').textContent = user.displayName?.split(' ')[0] || '';
+    const p = document.getElementById('navPhoto');
+    if (user.photoURL) { p.src = user.photoURL; p.style.display = 'block'; }
+  }
+  document.getElementById('navLogoutBtn').onclick = async () => {
+    await signOut(auth);
+    localStorage.removeItem('flatzy_user');
+    window.location.reload();
+  };
+});
+</script>

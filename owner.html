@@ -76,9 +76,23 @@ body { background: var(--dark2); }
 .confirm-modal { max-width: 380px; text-align: center; }
 .confirm-icon { font-size: 3rem; margin-bottom: 1rem; }
 .confirm-btns { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+
+/* MOBILE RESPONSIVE */
+@media(max-width: 768px) {
+  .owner-header { padding: 4.5rem 4% 1.5rem; }
+  .owner-header h1 { font-size: 1.4rem; }
+  .owner-tabs { width: 100%; overflow-x: auto; }
+  .otab { padding: 0.5rem 1rem; font-size: 0.82rem; white-space: nowrap; }
+  .owner-content { padding: 1rem 4%; }
+  .owner-stats { grid-template-columns: 1fr 1fr; }
+  .add-form-card { padding: 1.2rem; }
+  .listing-row { flex-wrap: wrap; }
+  .listing-actions { width: 100%; justify-content: flex-end; margin-top: 0.5rem; }
+  .amenity-grid { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
-<body>
+<body class="has-bottom-nav">
 
 <!-- NAV -->
 <nav class="topnav">
@@ -140,7 +154,7 @@ body { background: var(--dark2); }
         </div>
         <div class="form-row">
           <div class="form-group"><label>Area / Locality</label>
-            <select id="pArea"><option>Wandgori</option><option>Higna</option><option>Digdoh</option><option>Kalamna</option><option>Butibori</option><option>Besa</option><option>Other</option></select>
+            <select id="pArea"><option>Wandongri</option><option>Higna</option><option>Lokmanya Nagar</option><option>Digdoh</option><option>Kalamna</option><option>Butibori</option><option>Koradi</option><option>Other</option></select>
           </div>
           <div class="form-group"><label>Floor</label>
             <select id="pFloor"><option>Ground</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th+</option></select>
@@ -234,9 +248,10 @@ body { background: var(--dark2); }
 <script type="module">
 // ── Firebase Imports ──────────────────────────────────────────────
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, getDocs, addDoc, deleteDoc,
-  doc, query, where, orderBy, serverTimestamp
+  doc, query, where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -249,34 +264,40 @@ const firebaseConfig = {
 };
 
 const fbApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
 const db = getFirestore(fbApp);
 
-let pendingDeleteId = null;   // Firestore doc ID
-let cachedOwnerProps = [];    // cache for analytics reuse
+let currentUser = null;
 
-// ── Init ──────────────────────────────────────────────────────────
-async function init() {
-  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
-  document.getElementById('navName').textContent = user.name || '';
-  if(user.name)  document.getElementById('pOwnerName').value  = user.name;
-  if(user.phone) document.getElementById('pOwnerPhone').value = user.phone;
-  await renderListings();
+// ── Auth Guard ────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location = 'login.html';
+    return;
+  }
+  currentUser = user;
+  // Update nav name
+  document.getElementById('navName').textContent = user.displayName ? user.displayName.split(' ')[0] : '';
+  // Pre-fill form
+  document.getElementById('pOwnerName').value = user.displayName || '';
+  // Load listings
+  renderListings();
   renderAnalytics();
-}
+});
+
+let pendingDeleteId = null;
+let cachedOwnerProps = [];
 
 // ── Fetch owner props from Firestore ──────────────────────────────
 async function getOwnerProps() {
-  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
-  const phone = user.phone || '';
+  if (!currentUser) return [];
   try {
-    let q;
-    if(phone) {
-      q = query(collection(db,'properties'), where('ownerPhone','==',phone), orderBy('postedAt','desc'));
-    } else {
-      q = query(collection(db,'properties'), orderBy('postedAt','desc'));
-    }
+    const q = query(
+      collection(db, 'properties'),
+      where('ownerUid', '==', currentUser.uid)
+    );
     const snap = await getDocs(q);
-    return snap.docs.map(d=>({ id: d.id, ...d.data() }));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
   } catch(e) {
     console.warn('Firestore fetch error:', e.message);
     return [];
@@ -382,6 +403,8 @@ window.submitProperty = async function() {
     desc:      document.getElementById('pDesc').value,
     amenities: checkedAmenities,
     ownerName, ownerPhone: phone,
+    ownerUid: currentUser ? currentUser.uid : '',
+    ownerEmail: currentUser ? currentUser.email : '',
     emoji: ['🏠','🏡','🏢','🏘️','🏨'][Math.floor(Math.random()*5)],
     views: 0, inquiries: 0,
     postedAt: new Date().toISOString()
@@ -448,7 +471,11 @@ window.switchOTab = switchOTab;
 
 window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); };
 
-window.logout = function() { localStorage.removeItem('flatzy_user'); window.location='index.html'; };
+window.logout = async function() {
+  await signOut(auth);
+  localStorage.removeItem('flatzy_user');
+  window.location = 'index.html';
+};
 
 function showToast(msg, err=false) {
   const t = document.getElementById('toast');
@@ -457,7 +484,27 @@ function showToast(msg, err=false) {
 }
 
 // ── Boot ──────────────────────────────────────────────────────────
-init();
+// Boot handled by onAuthStateChanged above
 </script>
+
+<!-- BOTTOM NAV (Mobile) -->
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item">
+    <span class="bn-icon">🏠</span>Home
+  </a>
+  <a href="rent.html" class="bn-item">
+    <span class="bn-icon">🔍</span>Browse
+  </a>
+  <a href="owner.html" class="bn-item active">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item">
+    <span class="bn-icon">🎁</span>Refer
+  </a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon">👤</span>Profile
+  </a>
+</nav>
+
 </body>
 </html>
