@@ -564,23 +564,37 @@
 .enquire-btn:hover { background: #e8f0fd; }
 </style>
 
-<script>
+<script type="module">
+// ── Firebase Imports ──────────────────────────────────────────────
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+};
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── Demo properties (fallback / always shown) ─────────────────────
 const DEMO_PROPS = [
-  {id:1,title:'Spacious 2BHK Flat',area:'Wandgori',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',owner:'Rajesh Sharma',phone:'98XXXXXX01'},
-  {id:2,title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',owner:'Priya Deshpande',phone:'98XXXXXX02'},
-  {id:3,title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',owner:'Amit Patel',phone:'98XXXXXX03'},
-  {id:4,title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',owner:'Sunita Raut',phone:'98XXXXXX04'},
-  {id:5,title:'3BHK Family Flat',area:'Wandgori',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',owner:'Vikas Deshmukh',phone:'98XXXXXX05'},
-  {id:6,title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',owner:'Kavita Joshi',phone:'98XXXXXX06'},
+  {id:'demo1',title:'Spacious 2BHK Flat',area:'Wandgori',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
+  {id:'demo2',title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
+  {id:'demo3',title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
+  {id:'demo4',title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
+  {id:'demo5',title:'3BHK Family Flat',area:'Wandgori',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
+  {id:'demo6',title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
 ];
 
-function getProps() {
-  const stored = JSON.parse(localStorage.getItem('flatzy_properties') || '[]');
-  return [...DEMO_PROPS, ...stored];
-}
-
+// ── Render property card ──────────────────────────────────────────
 function renderCard(p) {
-  return `<div class="property-card" onclick="window.location='rent.html?id=${p.id}'">
+  const idStr = typeof p.id === 'string' ? p.id : String(p.id);
+  return `<div class="property-card" onclick="window.location='rent.html?id=${idStr}'">
     <div class="card-img"><div class="card-img-placeholder">${p.emoji||'🏠'}</div>
       <span class="card-badge">${p.furnish||'N/A'}</span>
       <span class="card-type">${p.type||'Flat'}</span>
@@ -596,63 +610,84 @@ function renderCard(p) {
         <div class="card-price">₹${Number(p.rent).toLocaleString('en-IN')} <span>/month</span></div>
       </div>
       <div class="card-action-btns">
-        <button class="schedule-btn" onclick="event.stopPropagation();scheduleVisit(${p.id})">📅 Schedule Visit</button>
-        <button class="enquire-btn" onclick="event.stopPropagation();enquireNow(${p.id})">💬 Enquire Now</button>
+        <button class="schedule-btn" onclick="event.stopPropagation();scheduleVisit('${idStr}')">📅 Schedule Visit</button>
+        <button class="enquire-btn" onclick="event.stopPropagation();enquireNow('${idStr}')">💬 Enquire Now</button>
       </div>
     </div>
   </div>`;
 }
 
-function init() {
-  const props = getProps();
-  // Stats
-  document.getElementById('statProps').textContent = props.length + '+';
-  // Featured (latest 6)
+// ── Fetch from Firestore + init page ─────────────────────────────
+let ALL_PROPS = [...DEMO_PROPS];
+
+async function init() {
   const grid = document.getElementById('featuredGrid');
-  grid.innerHTML = props.slice(0,6).map(renderCard).join('');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-size:0.95rem;">⏳ Loading properties...</div>';
+
+  try {
+    const q = query(collection(db, 'properties'), orderBy('postedAt', 'desc'));
+    const snapshot = await getDocs(q);
+    const firestoreProps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    ALL_PROPS = [...DEMO_PROPS, ...firestoreProps];
+  } catch(e) {
+    console.warn('Firestore fetch failed, showing demo only:', e.message);
+    // Still show demo props — no crash
+  }
+
+  // Update stats counter
+  const statEl = document.getElementById('statProps');
+  if(statEl) statEl.textContent = ALL_PROPS.length + '+';
+
+  // Featured grid — latest 6
+  grid.innerHTML = ALL_PROPS.slice(0,6).map(renderCard).join('');
+
   // Area counts
   ['Wandgori','Higna','Digdoh','Kalamna','Butibori','Besa'].forEach(a => {
     const el = document.getElementById('cnt-'+a);
-    if(el) el.textContent = props.filter(p=>p.area===a).length + ' listings';
+    if(el) el.textContent = ALL_PROPS.filter(p=>p.area===a).length + ' listings';
   });
 }
 
-function doSearch() {
-  const area = document.getElementById('srchArea').value;
-  const type = document.getElementById('srchType').value;
+// ── Search ────────────────────────────────────────────────────────
+window.doSearch = function() {
+  const area   = document.getElementById('srchArea').value;
+  const type   = document.getElementById('srchType').value;
   const budget = document.getElementById('srchBudget').value;
-  const furnish = document.getElementById('srchFurnish').value;
+  const furnish= document.getElementById('srchFurnish').value;
   let url = 'rent.html?';
-  if(area) url += 'area='+encodeURIComponent(area)+'&';
-  if(type) url += 'type='+encodeURIComponent(type)+'&';
-  if(budget) url += 'budget='+budget+'&';
-  if(furnish) url += 'furnish='+encodeURIComponent(furnish)+'&';
+  if(area)   url += 'area='   + encodeURIComponent(area)   + '&';
+  if(type)   url += 'type='   + encodeURIComponent(type)   + '&';
+  if(budget) url += 'budget=' + budget + '&';
+  if(furnish)url += 'furnish='+ encodeURIComponent(furnish)+ '&';
   window.location = url;
-}
+};
 
-function browseArea(area) { window.location = 'rent.html?area=' + encodeURIComponent(area); }
+window.browseArea = function(area) {
+  window.location = 'rent.html?area=' + encodeURIComponent(area);
+};
 
-function scheduleVisit(id) {
-  const props = getProps();
-  const p = props.find(x => x.id === id);
+// ── WhatsApp Actions ──────────────────────────────────────────────
+window.scheduleVisit = function(id) {
+  const p = ALL_PROPS.find(x => String(x.id) === String(id));
   const msg = encodeURIComponent(`Hi! I'd like to schedule a visit for: ${p ? p.title + ' in ' + p.area + ', ₹' + p.rent + '/month' : 'a property'}. Please let me know the available timings.`);
   window.open('https://wa.me/917387798079?text=' + msg, '_blank');
-}
+};
 
-function enquireNow(id) {
-  const props = getProps();
-  const p = props.find(x => x.id === id);
+window.enquireNow = function(id) {
+  const p = ALL_PROPS.find(x => String(x.id) === String(id));
   const msg = encodeURIComponent(`Hi! I'm interested in: ${p ? p.title + ' in ' + p.area + ', ₹' + p.rent + '/month' : 'a property on Flatzy'}. Can you share more details?`);
   window.open('https://wa.me/917387798079?text=' + msg, '_blank');
-}
+};
 
-function showToast(msg, err=false) {
+// ── Toast ─────────────────────────────────────────────────────────
+window.showToast = function(msg, err=false) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast' + (err?' error':'');
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 3000);
-}
+};
 
+// ── Run ───────────────────────────────────────────────────────────
 init();
 </script>
 </body>

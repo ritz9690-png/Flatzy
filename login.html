@@ -321,7 +321,12 @@ function signupVerifyOtp() {
 
   const name = document.getElementById('signupName').value;
   const phone = document.getElementById('signupPhone').value;
-  localStorage.setItem('flatzy_user', JSON.stringify({phone, role: selectedRole, name}));
+  const userData = {phone, role: selectedRole, name};
+  localStorage.setItem('flatzy_user', JSON.stringify(userData));
+
+  // Save to Firestore if function available
+  if(window.saveUserToFirestore) window.saveUserToFirestore(userData);
+
   document.getElementById('signupSuccessSub').textContent = 'Welcome, ' + name + '! 🎉';
   goStep('s-s3','s-s2');
 }
@@ -359,8 +364,9 @@ function showToast(msg, type='') {
 </script>
 
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -373,6 +379,7 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 window.googleLogin = async function() {
@@ -382,13 +389,29 @@ window.googleLogin = async function() {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
+
+    // Save/update user in Firestore
+    const userRef = doc(db, 'users', user.uid);
+    const existing = await getDoc(userRef);
+    const role = existing.exists() ? (existing.data().role || 'tenant') : 'tenant';
+
+    await setDoc(userRef, {
+      name: user.displayName,
+      email: user.email,
+      uid: user.uid,
+      photo: user.photoURL,
+      role,
+      lastLogin: new Date().toISOString()
+    }, { merge: true });
+
     localStorage.setItem('flatzy_user', JSON.stringify({
       name: user.displayName,
       email: user.email,
       uid: user.uid,
       photo: user.photoURL,
-      role: 'tenant'
+      role
     }));
+
     showToast('Welcome ' + user.displayName + '! ✅');
     setTimeout(() => {
       const u = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
@@ -398,6 +421,19 @@ window.googleLogin = async function() {
     showToast('Google login failed: ' + e.message, 'error');
     btn.disabled = false;
     btn.innerHTML = '<span style="font-size:1.1rem">🔵</span> Continue with Google';
+  }
+};
+
+// Save user to Firestore on phone signup too
+window.saveUserToFirestore = async function(userData) {
+  try {
+    const userRef = doc(db, 'users', 'phone_' + userData.phone);
+    await setDoc(userRef, {
+      ...userData,
+      createdAt: new Date().toISOString()
+    }, { merge: true });
+  } catch(e) {
+    console.warn('Could not save user to Firestore:', e.message);
   }
 };
 </script>
