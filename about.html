@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); }
+
+/* HERO BANNER */
+.about-hero {
+  margin-top: var(--nav-h);
+  background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
+  padding: 4rem 5% 3.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.about-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(96,180,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.about-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800; color: white;
+  letter-spacing: -1px; margin-bottom: 1rem;
+}
+.about-hero h1 span { color: #60b4ff; }
+.about-hero p {
+  color: rgba(255,255,255,0.75); font-size: 1rem;
+  max-width: 540px; margin: 0 auto; line-height: 1.7;
+}
+
+/* SECTION */
+.about-section {
+  max-width: 900px; margin: 0 auto;
+  padding: 2.5rem 5%;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem; font-weight: 800;
+  color: var(--text); margin-bottom: 0.5rem;
+  text-align: center;
+}
+.section-sub {
+  text-align: center; color: var(--muted);
+  font-size: 0.95rem; margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+/* STORY CARD */
+.story-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 20px; padding: 2rem;
+  box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;
+}
+.story-card p {
+  font-size: 0.95rem; line-height: 1.8;
+  color: var(--text); margin-bottom: 1rem;
+}
+.story-card p:last-child { margin-bottom: 0; }
+.story-card p a {
+  color: var(--primary); font-weight: 700;
+  text-decoration: none;
+}
+.story-card strong { color: var(--text); }
+
+/* MISSION CARD */
+.mission-card {
+  background: linear-gradient(135deg, #0F1C2E, #1A3A6E);
+  border-radius: 20px; padding: 2.5rem 2rem;
+  text-align: center; margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+.mission-card h2 {
+  font-size: 1.6rem; font-weight: 800;
+  color: white; margin-bottom: 1rem;
+}
+.mission-card p {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.95rem; line-height: 1.8;
+  max-width: 600px; margin: 0 auto;
+}
+.mission-card p span { color: #60b4ff; font-weight: 700; }
+.mission-card p strong {
+  color: white;
+  font-family: monospace; font-size: 0.9rem;
+  background: rgba(255,255,255,0.1);
+  padding: 0.1rem 0.5rem; border-radius: 4px;
+}
+
+/* VALUES GRID */
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+.value-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 1.8rem 1.2rem;
+  text-align: center; box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.value-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.value-icon {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem; font-size: 1.4rem;
+  border: 2px solid #93c5fd;
+}
+.value-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 800;
+  margin-bottom: 0.5rem; color: var(--text);
+}
+.value-desc {
+  font-size: 0.82rem; color: var(--muted);
+  line-height: 1.6;
+}
+
+/* TEAM SECTION */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.2rem; margin-bottom: 1.5rem;
+}
+.team-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 20px; padding: 2rem 1.5rem;
+  text-align: center; box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.team-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.team-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem; font-weight: 800; color: white;
+  box-shadow: 0 4px 16px rgba(26,111,232,0.3);
+}
+.team-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+  color: var(--text); margin-bottom: 0.3rem;
+}
+.team-role {
+  font-size: 0.82rem; color: var(--primary);
+  font-weight: 700; margin-bottom: 0.5rem;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.team-desc {
+  font-size: 0.82rem; color: var(--muted);
+  line-height: 1.6;
+}
+.team-badge {
+  display: inline-block;
+  background: var(--primary-light); color: var(--primary);
+  border: 1px solid #93c5fd;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 0.2rem 0.7rem; border-radius: 20px;
+  margin-top: 0.7rem;
+}
+
+/* STATS STRIP */
+.stats-strip {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 20px; padding: 1.8rem 2rem;
+  display: flex; justify-content: space-around;
+  flex-wrap: wrap; gap: 1rem;
+  box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem; font-weight: 800;
+  color: var(--primary);
+}
+.stat-lbl { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+/* FOOTER CREDIT */
+.dev-credit {
+  background: linear-gradient(135deg, #0F1C2E, #1A3A6E);
+  border-radius: 20px; padding: 2rem;
+  text-align: center; margin-bottom: 2rem;
+}
+.dev-credit p {
+  color: rgba(255,255,255,0.6); font-size: 0.85rem;
+}
+.dev-credit p span {
+  color: #60b4ff; font-weight: 700;
+}
+
+/* CTA */
+.about-cta {
+  background: var(--primary); border-radius: 20px;
+  padding: 2.5rem 2rem; text-align: center;
+  margin-bottom: 2rem; box-shadow: var(--shadow-md);
+}
+.about-cta h3 {
+  font-size: 1.4rem; font-weight: 800;
+  color: white; margin-bottom: 0.8rem;
+}
+.about-cta p { color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-bottom: 1.5rem; }
+.cta-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+.cta-btn {
+  padding: 0.7rem 1.8rem; border-radius: 10px;
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 0.9rem; text-decoration: none;
+  transition: all 0.2s; cursor: pointer; border: none;
+}
+.cta-btn.white { background: white; color: var(--primary); }
+.cta-btn.white:hover { background: #f0f4ff; }
+.cta-btn.outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.5); }
+.cta-btn.outline:hover { background: rgba(255,255,255,0.1); }
+
+@media(max-width:768px) {
+  .about-hero { padding: 3rem 4% 2.5rem; }
+  .about-section { padding: 1.5rem 4%; }
+  .stats-strip { padding: 1.2rem 1rem; }
+  .stat-num { font-size: 1.5rem; }
+  .team-grid { grid-template-columns: 1fr 1fr; }
+  .values-grid { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:480px) {
+  .team-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body class="has-bottom-nav">
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+    <a href="refer.html" style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🎁 Refer & Earn</a>
+    <a href="about.html" class="active" style="color:var(--primary);font-weight:700;">About</a>
+  </div>
+  <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <a href="login.html" class="nav-btn outline">Login</a>
+    <a href="login.html" class="nav-btn">Sign Up Free</a>
+  </div>
+  <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
+    <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
+    <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
+    <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="about-hero">
+  <h1>About <span>Flatzy</span></h1>
+  <p>Flatzy is a student-led startup making renting simple, transparent, and stress-free for everyone in Nagpur.</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="about-section">
+
+  <!-- OUR STORY -->
+  <div class="section-title" style="text-align:left;margin-bottom:1rem;">Our Story</div>
+  <div class="story-card">
+    <p>Flatzy was born from the vision of <strong>Sarvadnya Bhoyar</strong>, a Computer Science student at YCCE Nagpur. As a student himself, he experienced the struggles of finding quality rental properties — confusing listings, poor communication, and hidden broker fees made the process stressful.</p>
+    <p>Determined to solve this problem, he built a platform focused on <a href="#">verified listings, user trust, and customer-first support</a>. What started as a college project has now grown into a startup helping people across Nagpur find homes easily and confidently.</p>
+    <p>Our story is one of passion, innovation, and the belief that technology can make the rental experience smoother, safer, and more reliable for everyone.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stat-item">
+      <div class="stat-num">500+</div>
+      <div class="stat-lbl">Happy Tenants</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100+</div>
+      <div class="stat-lbl">Verified Listings</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">6+</div>
+      <div class="stat-lbl">Areas in Nagpur</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-lbl">Brokerage Fees</div>
+    </div>
+  </div>
+
+  <!-- OUR MISSION -->
+  <div class="mission-card">
+    <h2>Our Mission</h2>
+    <p>Our mission is to <span>revolutionize the rental experience</span> by providing a transparent, reliable, and user-friendly platform that connects people with their perfect homes. As a startup built by a <strong>Computer Science student from YCCE</strong>, we are driven by innovation, fresh ideas, and the passion to solve real problems. We're committed to building trust, fostering community, and making quality housing accessible to everyone.</p>
+  </div>
+
+  <!-- OUR VALUES -->
+  <div class="section-title">Our Values</div>
+  <div class="section-sub">The principles that guide everything we do</div>
+  <div class="values-grid">
+    <div class="value-card">
+      <div class="value-icon">👥</div>
+      <div class="value-title">Customer First</div>
+      <div class="value-desc">We prioritize our customers' needs and ensure their satisfaction is always our top priority.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-icon">🎯</div>
+      <div class="value-title">Reliability</div>
+      <div class="value-desc">We provide accurate information and reliable services you can trust.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-icon">🏆</div>
+      <div class="value-title">Excellence</div>
+      <div class="value-desc">We strive for excellence in everything we do, from listings to customer support.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-icon">❤️</div>
+      <div class="value-title">Care</div>
+      <div class="value-desc">We genuinely care about helping people find their perfect home.</div>
+    </div>
+  </div>
+
+  <!-- TEAM -->
+  <div class="section-title">Meet the Team</div>
+  <div class="section-sub">The people behind Flatzy Nagpur</div>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar">SB</div>
+      <div class="team-name">Sarvadnya Bhoyar</div>
+      <div class="team-role">Founder & CEO</div>
+      <div class="team-desc">Computer Science student at YCCE Nagpur. Stanford Code in Place 2025 · Harvard ALP Alumni. Building Flatzy to solve real housing problems.</div>
+      <span class="team-badge">🎓 YCCE Nagpur</span>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar" style="background:linear-gradient(135deg,#10b981,#0ea5e9);">RG</div>
+      <div class="team-name">Ritesh Gupta</div>
+      <div class="team-role">Developer & Coder</div>
+      <div class="team-desc">CSE (AI & ML) student building the tech behind Flatzy — from UI to Firebase backend, making the platform fast, smooth and reliable.</div>
+      <span class="team-badge">💻 CSE (AI&ML)</span>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="about-cta">
+    <h3>Ready to Find Your Perfect Home? 🏠</h3>
+    <p>Browse verified flats, PGs and hostels in Nagpur — zero brokerage, direct owner contact.</p>
+    <div class="cta-btns">
+      <a href="rent.html" class="cta-btn white">🔍 Browse Properties</a>
+      <a href="owner.html" class="cta-btn outline">📋 List Your Property</a>
+    </div>
+  </div>
+
+  <!-- DEV CREDIT -->
+  <div class="dev-credit">
+    <p>🛠️ Designed & Developed by <span>Ritesh Gupta</span> · CSE (AI & ML)</p>
+    <p style="margin-top:0.3rem;font-size:0.78rem;">© 2025 Flatzy Nagpur. All rights reserved.</p>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item">
+    <span class="bn-icon">🏠</span>Home
+  </a>
+  <a href="rent.html" class="bn-item">
+    <span class="bn-icon">🔍</span>Browse
+  </a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item">
+    <span class="bn-icon">🎁</span>Refer
+  </a>
+  <a href="about.html" class="bn-item active">
+    <span class="bn-icon">ℹ️</span>About
+  </a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app = getApps().length ? getApps()[0] : initializeApp({
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+});
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, user => {
+  document.getElementById('navGuest').style.display = user ? 'none' : 'flex';
+  document.getElementById('navUser').style.display  = user ? 'flex' : 'none';
+  if (user) {
+    document.getElementById('navName').textContent = user.displayName?.split(' ')[0] || '';
+    const p = document.getElementById('navPhoto');
+    if (user.photoURL) { p.src = user.photoURL; p.style.display = 'block'; }
+  }
+});
+
+window.logoutUser = async function() {
+  await signOut(auth);
+  localStorage.removeItem('flatzy_user');
+  window.location = 'index.html';
+};
+</script>
+
+</body>
+</html>
