@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Properties – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); }
+
+/* PAGE HEADER */
+.browse-header { background: white; border-bottom: 1.5px solid var(--border); padding: 5.5rem 5% 1.5rem; }
+.browse-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.3rem; }
+.browse-header p { color: var(--muted); font-size: 0.9rem; }
+
+/* LAYOUT */
+.browse-layout { display: flex; gap: 1.5rem; padding: 1.5rem 5%; align-items: flex-start; }
+
+/* SIDEBAR FILTER */
+.filter-sidebar { width: 280px; flex-shrink: 0; position: sticky; top: 80px; }
+.filter-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; padding: 1.4rem; box-shadow: var(--shadow-sm); }
+.filter-title { font-family: 'Syne',sans-serif; font-size: 1rem; font-weight: 800; margin-bottom: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+.filter-clear { font-size: 0.8rem; color: var(--primary); cursor: pointer; font-weight: 600; }
+.filter-section { margin-bottom: 1.4rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--border); }
+.filter-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.filter-label { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.7rem; }
+.filter-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.fchip { padding: 0.35rem 0.8rem; border-radius: 20px; border: 1.5px solid var(--border); background: var(--dark2); font-size: 0.8rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.15s; font-family: 'Syne',sans-serif; }
+.fchip.active { background: var(--primary); color: white; border-color: var(--primary); }
+.price-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.price-inputs input { background: var(--dark2); border: 1.5px solid var(--border); border-radius: 8px; padding: 0.5rem 0.7rem; font-family: 'DM Sans',sans-serif; font-size: 0.85rem; color: var(--text); outline: none; width: 100%; }
+.price-inputs input:focus { border-color: var(--primary); }
+.apply-filter-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 0.7rem; border-radius: 10px; font-family: 'Syne',sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.2s; margin-top: 0.3rem; }
+.apply-filter-btn:hover { background: var(--primary-dark); }
+
+/* MAIN CONTENT */
+.listings-main { flex: 1; min-width: 0; }
+.listings-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem; }
+.listings-count { font-size: 0.9rem; color: var(--muted); }
+.listings-count strong { color: var(--text); }
+.sort-sel { background: white; border: 1.5px solid var(--border); border-radius: 8px; padding: 0.45rem 0.8rem; font-family: 'DM Sans',sans-serif; font-size: 0.85rem; color: var(--text); outline: none; cursor: pointer; }
+.search-inp { flex: 1; min-width: 200px; background: white; border: 1.5px solid var(--border); border-radius: 8px; padding: 0.45rem 0.9rem; font-family: 'DM Sans',sans-serif; font-size: 0.9rem; color: var(--text); outline: none; }
+.search-inp:focus { border-color: var(--primary); }
+
+.props-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+
+/* MOBILE FILTER TOGGLE */
+.mobile-filter-btn { display: none; background: white; border: 1.5px solid var(--border); border-radius: 10px; padding: 0.55rem 1rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; align-items: center; gap: 0.4rem; color: var(--text); }
+.mobile-filter-btn.has-filters { border-color: var(--primary); color: var(--primary); }
+
+/* PROPERTY DETAIL MODAL */
+.detail-modal { max-width: 680px; padding: 0; overflow: hidden; max-height: 90vh; overflow-y: auto; }
+.detail-gallery { height: 260px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 5rem; position: relative; }
+.detail-body { padding: 1.8rem; }
+.detail-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.3rem; }
+.detail-location { font-size: 0.9rem; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; margin-bottom: 1.2rem; }
+.detail-chips { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.detail-chip { background: var(--dark2); border: 1.5px solid var(--border); padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; color: var(--text); }
+.detail-price-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.3rem; }
+.detail-price { font-family: 'Syne',sans-serif; font-size: 2rem; font-weight: 800; color: var(--primary); }
+.detail-price-unit { font-size: 0.9rem; color: var(--muted); }
+.detail-deposit { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+.detail-section-title { font-family: 'Syne',sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.7rem; margin-top: 1.2rem; }
+.amenity-list { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.amen-pill { background: var(--primary-light); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.detail-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+.contact-card { background: var(--dark2); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.2rem; margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.contact-owner-info { }
+.contact-owner-name { font-weight: 700; font-size: 1rem; }
+.contact-owner-label { font-size: 0.8rem; color: var(--muted); }
+.reveal-btn { background: var(--green); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 10px; font-family: 'Syne',sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.2s; }
+.reveal-btn:hover { background: #059669; }
+.phone-revealed { font-family: 'Syne',sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--green); letter-spacing: 2px; }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .filter-sidebar { display: none; }
+  .mobile-filter-btn { display: flex; }
+  .browse-layout { padding: 1rem 4%; }
+}
+
+/* MOBILE FILTER DRAWER */
+.filter-drawer-overlay { display: none; position: fixed; inset: 0; z-index: 1500; background: rgba(15,28,46,0.5); backdrop-filter: blur(4px); align-items: flex-end; }
+.filter-drawer-overlay.active { display: flex; }
+.filter-drawer { background: white; border-radius: 20px 20px 0 0; width: 100%; max-height: 85vh; overflow-y: auto; padding: 1.5rem; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+  <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+  <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+</a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="rent.html" class="active">Browse</a>
+    <a href="owner.html">List Property</a>
+  </div>
+  <div style="display:flex;gap:0.5rem;">
+    <a href="login.html" class="nav-btn outline" id="navLogin" style="display:none;">Login</a>
+    <span style="font-size:0.9rem;color:var(--muted);padding:0.5rem;" id="navUser"></span>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="browse-header">
+  <h1>Browse Properties</h1>
+  <p id="browseSubtitle">Find your perfect flat, PG or hostel in Nagpur</p>
+</div>
+
+<!-- BROWSE LAYOUT -->
+<div class="browse-layout">
+
+  <!-- SIDEBAR -->
+  <div class="filter-sidebar">
+    <div class="filter-card" id="filterCard">
+      <div class="filter-title">Filters <span class="filter-clear" onclick="clearFilters()">Clear All</span></div>
+
+      <div class="filter-section">
+        <div class="filter-label">Area</div>
+        <div class="filter-chips" id="fArea">
+          <span class="fchip" data-val="" onclick="toggleFChip(this,'fArea')">All</span>
+          <span class="fchip" data-val="Wandgori" onclick="toggleFChip(this,'fArea')">Wandgori</span>
+          <span class="fchip" data-val="Higna" onclick="toggleFChip(this,'fArea')">Higna</span>
+          <span class="fchip" data-val="Digdoh" onclick="toggleFChip(this,'fArea')">Digdoh</span>
+          <span class="fchip" data-val="Kalamna" onclick="toggleFChip(this,'fArea')">Kalamna</span>
+          <span class="fchip" data-val="Butibori" onclick="toggleFChip(this,'fArea')">Butibori</span>
+          <span class="fchip" data-val="Besa" onclick="toggleFChip(this,'fArea')">Besa</span>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Property Type</div>
+        <div class="filter-chips" id="fType">
+          <span class="fchip" data-val="" onclick="toggleFChip(this,'fType')">All</span>
+          <span class="fchip" data-val="Flat" onclick="toggleFChip(this,'fType')">Flat</span>
+          <span class="fchip" data-val="PG" onclick="toggleFChip(this,'fType')">PG</span>
+          <span class="fchip" data-val="Hostel" onclick="toggleFChip(this,'fType')">Hostel</span>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">BHK</div>
+        <div class="filter-chips" id="fBhk">
+          <span class="fchip" data-val="" onclick="toggleFChip(this,'fBhk')">Any</span>
+          <span class="fchip" data-val="1 BHK" onclick="toggleFChip(this,'fBhk')">1 BHK</span>
+          <span class="fchip" data-val="2 BHK" onclick="toggleFChip(this,'fBhk')">2 BHK</span>
+          <span class="fchip" data-val="3 BHK" onclick="toggleFChip(this,'fBhk')">3 BHK</span>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Furnishing</div>
+        <div class="filter-chips" id="fFurnish">
+          <span class="fchip" data-val="" onclick="toggleFChip(this,'fFurnish')">Any</span>
+          <span class="fchip" data-val="Furnished" onclick="toggleFChip(this,'fFurnish')">Furnished</span>
+          <span class="fchip" data-val="Semi-Furnished" onclick="toggleFChip(this,'fFurnish')">Semi</span>
+          <span class="fchip" data-val="Unfurnished" onclick="toggleFChip(this,'fFurnish')">Unfurnished</span>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Budget Range (₹/month)</div>
+        <div class="price-inputs">
+          <input type="number" id="fMinPrice" placeholder="Min" oninput="applyFilters()">
+          <input type="number" id="fMaxPrice" placeholder="Max" oninput="applyFilters()">
+        </div>
+      </div>
+
+      <button class="apply-filter-btn" onclick="applyFilters()">Apply Filters</button>
+    </div>
+  </div>
+
+  <!-- MAIN LISTINGS -->
+  <div class="listings-main">
+    <div class="listings-toolbar">
+      <button class="mobile-filter-btn" id="mobileFilterBtn" onclick="openMobileFilter()">⚙️ Filters <span id="filterBadge"></span></button>
+      <input class="search-inp" type="text" placeholder="🔍 Search title, area…" oninput="applyFilters()" id="searchInp">
+      <div class="listings-count" id="listingsCount"></div>
+      <select class="sort-sel" id="sortSel" onchange="applyFilters()">
+        <option value="newest">Newest First</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="props-grid" id="propsGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="empty-icon">🏚️</div>
+      <p>No properties found. Try adjusting your filters.</p>
+      <br><button class="btn-outline" onclick="clearFilters()" style="margin:0 auto;">Clear Filters</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROPERTY DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal detail-modal" id="detailContent">
+    <button class="modal-close" onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;z-index:10;">✕</button>
+  </div>
+</div>
+
+<!-- MOBILE FILTER DRAWER -->
+<div class="filter-drawer-overlay" id="filterDrawer">
+  <div class="filter-drawer" id="filterDrawerContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DEMO = [
+  {id:1,title:'Spacious 2BHK Flat',area:'Wandgori',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,deposit:19000,emoji:'🏠',owner:'Rajesh Sharma',phone:'98XXXXXX01',amenities:['🅿️ Parking','💧 24hr Water'],desc:'Well-maintained 2BHK on 2nd floor. Close to MIDC and bus stop. Ideal for families and working professionals.'},
+  {id:2,title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,deposit:5500,emoji:'🏡',owner:'Priya Deshpande',phone:'98XXXXXX02',amenities:['📶 WiFi Ready','🧹 Housekeeping'],desc:'Safe and comfortable PG for working girls. Meals optional. 24hr security.'},
+  {id:3,title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,deposit:14000,emoji:'🏢',owner:'Amit Patel',phone:'98XXXXXX03',amenities:['❄️ AC Installed','📶 WiFi Ready'],desc:'Brand new 1BHK studio with modern fittings. Perfect for single working professional.'},
+  {id:4,title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,deposit:3500,emoji:'🏨',owner:'Sunita Raut',phone:'98XXXXXX04',amenities:['💧 24hr Water'],desc:'Affordable hostel accommodation near industrial area. Shared rooms available.'},
+  {id:5,title:'3BHK Family Flat',area:'Wandgori',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,deposit:28000,emoji:'🏘️',owner:'Vikas Deshmukh',phone:'98XXXXXX05',amenities:['🅿️ Parking','🛗 Lift','🔒 CCTV'],desc:'Spacious 3BHK in a gated society. Ideal for large families. All amenities.'},
+  {id:6,title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,deposit:12400,emoji:'🏠',owner:'Kavita Joshi',phone:'98XXXXXX06',amenities:['🅿️ Parking'],desc:'Neat 1BHK near Butibori MIDC. Easy commute. Good locality.'},
+];
+
+let allProps = [];
+let filters = { area:'', type:'', bhk:'', furnish:'', minPrice:'', maxPrice:'' };
+let contactRevealed = {};
+
+function getProps() {
+  const stored = JSON.parse(localStorage.getItem('flatzy_properties')||'[]');
+  return [...DEMO, ...stored];
+}
+
+function init() {
+  allProps = getProps();
+  // Nav
+  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
+  if(user.name) document.getElementById('navUser').textContent = user.name;
+  else document.getElementById('navLogin').style.display = 'inline-flex';
+
+  // Read URL params
+  const p = new URLSearchParams(window.location.search);
+  if(p.get('area')) { filters.area = p.get('area'); setFChipActive('fArea', p.get('area')); }
+  if(p.get('type')) { filters.type = p.get('type'); setFChipActive('fType', p.get('type')); }
+  if(p.get('furnish')) { filters.furnish = p.get('furnish'); setFChipActive('fFurnish', p.get('furnish')); }
+  if(p.get('budget')) { document.getElementById('fMaxPrice').value = p.get('budget'); filters.maxPrice = p.get('budget'); }
+
+  if(filters.area) document.getElementById('browseSubtitle').textContent = 'Showing properties in ' + filters.area;
+
+  // Check for specific property ID
+  const id = p.get('id');
+  if(id) {
+    const prop = allProps.find(pr=>pr.id==id);
+    if(prop) setTimeout(()=>showDetail(prop), 300);
+  }
+
+  applyFilters();
+  // Clone filter card to drawer
+  document.getElementById('filterDrawerContent').innerHTML = document.getElementById('filterCard').innerHTML;
+}
+
+function toggleFChip(el, groupId) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  filters[groupId.replace('f','').toLowerCase()] = el.dataset.val;
+  if(groupId==='fArea') filters.area = el.dataset.val;
+  if(groupId==='fType') filters.type = el.dataset.val;
+  if(groupId==='fBhk') filters.bhk = el.dataset.val;
+  if(groupId==='fFurnish') filters.furnish = el.dataset.val;
+  applyFilters();
+}
+
+function setFChipActive(groupId, val) {
+  const group = document.getElementById(groupId);
+  if(!group) return;
+  group.querySelectorAll('.fchip').forEach(c => c.classList.toggle('active', c.dataset.val===val));
+}
+
+function applyFilters() {
+  let list = [...allProps];
+  const q = (document.getElementById('searchInp').value||'').toLowerCase();
+  const minP = document.getElementById('fMinPrice') ? Number(document.getElementById('fMinPrice').value)||0 : 0;
+  const maxP = document.getElementById('fMaxPrice') ? Number(document.getElementById('fMaxPrice').value)||Infinity : Infinity;
+
+  if(filters.area) list = list.filter(p=>p.area===filters.area);
+  if(filters.type) list = list.filter(p=>p.type===filters.type);
+  if(filters.bhk) list = list.filter(p=>p.bhk===filters.bhk);
+  if(filters.furnish) list = list.filter(p=>p.furnish===filters.furnish);
+  if(minP) list = list.filter(p=>p.rent>=minP);
+  if(maxP!==Infinity) list = list.filter(p=>p.rent<=maxP);
+  if(q) list = list.filter(p=>p.title.toLowerCase().includes(q)||p.area.toLowerCase().includes(q)||String(p.rent).includes(q));
+
+  const sort = document.getElementById('sortSel').value;
+  if(sort==='price-asc') list.sort((a,b)=>a.rent-b.rent);
+  else if(sort==='price-desc') list.sort((a,b)=>b.rent-a.rent);
+
+  renderGrid(list);
+}
+
+function clearFilters() {
+  filters = { area:'', type:'', bhk:'', furnish:'', minPrice:'', maxPrice:'' };
+  ['fArea','fType','fBhk','fFurnish'].forEach(gid => {
+    const g = document.getElementById(gid);
+    if(!g) return;
+    g.querySelectorAll('.fchip').forEach((c,i)=>c.classList.toggle('active',i===0));
+  });
+  const min = document.getElementById('fMinPrice'), max = document.getElementById('fMaxPrice');
+  if(min) min.value=''; if(max) max.value='';
+  document.getElementById('searchInp').value='';
+  applyFilters();
+}
+
+function renderGrid(list) {
+  const grid = document.getElementById('propsGrid');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('listingsCount').textContent = list.length + ' propert' + (list.length===1?'y':'ies') + ' found';
+  if(!list.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  grid.innerHTML = list.map(p=>`
+    <div class="property-card" onclick="showDetail(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="card-img"><div class="card-img-placeholder">${p.emoji||'🏠'}</div>
+        <span class="card-badge">${p.furnish}</span><span class="card-type">${p.type}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${p.title}</div>
+        <div class="card-location">📍 ${p.area}, Nagpur</div>
+        <div class="card-details">
+          <span class="card-detail">🛏 ${p.bhk}</span>
+          <span class="card-detail">🏗 ${p.furnish}</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹${Number(p.rent).toLocaleString('en-IN')} <span>/mo</span></div>
+          <button class="contact-btn" onclick="event.stopPropagation();showDetail(${JSON.stringify(p).replace(/"/g,'&quot;')})">Details</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showDetail(p) {
+  const revealed = contactRevealed[p.id];
+  document.getElementById('detailContent').innerHTML = `
+    <button class="modal-close" onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;z-index:10;">✕</button>
+    <div class="detail-gallery">${p.emoji||'🏠'}</div>
+    <div class="detail-body">
+      <div class="detail-title">${p.title}</div>
+      <div class="detail-location">📍 ${p.area}, Nagpur${p.address?(' — '+p.address):''}</div>
+      <div class="detail-chips">
+        <span class="detail-chip">🛏 ${p.bhk}</span>
+        <span class="detail-chip">🏠 ${p.type}</span>
+        <span class="detail-chip">🏗 ${p.furnish}</span>
+        ${p.floor?`<span class="detail-chip">⬆️ ${p.floor} Floor</span>`:''}
+        ${p.tenants?`<span class="detail-chip">👤 ${p.tenants}</span>`:''}
+      </div>
+      <div class="detail-price-row">
+        <div class="detail-price">₹${Number(p.rent).toLocaleString('en-IN')}</div>
+        <div class="detail-price-unit">/month</div>
+      </div>
+      <div class="detail-deposit">Security Deposit: ₹${Number(p.deposit||p.rent*2).toLocaleString('en-IN')}</div>
+      ${p.amenities && p.amenities.length ? `
+        <div class="detail-section-title">Amenities</div>
+        <div class="amenity-list">${p.amenities.map(a=>`<span class="amen-pill">${a}</span>`).join('')}</div>
+      ` : ''}
+      ${p.desc?`<div class="detail-section-title">Description</div><div class="detail-desc">${p.desc}</div>`:''}
+      <div class="contact-card">
+        <div class="contact-owner-info">
+          <div class="contact-owner-name">🏠 ${p.ownerName||p.owner||'Owner'}</div>
+          <div class="contact-owner-label">Property Owner · Direct Contact</div>
+          ${revealed ? `<div class="phone-revealed" id="ph-${p.id}">📞 +91 ${p.phone||p.ownerPhone}</div>` : ''}
+        </div>
+        ${revealed ?
+          `<a href="tel:+91${p.phone||p.ownerPhone}" class="reveal-btn">📞 Call Now</a>` :
+          `<button class="reveal-btn" onclick="revealContact(${p.id},'${p.phone||p.ownerPhone}','${p.ownerName||p.owner||'Owner'}')">Reveal Number 🔓</button>`
+        }
+      </div>
+    </div>
+  `;
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function revealContact(id, phone, name) {
+  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
+  if(!user.phone) { showToast('Please login to view contact 🔒','error'); setTimeout(()=>window.location='login.html',1500); return; }
+  contactRevealed[id] = true;
+  // Update the reveal area
+  const card = document.getElementById('detailContent').querySelector('.contact-card');
+  if(card) {
+    const btn = card.querySelector('.reveal-btn');
+    if(btn) btn.outerHTML = `<a href="tel:+91${phone}" class="reveal-btn">📞 Call Now</a>`;
+    const info = card.querySelector('.contact-owner-info');
+    if(info && !card.querySelector('.phone-revealed')) {
+      info.innerHTML += `<div class="phone-revealed" style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--green);letter-spacing:2px;margin-top:0.5rem;">📞 +91 ${phone}</div>`;
+    }
+  }
+  showToast('Contact revealed! 📞');
+}
+
+function closeModal() { document.getElementById('detailModal').classList.remove('active'); }
+
+function openMobileFilter() {
+  document.getElementById('filterDrawer').classList.add('active');
+}
+document.getElementById('filterDrawer').addEventListener('click', function(e) {
+  if(e.target===this) this.classList.remove('active');
+});
+
+function showToast(msg, err=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(err?' error':'');
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script>
+</body>
+</html>

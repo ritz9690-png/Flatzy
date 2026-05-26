@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); padding-bottom: 72px; }
+
+/* WELCOME BANNER */
+.welcome-banner {
+  background: linear-gradient(120deg, var(--primary) 0%, #0EA5E9 100%);
+  padding: 5.5rem 5% 2rem; color: white;
+}
+.welcome-banner h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.3rem; }
+.welcome-banner p { opacity: 0.85; font-size: 0.9rem; }
+
+/* QUICK SEARCH */
+.quick-search {
+  background: white; border-radius: 16px; padding: 1rem 1.2rem;
+  margin: 1rem 5%; display: flex; gap: 0.8rem; align-items: center;
+  box-shadow: var(--shadow-md); border: 1.5px solid var(--border);
+}
+.quick-search input { flex: 1; border: none; background: transparent; font-family: 'DM Sans',sans-serif; font-size: 0.95rem; color: var(--text); outline: none; }
+.quick-search input::placeholder { color: var(--muted); }
+.qs-btn { background: var(--primary); color: white; border: none; padding: 0.55rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: 'Syne',sans-serif; font-size: 0.9rem; white-space: nowrap; }
+
+/* STATS ROW */
+.stats-row { display: flex; gap: 1rem; padding: 0 5% 1.5rem; overflow-x: auto; }
+.stat-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 1rem 1.4rem; min-width: 140px; box-shadow: var(--shadow-sm); flex-shrink: 0; }
+.stat-card .num { font-family: 'Syne',sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+.stat-card .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+/* SECTION */
+.home-section { padding: 0 5% 2rem; }
+.home-section-title { font-family: 'Syne',sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+.home-section-title a { font-size: 0.85rem; color: var(--primary); font-weight: 600; text-decoration: none; }
+
+/* CATEGORY CHIPS */
+.cat-scroll { display: flex; gap: 0.7rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+.cat-chip { background: white; border: 1.5px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; color: var(--muted); font-family: 'Syne',sans-serif; flex-shrink: 0; }
+.cat-chip.active, .cat-chip:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* PROPS GRID */
+.props-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+
+/* WISHLIST SECTION */
+.wish-scroll { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem; }
+.wish-card { min-width: 220px; background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 1rem; box-shadow: var(--shadow-sm); flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
+.wish-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.wish-card .wc-emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+.wish-card .wc-title { font-family: 'Syne',sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.wish-card .wc-price { font-size: 0.85rem; color: var(--primary); font-weight: 700; }
+.wish-card .wc-loc { font-size: 0.78rem; color: var(--muted); }
+
+/* BOTTOM NAV */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: white; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; z-index: 500; box-shadow: 0 -4px 24px rgba(26,111,232,0.08); }
+.bn-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.68rem; color: var(--muted); cursor: pointer; font-family: 'Syne',sans-serif; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 10px; transition: color 0.2s; position: relative; }
+.bn-item.active { color: var(--primary); }
+.bn-icon { font-size: 1.3rem; }
+.bn-badge { position: absolute; top: 0; right: 4px; background: #e11d48; color: white; font-size: 0.6rem; font-weight: 800; border-radius: 50%; width: 15px; height: 15px; display: none; align-items: center; justify-content: center; }
+.bn-badge.show { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+  <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+  <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+</a>
+  <div class="nav-links">
+    <a href="home.html" class="active">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+  </div>
+  <div style="display:flex;gap:0.5rem;align-items:center;" id="navUserArea">
+    <span style="font-size:0.9rem;color:var(--muted);" id="navUserName"></span>
+    <button onclick="logout()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.85rem;">Logout</button>
+  </div>
+</nav>
+
+<!-- WELCOME -->
+<div class="welcome-banner">
+  <h2>Good <span id="greetingTime">Morning</span>, <span id="greetingName">Friend</span>! 👋</h2>
+  <p>Find your perfect flat in Nagpur. <span id="propCountBadge">0</span> listings available.</p>
+</div>
+
+<!-- QUICK SEARCH -->
+<div class="quick-search">
+  <span style="font-size:1.2rem;">🔍</span>
+  <input type="text" id="quickSearchInput" placeholder="Search area, type or price…" oninput="filterProps()">
+  <button class="qs-btn" onclick="window.location='rent.html'">Filters</button>
+</div>
+
+<!-- STATS -->
+<div class="stats-row" id="statsRow">
+  <!-- populated by JS -->
+</div>
+
+<!-- CATEGORIES -->
+<div class="home-section">
+  <div class="cat-scroll" id="catChips">
+    <div class="cat-chip active" onclick="filterByType('')" data-type="">All</div>
+    <div class="cat-chip" onclick="filterByType('Flat')" data-type="Flat">🏠 Flats</div>
+    <div class="cat-chip" onclick="filterByType('PG')" data-type="PG">🏡 PG</div>
+    <div class="cat-chip" onclick="filterByType('Hostel')" data-type="Hostel">🏨 Hostel</div>
+    <div class="cat-chip" onclick="filterByType('1 BHK')" data-type="1 BHK">1 BHK</div>
+    <div class="cat-chip" onclick="filterByType('2 BHK')" data-type="2 BHK">2 BHK</div>
+    <div class="cat-chip" onclick="filterByType('3 BHK')" data-type="3 BHK">3 BHK</div>
+  </div>
+
+  <div class="home-section-title">
+    Available Properties <a href="rent.html">View All →</a>
+  </div>
+  <div class="props-grid" id="propsGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon">🏚️</div>
+    <p>No properties found. Try a different filter.</p>
+  </div>
+</div>
+
+<!-- WISHLIST -->
+<div class="home-section" id="wishSection" style="display:none;">
+  <div class="home-section-title">Saved Properties ❤️</div>
+  <div class="wish-scroll" id="wishScroll"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bn-item active" id="bn-home" onclick="window.location='home.html'">
+    <span class="bn-icon">🏠</span>Home
+  </button>
+  <button class="bn-item" id="bn-browse" onclick="window.location='rent.html'">
+    <span class="bn-icon">🔍</span>Browse
+  </button>
+  <button class="bn-item" id="bn-post" onclick="window.location='owner.html'">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-top:-12px;box-shadow:0 4px 16px rgba(26,111,232,0.4)">+</span>Post
+  </button>
+  <button class="bn-item" id="bn-saved">
+    <span class="bn-icon">❤️</span>Saved
+    <span class="bn-badge" id="bnWishBadge"></span>
+  </button>
+  <button class="bn-item" id="bn-profile" onclick="window.location='login.html'">
+    <span class="bn-icon">👤</span>Profile
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DEMO = [
+  {id:1,title:'Spacious 2BHK Flat',area:'Wandgori',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',owner:'Rajesh Sharma',phone:'98XXXXXX01'},
+  {id:2,title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',owner:'Priya Deshpande',phone:'98XXXXXX02'},
+  {id:3,title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',owner:'Amit Patel',phone:'98XXXXXX03'},
+  {id:4,title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',owner:'Sunita Raut',phone:'98XXXXXX04'},
+  {id:5,title:'3BHK Family Flat',area:'Wandgori',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',owner:'Vikas Deshmukh',phone:'98XXXXXX05'},
+  {id:6,title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',owner:'Kavita Joshi',phone:'98XXXXXX06'},
+];
+
+let allProps = [];
+let wishlist = [];
+let currentTypeFilter = '';
+
+function getProps() {
+  const stored = JSON.parse(localStorage.getItem('flatzy_properties')||'[]');
+  return [...DEMO, ...stored];
+}
+
+function init() {
+  // Auth check
+  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
+  if(user.name) document.getElementById('navUserName').textContent = user.name;
+  document.getElementById('greetingName').textContent = user.name || 'Friend';
+  const h = new Date().getHours();
+  document.getElementById('greetingTime').textContent = h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening';
+
+  allProps = getProps();
+  wishlist = JSON.parse(localStorage.getItem('flatzy_wishlist')||'[]');
+
+  document.getElementById('propCountBadge').textContent = allProps.length;
+
+  // Stats
+  const statsRow = document.getElementById('statsRow');
+  const areas = [...new Set(allProps.map(p=>p.area))];
+  statsRow.innerHTML = `
+    <div class="stat-card"><div class="num">${allProps.length}</div><div class="lbl">Total Listings</div></div>
+    <div class="stat-card"><div class="num">${areas.length}</div><div class="lbl">Areas Covered</div></div>
+    <div class="stat-card"><div class="num">${allProps.filter(p=>p.type==='PG').length}</div><div class="lbl">PG Options</div></div>
+    <div class="stat-card"><div class="num">0%</div><div class="lbl">Brokerage</div></div>
+  `;
+
+  renderProps(allProps);
+  renderWishlist();
+  updateWishBadge();
+}
+
+function renderProps(list) {
+  const grid = document.getElementById('propsGrid');
+  const empty = document.getElementById('emptyState');
+  if(!list.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  grid.innerHTML = list.map(p => `
+    <div class="property-card" onclick="window.location='rent.html?id=${p.id}'">
+      <div class="card-img"><div class="card-img-placeholder">${p.emoji||'🏠'}</div>
+        <span class="card-badge">${p.furnish}</span>
+        <span class="card-type">${p.type}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${p.title}</div>
+        <div class="card-location">📍 ${p.area}, Nagpur</div>
+        <div class="card-details">
+          <span class="card-detail">🛏 ${p.bhk}</span>
+          <span class="card-detail">${p.furnish}</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹${Number(p.rent).toLocaleString('en-IN')} <span>/mo</span></div>
+          <button class="contact-btn" onclick="event.stopPropagation();toggleWish(${p.id})">${wishlist.includes(p.id)?'❤️':'🤍'} Save</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProps() {
+  const q = document.getElementById('quickSearchInput').value.toLowerCase();
+  let list = allProps;
+  if(currentTypeFilter) list = list.filter(p => p.type===currentTypeFilter || p.bhk===currentTypeFilter);
+  if(q) list = list.filter(p => p.title.toLowerCase().includes(q) || p.area.toLowerCase().includes(q) || String(p.rent).includes(q));
+  renderProps(list);
+}
+
+function filterByType(type) {
+  currentTypeFilter = type;
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c.dataset.type===type));
+  filterProps();
+}
+
+function toggleWish(id) {
+  if(wishlist.includes(id)) { wishlist = wishlist.filter(x=>x!==id); showToast('Removed from saved'); }
+  else { wishlist.push(id); showToast('Saved to wishlist ❤️'); }
+  localStorage.setItem('flatzy_wishlist', JSON.stringify(wishlist));
+  updateWishBadge();
+  filterProps();
+  renderWishlist();
+}
+
+function renderWishlist() {
+  const section = document.getElementById('wishSection');
+  const scroll = document.getElementById('wishScroll');
+  const saved = allProps.filter(p=>wishlist.includes(p.id));
+  if(!saved.length) { section.style.display='none'; return; }
+  section.style.display='block';
+  scroll.innerHTML = saved.map(p=>`
+    <div class="wish-card" onclick="window.location='rent.html?id=${p.id}'">
+      <div class="wc-emoji">${p.emoji||'🏠'}</div>
+      <div class="wc-title">${p.title}</div>
+      <div class="wc-price">₹${Number(p.rent).toLocaleString('en-IN')}/mo</div>
+      <div class="wc-loc">📍 ${p.area}</div>
+    </div>
+  `).join('');
+}
+
+function updateWishBadge() {
+  const b = document.getElementById('bnWishBadge');
+  if(wishlist.length) { b.textContent=wishlist.length; b.classList.add('show'); }
+  else b.classList.remove('show');
+}
+
+function logout() {
+  localStorage.removeItem('flatzy_user');
+  window.location = 'index.html';
+}
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className='toast'+(err?' error':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script>
+</body>
+</html>

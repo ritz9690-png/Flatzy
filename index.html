@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flatzy Nagpur – Find Your Perfect Home</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<style>
+/* ---- HERO ---- */
+.topnav{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background: white;
+}
+.hero{
+  margin-top: 80px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6rem 5% 4%;
+  position: relative;
+  overflow: visible;
+}
+.hero-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: contain;
+  background:#000000;
+  object-position: 100% center;
+  z-index:-2;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.10);
+  z-index: -1;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -50px; left: -50px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 70%);
+  pointer-events: none; z-index: 2;
+}
+
+.hero-tag { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); color: #fff; padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.8rem; font-weight: 500; margin-bottom: 1.5rem; width: fit-content; backdrop-filter: blur(8px); }
+.hero-tag .dot { width: 6px; height: 6px; background: #60b4ff; border-radius: 50%; animation: pulse 2s infinite; }
+.hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800; line-height: 1.1; letter-spacing: -2px; margin-bottom: 1.2rem; color: #ffffff; text-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+.hero h1 em { color: #60b4ff; font-style: normal; }
+.hero p { font-size: 1.1rem; color: rgba(255,255,255,0.85); max-width: 520px; line-height: 1.7; margin-bottom: 2.5rem; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+.hero-stats { display: flex; gap: 3rem; flex-wrap: wrap; }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: #60b4ff; }
+.stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+/* SEARCH */
+.search-section { padding: 3rem 5%; background: white; }
+.search-box {
+  background: white; border: 1.5px solid var(--border); border-radius: 16px;
+  padding: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;
+  box-shadow: var(--shadow-md);
+}
+.search-field { flex: 1; min-width: 160px; }
+.search-field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.search-field select, .search-field input { width: 100%; background: var(--dark2); border: 1.5px solid var(--border); color: var(--text); padding: 0.7rem 1rem; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+.search-field select:focus, .search-field input:focus { border-color: var(--primary); background: white; }
+.search-btn { background: var(--primary); color: white; border: none; padding: 0.7rem 2rem; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 700; cursor: pointer; font-size: 1rem; transition: all 0.2s; white-space: nowrap; box-shadow: 0 3px 10px rgba(26,111,232,0.25); }
+.search-btn:hover { background: var(--primary-dark); }
+
+/* HOW IT WORKS */
+.how-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+.how-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; padding: 1.8rem; position: relative; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s; }
+.how-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.how-num { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: rgba(26,111,232,0.1); position: absolute; top: 1rem; right: 1.2rem; line-height: 1; }
+.how-icon { font-size: 2rem; margin-bottom: 1rem; }
+.how-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.how-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+/* AREAS */
+.areas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+.area-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 1.2rem; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+.area-card:hover { border-color: var(--primary); background: var(--primary-light); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.area-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.area-name { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; }
+.area-count { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+
+/* PROPERTIES GRID */
+.properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+/* LIFESTYLE TAGS */
+.lifestyle-tag {
+  background: #f0f9ff; border: 1.5px solid #bae6fd; color: #0369a1;
+  padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.82rem;
+  font-weight: 600; cursor: default; transition: all 0.2s;
+}
+.lifestyle-tag:hover { background: #e0f2fe; border-color: #0ea5e9; }
+
+/* TRUST TICKER */
+.trust-ticker {
+  overflow: hidden; background: #1a6fe8; padding: 0.6rem 0;
+}
+.ticker-track {
+  display: flex; gap: 3rem; width: max-content;
+  animation: ticker 25s linear infinite;
+}
+.ticker-track span {
+  color: white; font-size: 0.8rem; font-weight: 600;
+  white-space: nowrap; opacity: 0.95;
+}
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* AMENITIES */
+.amenities-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem;
+}
+.amenity-card {
+  background: white; border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 1.4rem 1rem; text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.2s;
+}
+.amenity-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(26,111,232,0.12); }
+.amenity-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.amenity-name { font-size: 0.8rem; font-weight: 700; color: #1a1a2e; }
+
+/* WHY FLATZY */
+.why-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;
+}
+.why-card {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px; padding: 2rem 1.5rem; backdrop-filter: blur(8px);
+  transition: transform 0.2s, background 0.2s;
+}
+.why-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); }
+.why-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.why-title { font-weight: 800; font-size: 1rem; color: white; margin-bottom: 0.5rem; }
+.why-desc { font-size: 0.85rem; color: rgba(255,255,255,0.65); line-height: 1.6; }
+
+/* TESTIMONIALS */
+.testimonials-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;
+}
+.testi-card {
+  background: white; border: 1.5px solid var(--border); border-radius: 18px;
+  padding: 1.8rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06); transition: transform 0.2s;
+}
+.testi-card:hover { transform: translateY(-4px); }
+.testi-stars { font-size: 1rem; margin-bottom: 0.8rem; letter-spacing: 2px; }
+.testi-text { font-size: 0.88rem; color: var(--text); line-height: 1.7; margin-bottom: 1.2rem; font-style: italic; }
+.testi-author { display: flex; align-items: center; gap: 0.8rem; }
+.testi-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #1a6fe8; color: white; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.testi-name { font-weight: 700; font-size: 0.9rem; }
+.testi-loc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+/* APP BANNER */
+.app-banner {
+  display: flex; align-items: center; gap: 3rem;
+  max-width: 1000px; margin: 0 auto; flex-wrap: wrap; justify-content: center;
+}
+.app-banner-left { flex: 1; min-width: 280px; }
+.app-banner-right { flex-shrink: 0; }
+.app-store-btn {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: #1a1a2e; color: white; padding: 0.7rem 1.4rem;
+  border-radius: 12px; text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.app-store-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.app-mockup {
+  background: linear-gradient(135deg, #1a6fe8, #7c3aed);
+  border-radius: 28px; padding: 4px; box-shadow: 0 20px 60px rgba(26,111,232,0.3);
+}
+.app-screen {
+  background: white; border-radius: 24px; padding: 1.8rem 1.5rem;
+  width: 200px; text-align: center;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+  <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+  <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+</a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="#how">How It Works</a>
+    <a href="owner.html">List Property</a>
+    <a href="refer.html" style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🎁 Refer &amp; Earn</a>
+  </div>
+  <div style="display:flex;gap:0.5rem;align-items:center;">
+    <a href="login.html" class="nav-btn outline">Login</a>
+    <a href="login.html?signup=1" class="nav-btn">Sign Up Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+
+  <!-- VIDEO BACKGROUND -->
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="home.mp4" type="video/mp4">
+  </video>
+
+  <div class="hero-tag"><span class="dot"></span> Nagpur's #1 Property Platform</div>
+  <h1>Find Your<br><em>Perfect Home</em><br>in Nagpur</h1>
+  <p>Browse verified flats, PGs and hostels in Wandgori, Higna, Digdoh & more. No brokers, no hidden fees. Just honest listings.</p>
+  <div class="hero-btns">
+    <a href="rent.html" class="btn-primary">🔍 Browse Properties</a>
+    <a href="owner.html" class="btn-outline">📋 List Your Property</a>
+  </div>
+
+</section>
+
+<!-- SEARCH -->
+<div class="search-section">
+  <div class="search-box">
+    <div class="search-field">
+      <label>Area</label>
+      <select id="srchArea">
+        <option value="">All Areas</option>
+        <option>Wandgori</option><option>Higna</option><option>Digdoh</option><option>Kalamna</option>
+        <option>Butibori</option><option>Besa</option>
+      </select>
+    </div>
+    <div class="search-field">
+      <label>Type</label>
+      <select id="srchType">
+        <option value="">All Types</option>
+        <option>1 BHK</option><option>2 BHK</option><option>3 BHK</option>
+        <option>PG</option><option>Hostel</option><option>Studio</option>
+      </select>
+    </div>
+    <div class="search-field">
+      <label>Budget</label>
+      <select id="srchBudget">
+        <option value="">Any Budget</option>
+        <option value="5000">Under ₹5,000</option>
+        <option value="8000">Under ₹8,000</option>
+        <option value="12000">Under ₹12,000</option>
+        <option value="20000">Under ₹20,000</option>
+      </select>
+    </div>
+    <div class="search-field">
+      <label>Furnishing</label>
+      <select id="srchFurnish">
+        <option value="">Any</option>
+        <option>Furnished</option><option>Semi-Furnished</option><option>Unfurnished</option>
+      </select>
+    </div>
+    <button class="search-btn" onclick="doSearch()">🔍 Search</button>
+  </div>
+</div>
+
+<!-- LIFESTYLE TAGS (Zolo-inspired) -->
+<section style="padding:1.5rem 5%;background:white;border-bottom:1.5px solid var(--border);">
+  <div style="display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center;align-items:center;">
+    <span style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-right:0.5rem;">Your Stay, Your Way:</span>
+    <div class="lifestyle-tag">⏱️ Short or Long Term</div>
+    <div class="lifestyle-tag">🛏️ Private or Shared Room</div>
+    <div class="lifestyle-tag">🍽️ Meals Available</div>
+    <div class="lifestyle-tag">🔒 Verified Owners</div>
+    <div class="lifestyle-tag">💸 Zero Brokerage</div>
+    <div class="lifestyle-tag">👫 Couple Friendly</div>
+  </div>
+</section>
+
+<!-- TRUST TICKER -->
+<div class="trust-ticker">
+  <div class="ticker-track">
+    <span>✅ 100% Verified Listings</span><span>🏆 Nagpur's #1 Platform</span><span>💰 Zero Brokerage</span><span>📞 Direct Owner Contact</span><span>🚀 Instant Booking</span><span>⭐ 4.8/5 Rating</span><span>✅ 100% Verified Listings</span><span>🏆 Nagpur's #1 Platform</span><span>💰 Zero Brokerage</span><span>📞 Direct Owner Contact</span><span>🚀 Instant Booking</span><span>⭐ 4.8/5 Rating</span>
+  </div>
+</div>
+
+<!-- FEATURED PROPERTIES -->
+<section style="background:var(--dark2);">
+  <div class="section-header">
+    <div class="section-tag">Featured</div>
+    <div class="section-title">Latest Listings</div>
+    <div class="section-sub">Fresh properties added by verified owners</div>
+  </div>
+  <div class="properties-grid" id="featuredGrid">
+    <!-- Populated by JS -->
+  </div>
+  <div style="text-align:center;margin-top:2.5rem;">
+    <a href="rent.html" class="btn-primary">View All Properties →</a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-header">
+    <div class="section-tag">Simple Process</div>
+    <div class="section-title">How Flatzy Works</div>
+  </div>
+  <div class="how-grid">
+    <div class="how-card"><div class="how-num">01</div><div class="how-icon">🔍</div><div class="how-title">Search & Filter</div><div class="how-desc">Browse hundreds of verified listings in your preferred area with smart filters.</div></div>
+    <div class="how-card"><div class="how-num">02</div><div class="how-icon">📞</div><div class="how-title">Contact Owner</div><div class="how-desc">Get the owner's direct number. No middlemen, no brokerage charges.</div></div>
+    <div class="how-card"><div class="how-num">03</div><div class="how-icon">🏠</div><div class="how-title">Visit & Finalize</div><div class="how-desc">Schedule a visit, check the property and seal the deal directly.</div></div>
+    <div class="how-card"><div class="how-num">04</div><div class="how-icon">🎉</div><div class="how-title">Move In!</div><div class="how-desc">Pack your bags and settle into your new home with zero hassle.</div></div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section style="background:var(--dark2);">
+  <div class="section-header">
+    <div class="section-tag">Explore</div>
+    <div class="section-title">Browse by Area</div>
+  </div>
+  <div class="areas-grid">
+    <div class="area-card" onclick="browseArea('Wandgori')"><div class="area-icon">🏘️</div><div class="area-name">Wandgori</div><div class="area-count" id="cnt-Wandgori">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Higna')"><div class="area-icon">🌆</div><div class="area-name">Higna</div><div class="area-count" id="cnt-Higna">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Digdoh')"><div class="area-icon">🏙️</div><div class="area-name">Digdoh</div><div class="area-count" id="cnt-Digdoh">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Kalamna')"><div class="area-icon">🏗️</div><div class="area-name">Kalamna</div><div class="area-count" id="cnt-Kalamna">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Butibori')"><div class="area-icon">🌿</div><div class="area-name">Butibori</div><div class="area-count" id="cnt-Butibori">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Besa')"><div class="area-icon">🏢</div><div class="area-name">Besa</div><div class="area-count" id="cnt-Besa">0 listings</div></div>
+  </div>
+</section>
+
+<!-- AMENITIES SECTION (Colive-inspired) -->
+<section>
+  <div class="section-header">
+    <div class="section-tag">Included</div>
+    <div class="section-title">Top Amenities</div>
+    <div class="section-sub">Everything you need, already included in your rent</div>
+  </div>
+  <div class="amenities-grid">
+    <div class="amenity-card"><div class="amenity-icon">📶</div><div class="amenity-name">High-Speed WiFi</div></div>
+    <div class="amenity-card"><div class="amenity-icon">🔒</div><div class="amenity-name">24/7 Security</div></div>
+    <div class="amenity-card"><div class="amenity-icon">🧹</div><div class="amenity-name">Housekeeping</div></div>
+    <div class="amenity-card"><div class="amenity-icon">🍽️</div><div class="amenity-name">Mess / Tiffin</div></div>
+    <div class="amenity-card"><div class="amenity-icon">🚗</div><div class="amenity-name">Parking Space</div></div>
+    <div class="amenity-card"><div class="amenity-icon">🧺</div><div class="amenity-name">Laundry</div></div>
+    <div class="amenity-card"><div class="amenity-icon">❄️</div><div class="amenity-name">AC Rooms</div></div>
+    <div class="amenity-card"><div class="amenity-icon">💡</div><div class="amenity-name">Power Backup</div></div>
+  </div>
+</section>
+
+<!-- WHY FLATZY (Nestaway-inspired trust section) -->
+<section style="background:linear-gradient(135deg,#0f172a,#1a2744);padding:4rem 5%;">
+  <div class="section-header">
+    <div class="section-tag" style="background:rgba(255,255,255,0.1);color:#93c5fd;border-color:rgba(255,255,255,0.2);">Why Flatzy</div>
+    <div class="section-title" style="color:white;">Nagpur Ka Sabse Bharosemand Platform</div>
+    <div class="section-sub" style="color:rgba(255,255,255,0.6);">Competitors charge brokerages. We charge zero.</div>
+  </div>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">🚫💰</div>
+      <div class="why-title">Zero Brokerage</div>
+      <div class="why-desc">No hidden charges. No agent fees. Connect directly with owners and save months of rent.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">✅</div>
+      <div class="why-title">Verified Listings Only</div>
+      <div class="why-desc">Every listing on Flatzy is verified by our team. No fake posts, no fraud, no disappointment.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📍</div>
+      <div class="why-title">Nagpur Specialist</div>
+      <div class="why-desc">We focus only on Nagpur — Wandgori, Higna, Digdoh, MIDC. We know every lane better than anyone.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">⚡</div>
+      <div class="why-title">Instant Contact</div>
+      <div class="why-desc">Get owner details instantly on WhatsApp. No waiting, no callbacks. Just direct connection.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS (Zolo-inspired) -->
+<section style="background:var(--dark2);">
+  <div class="section-header">
+    <div class="section-tag">Reviews</div>
+    <div class="section-title">What Our Users Say</div>
+    <div class="section-sub">Real people, real experiences in Nagpur</div>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <div class="testi-text">"Found my flat in Wandgori within 2 days! No broker, no extra charges. Flatzy is simply the best in Nagpur."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">RK</div>
+        <div>
+          <div class="testi-name">Rahul Kapse</div>
+          <div class="testi-loc">📍 Wandgori, Nagpur</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <div class="testi-text">"I was shifting to Nagpur for my job at MIDC. Flatzy helped me find a 1BHK in Butibori in just one day. Amazing!"</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#7c3aed;">PD</div>
+        <div>
+          <div class="testi-name">Priya Deshpande</div>
+          <div class="testi-loc">📍 Butibori, Nagpur</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <div class="testi-text">"As a property owner, listing on Flatzy was super easy. Got serious inquiries within hours. Highly recommend!"</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#059669;">VD</div>
+        <div>
+          <div class="testi-name">Vikas Deshmukh</div>
+          <div class="testi-loc">📍 Higna, Nagpur</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP DOWNLOAD (Colive-inspired) -->
+<section style="background:white;">
+  <div class="app-banner">
+    <div class="app-banner-left">
+      <div class="section-tag" style="margin-bottom:1rem;">📱 Mobile App</div>
+      <h2 style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:1rem;">Find Flats Faster<br>on Our App</h2>
+      <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:1.8rem;max-width:420px;">Get instant notifications for new listings, schedule visits, and contact owners — all from your phone. Available soon!</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="https://wa.me/917387798079?text=I want to know when the Flatzy app launches!" target="_blank" class="app-store-btn">
+          <span style="font-size:1.5rem;">▶️</span>
+          <div>
+            <div style="font-size:0.65rem;opacity:0.8;">Coming Soon on</div>
+            <div style="font-weight:700;font-size:0.9rem;">Google Play</div>
+          </div>
+        </a>
+        <a href="https://wa.me/917387798079?text=I want to know when the Flatzy app launches!" target="_blank" class="app-store-btn">
+          <span style="font-size:1.5rem;">🍎</span>
+          <div>
+            <div style="font-size:0.65rem;opacity:0.8;">Coming Soon on</div>
+            <div style="font-weight:700;font-size:0.9rem;">App Store</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="app-banner-right">
+      <div class="app-mockup">
+        <div class="app-screen">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🏠</div>
+          <div style="font-weight:800;font-size:0.95rem;color:#1a1a2e;">Flatzy App</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin:0.3rem 0 1rem;">Nagpur's #1 Property App</div>
+          <div style="background:#1a6fe8;color:white;border-radius:8px;padding:0.5rem;font-size:0.75rem;font-weight:700;margin-bottom:0.5rem;">🔍 Search Properties</div>
+          <div style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:8px;padding:0.5rem;font-size:0.75rem;font-weight:600;margin-bottom:0.5rem;color:#0369a1;">📅 Schedule Visit</div>
+          <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:8px;padding:0.5rem;font-size:0.75rem;font-weight:600;color:#166534;">💬 Chat with Owner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Flat<span>zy</span></div>
+      <div class="footer-desc">Nagpur's trusted property platform. Find flats, PGs and hostels in Wandgori, Higna, Digdoh and more. No brokers, no fees.</div>
+      <div style="margin-top:1rem;display:flex;gap:0.7rem;">
+        <a href="https://wa.me/917387798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">💬 WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="rent.html">Browse Properties</a>
+      <a href="owner.html">List Property</a>
+      <a href="refer.html">Refer & Earn</a>
+      <a href="#how">How it Works</a>
+    </div>
+    <div class="footer-col">
+      <h4>Areas</h4>
+      <a href="rent.html?area=Wandgori">Wandgori</a>
+      <a href="rent.html?area=Higna">Higna</a>
+      <a href="rent.html?area=Digdoh">Digdoh</a>
+      <a href="rent.html?area=Kalamna">Kalamna</a>
+      <a href="rent.html?area=Butibori">Butibori</a>
+      <a href="rent.html?area=Besa">Besa</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Flatzy Nagpur. All rights reserved.</div>
+    <div class="footer-copy">Made with ❤️ for Nagpur</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/917387798079" target="_blank" class="whatsapp-float" title="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" width="30" height="30" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 0C7.163 0 0 7.163 0 16c0 2.827.738 5.476 2.027 7.776L0 32l8.443-2.013A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.07 22.243c-.334.937-1.95 1.793-2.7 1.907-.694.106-1.574.15-2.54-.16-.587-.19-1.34-.443-2.3-.868-4.042-1.746-6.68-5.835-6.88-6.108-.193-.273-1.573-2.094-1.573-3.993 0-1.9.994-2.834 1.347-3.22a1.42 1.42 0 011.02-.476c.254 0 .508.003.73.014.234.012.548-.089.858.654.32.766 1.087 2.665 1.183 2.858.097.193.16.42.032.677-.128.257-.193.416-.386.64-.193.224-.407.5-.58.672-.194.193-.395.4-.17.784.226.384.1 1.573 2.1 2.57 2.1 1 2.73 1.52 3.114 1.72.384.193.608.16.832-.096.224-.257.96-1.12 1.216-1.504.256-.384.512-.32.864-.192.352.128 2.24 1.056 2.624 1.248.384.193.64.288.736.448.096.16.096.928-.238 1.866z"/>
+  </svg>
+</a>
+
+<style>
+.whatsapp-float {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  background: #25D366;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+  animation: wa-pulse 2s infinite;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+.whatsapp-float:hover { transform: scale(1.1); }
+@keyframes wa-pulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); }
+  50% { box-shadow: 0 4px 30px rgba(37,211,102,0.85); }
+}
+.card-action-btns {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+.schedule-btn {
+  flex: 1;
+  background: #1a6fe8;
+  color: white;
+  border: none;
+  padding: 0.55rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.schedule-btn:hover { background: #1558c0; }
+.enquire-btn {
+  flex: 1;
+  background: white;
+  color: #1a6fe8;
+  border: 1.5px solid #1a6fe8;
+  padding: 0.55rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.enquire-btn:hover { background: #e8f0fd; }
+</style>
+
+<script>
+const DEMO_PROPS = [
+  {id:1,title:'Spacious 2BHK Flat',area:'Wandgori',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',owner:'Rajesh Sharma',phone:'98XXXXXX01'},
+  {id:2,title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',owner:'Priya Deshpande',phone:'98XXXXXX02'},
+  {id:3,title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',owner:'Amit Patel',phone:'98XXXXXX03'},
+  {id:4,title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',owner:'Sunita Raut',phone:'98XXXXXX04'},
+  {id:5,title:'3BHK Family Flat',area:'Wandgori',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',owner:'Vikas Deshmukh',phone:'98XXXXXX05'},
+  {id:6,title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',owner:'Kavita Joshi',phone:'98XXXXXX06'},
+];
+
+function getProps() {
+  const stored = JSON.parse(localStorage.getItem('flatzy_properties') || '[]');
+  return [...DEMO_PROPS, ...stored];
+}
+
+function renderCard(p) {
+  return `<div class="property-card" onclick="window.location='rent.html?id=${p.id}'">
+    <div class="card-img"><div class="card-img-placeholder">${p.emoji||'🏠'}</div>
+      <span class="card-badge">${p.furnish||'N/A'}</span>
+      <span class="card-type">${p.type||'Flat'}</span>
+    </div>
+    <div class="card-body">
+      <div class="card-title">${p.title}</div>
+      <div class="card-location">📍 ${p.area}, Nagpur</div>
+      <div class="card-details">
+        <span class="card-detail">🛏 ${p.bhk}</span>
+        <span class="card-detail">🏗 ${p.furnish}</span>
+      </div>
+      <div class="card-footer">
+        <div class="card-price">₹${Number(p.rent).toLocaleString('en-IN')} <span>/month</span></div>
+      </div>
+      <div class="card-action-btns">
+        <button class="schedule-btn" onclick="event.stopPropagation();scheduleVisit(${p.id})">📅 Schedule Visit</button>
+        <button class="enquire-btn" onclick="event.stopPropagation();enquireNow(${p.id})">💬 Enquire Now</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function init() {
+  const props = getProps();
+  // Stats
+  document.getElementById('statProps').textContent = props.length + '+';
+  // Featured (latest 6)
+  const grid = document.getElementById('featuredGrid');
+  grid.innerHTML = props.slice(0,6).map(renderCard).join('');
+  // Area counts
+  ['Wandgori','Higna','Digdoh','Kalamna','Butibori','Besa'].forEach(a => {
+    const el = document.getElementById('cnt-'+a);
+    if(el) el.textContent = props.filter(p=>p.area===a).length + ' listings';
+  });
+}
+
+function doSearch() {
+  const area = document.getElementById('srchArea').value;
+  const type = document.getElementById('srchType').value;
+  const budget = document.getElementById('srchBudget').value;
+  const furnish = document.getElementById('srchFurnish').value;
+  let url = 'rent.html?';
+  if(area) url += 'area='+encodeURIComponent(area)+'&';
+  if(type) url += 'type='+encodeURIComponent(type)+'&';
+  if(budget) url += 'budget='+budget+'&';
+  if(furnish) url += 'furnish='+encodeURIComponent(furnish)+'&';
+  window.location = url;
+}
+
+function browseArea(area) { window.location = 'rent.html?area=' + encodeURIComponent(area); }
+
+function scheduleVisit(id) {
+  const props = getProps();
+  const p = props.find(x => x.id === id);
+  const msg = encodeURIComponent(`Hi! I'd like to schedule a visit for: ${p ? p.title + ' in ' + p.area + ', ₹' + p.rent + '/month' : 'a property'}. Please let me know the available timings.`);
+  window.open('https://wa.me/917387798079?text=' + msg, '_blank');
+}
+
+function enquireNow(id) {
+  const props = getProps();
+  const p = props.find(x => x.id === id);
+  const msg = encodeURIComponent(`Hi! I'm interested in: ${p ? p.title + ' in ' + p.area + ', ₹' + p.rent + '/month' : 'a property on Flatzy'}. Can you share more details?`);
+  window.open('https://wa.me/917387798079?text=' + msg, '_blank');
+}
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (err?' error':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+init();
+</script>
+</body>
+</html>

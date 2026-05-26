@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<title>Login – Flatzy Nagpur</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: linear-gradient(135deg,#EBF2FF 0%,#F8FBFF 60%,#E8F4FD 100%); min-height: 100vh; display: flex; flex-direction: column; }
+
+.login-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 80px 1rem 2rem;
+}
+.login-card {
+  background: white; border: 1.5px solid var(--border); border-radius: 24px;
+  padding: 2.5rem; width: 100%; max-width: 440px;
+  box-shadow: 0 12px 48px rgba(26,111,232,0.12);
+  animation: fadeUp 0.4s ease;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+.login-logo { text-align: center; margin-bottom: 0.5rem; font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--primary); letter-spacing:-1px; }
+.login-logo span { color:var(--text); }
+.login-tagline { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:2rem; }
+
+.tab-bar { display:flex; background:var(--dark2); border-radius:12px; padding:4px; margin-bottom:1.8rem; }
+.tab-btn { flex:1; padding:0.65rem; border:none; background:transparent; color:var(--muted); font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; border-radius:9px; transition:all 0.2s; }
+.tab-btn.active { background:var(--primary); color:white; }
+
+.step { display:none; }
+.step.active { display:block; }
+
+.phone-row { display:flex; }
+.prefix { background:var(--dark2); border:1.5px solid var(--border); border-right:none; padding:0.8rem 0.9rem; border-radius:10px 0 0 10px; color:var(--muted); font-size:0.95rem; display:flex; align-items:center; }
+.phone-row input { border-radius:0 10px 10px 0 !important; }
+
+.otp-row { display:flex; gap:0.6rem; justify-content:center; margin:1rem 0; }
+.otp-box { width:52px; height:56px; text-align:center; font-size:1.3rem; font-weight:700; border:1.5px solid var(--border); border-radius:10px; background:var(--dark2); color:var(--text); outline:none; font-family:'Syne',sans-serif; transition:border-color 0.2s; }
+.otp-box:focus { border-color:var(--primary); background:white; }
+
+.otp-note { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:0.8rem; }
+.otp-note span { color:var(--primary); cursor:pointer; font-weight:600; }
+
+.role-row { display:flex; gap:0.8rem; margin-bottom:1.5rem; }
+.role-opt { flex:1; background:var(--dark2); border:2px solid var(--border); border-radius:12px; padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s; }
+.role-opt.selected { border-color:var(--primary); background:var(--primary-light); }
+.role-icon { font-size:1.6rem; margin-bottom:0.3rem; }
+.role-name { font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700; }
+.role-desc { font-size:0.72rem; color:var(--muted); margin-top:0.2rem; }
+
+.success-box { text-align:center; padding:1rem 0; }
+.success-icon { font-size:3.5rem; margin-bottom:1rem; }
+.success-title { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:0.5rem; }
+.success-sub { font-size:0.9rem; color:var(--muted); }
+
+.divider { display:flex; align-items:center; gap:1rem; margin:1.2rem 0; color:var(--muted); font-size:0.8rem; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.social-btn { display:flex; align-items:center; justify-content:center; gap:0.6rem; width:100%; padding:0.75rem; border:1.5px solid var(--border); background:white; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; cursor:pointer; transition:all 0.2s; color:var(--text); }
+.social-btn:hover { border-color:var(--primary); background:var(--primary-light); }
+.social-btn img { width:20px; height:20px; }
+
+/* Loading spinner */
+.btn-full.loading { opacity:0.7; pointer-events:none; position:relative; }
+.btn-full.loading::after { content:''; display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.5); border-top-color:white; border-radius:50%; animation:spin 0.6s linear infinite; margin-left:8px; vertical-align:middle; }
+@keyframes spin { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+  <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+  <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+  </div>
+  <a href="index.html" class="nav-btn outline">← Back to Home</a>
+</nav>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">Flat<span>zy</span></div>
+    <div class="login-tagline">Nagpur's No-Broker Property Platform</div>
+
+    <!-- TABS -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button class="tab-btn" id="tabSignup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- LOGIN FLOW -->
+    <div id="loginFlow">
+      <!-- Step 1: Phone -->
+      <div class="step active" id="l-s1">
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <div class="phone-row">
+            <div class="prefix">🇮🇳 +91</div>
+            <input type="tel" id="loginPhone" placeholder="Enter 10-digit number" maxlength="10">
+          </div>
+        </div>
+        <button class="btn-full primary" id="loginSendBtn" onclick="loginSendOtp()">Send OTP</button>
+        <div class="divider">or</div>
+        <button class="social-btn" id="googleLoginBtn" onclick="googleLogin()">
+          <span style="font-size:1.1rem">🔵</span> Continue with Google
+        </button>
+      </div>
+      <!-- Step 2: OTP -->
+      <div class="step" id="l-s2">
+        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1.5rem;text-align:center;">OTP sent to <strong id="loginPhoneDisp"></strong></p>
+        <div class="otp-row" id="loginOtpRow">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'loginOtpRow')">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'loginOtpRow')">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'loginOtpRow')">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'loginOtpRow')">
+        </div>
+        <div class="otp-note">Didn't receive? <span onclick="resendOtp('login')">Resend OTP</span></div>
+        <br>
+        <button class="btn-full primary" id="loginVerifyBtn" onclick="loginVerifyOtp()">Verify & Login</button>
+        <button class="btn-full secondary" onclick="goStep('l-s1','l-s2')">← Change Number</button>
+      </div>
+      <!-- Step 3: Success -->
+      <div class="step" id="l-s3">
+        <div class="success-box">
+          <div class="success-icon">🎉</div>
+          <div class="success-title">Welcome Back!</div>
+          <div class="success-sub" id="loginSuccessSub">Logged in successfully</div>
+          <br>
+          <button class="btn-full primary" onclick="redirectAfterLogin()">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNUP FLOW -->
+    <div id="signupFlow" style="display:none;">
+      <!-- Step 1: Role -->
+      <div class="step active" id="s-s1">
+        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem;">I am a...</p>
+        <div class="role-row">
+          <div class="role-opt selected" id="role-tenant" onclick="selectRole('tenant')">
+            <div class="role-icon">🔍</div>
+            <div class="role-name">Rent</div>
+            <div class="role-desc">Looking for a flat/PG</div>
+          </div>
+          <div class="role-opt" id="role-owner" onclick="selectRole('owner')">
+            <div class="role-icon">🏠</div>
+            <div class="role-name">Owner</div>
+            <div class="role-desc">Have property to rent</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <div class="phone-row">
+            <div class="prefix">🇮🇳 +91</div>
+            <input type="tel" id="signupPhone" placeholder="10-digit number" maxlength="10">
+          </div>
+        </div>
+        <button class="btn-full primary" id="signupSendBtn" onclick="signupSendOtp()">Send OTP →</button>
+      </div>
+      <!-- Step 2: OTP -->
+      <div class="step" id="s-s2">
+        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1.5rem;text-align:center;">OTP sent to <strong id="signupPhoneDisp"></strong></p>
+        <div class="otp-row" id="signupOtpRow">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'signupOtpRow')">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'signupOtpRow')">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'signupOtpRow')">
+          <input class="otp-box" maxlength="1" oninput="otpNext(this,'signupOtpRow')">
+        </div>
+        <div class="otp-note">Didn't receive? <span onclick="resendOtp('signup')">Resend OTP</span></div>
+        <br>
+        <button class="btn-full primary" id="signupVerifyBtn" onclick="signupVerifyOtp()">Create Account</button>
+        <button class="btn-full secondary" onclick="goStep('s-s1','s-s2')">← Back</button>
+      </div>
+      <!-- Step 3: Success -->
+      <div class="step" id="s-s3">
+        <div class="success-box">
+          <div class="success-icon">🎊</div>
+          <div class="success-title">Account Created!</div>
+          <div class="success-sub" id="signupSuccessSub">Welcome to Flatzy!</div>
+          <br>
+          <button class="btn-full primary" onclick="redirectAfterLogin()">Explore Now →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let selectedRole = 'tenant';
+let loginOtpExpected = '';   // stores OTP from server
+let signupOtpExpected = '';  // stores OTP from server
+
+// Check URL param
+window.onload = () => {
+  const p = new URLSearchParams(window.location.search);
+  if(p.get('signup')==='1') switchTab('signup');
+};
+
+function switchTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
+  document.getElementById('loginFlow').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('signupFlow').style.display = tab==='signup' ? 'block' : 'none';
+}
+
+function selectRole(r) {
+  selectedRole = r;
+  document.getElementById('role-tenant').classList.toggle('selected', r==='tenant');
+  document.getElementById('role-owner').classList.toggle('selected', r==='owner');
+}
+
+function goStep(showId, hideId) {
+  document.getElementById(showId).classList.add('active');
+  document.getElementById(hideId).classList.remove('active');
+}
+
+function otpNext(el, rowId) {
+  const boxes = document.getElementById(rowId).querySelectorAll('.otp-box');
+  const idx = Array.from(boxes).indexOf(el);
+  if(el.value.length===1 && idx < boxes.length-1) boxes[idx+1].focus();
+}
+
+// ─── SEND OTP (calls Netlify function) ───────────────────────────
+async function sendOtpToServer(phone) {
+  const res = await fetch('/.netlify/functions/send-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone })
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to send OTP');
+  return data.otp; // server returns OTP (MVP approach)
+}
+
+// ─── LOGIN ────────────────────────────────────────────────────────
+async function loginSendOtp() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  if(phone.length !== 10 || !/^\d+$/.test(phone)) {
+    showToast('Enter valid 10-digit number ❌', 'error'); return;
+  }
+  const btn = document.getElementById('loginSendBtn');
+  btn.classList.add('loading'); btn.textContent = 'Sending...';
+
+  try {
+    loginOtpExpected = await sendOtpToServer(phone);
+    document.getElementById('loginPhoneDisp').textContent = '+91 ' + phone;
+    goStep('l-s2','l-s1');
+    showToast('OTP sent to +91 ' + phone + ' ✅');
+  } catch(e) {
+    showToast(e.message || 'Error sending OTP ❌', 'error');
+  } finally {
+    btn.classList.remove('loading'); btn.textContent = 'Send OTP';
+  }
+}
+
+function loginVerifyOtp() {
+  const boxes = document.getElementById('loginOtpRow').querySelectorAll('.otp-box');
+  const otp = Array.from(boxes).map(b=>b.value).join('');
+  if(otp.length < 4) { showToast('Enter 4-digit OTP ❌','error'); return; }
+
+  if(otp !== loginOtpExpected) {
+    showToast('Wrong OTP! Try again ❌','error');
+    boxes.forEach(b => b.style.borderColor = 'red');
+    setTimeout(() => boxes.forEach(b => b.style.borderColor = ''), 1500);
+    return;
+  }
+
+  const phone = document.getElementById('loginPhone').value;
+  localStorage.setItem('flatzy_user', JSON.stringify({phone, role: 'tenant', name: 'User'}));
+  document.getElementById('loginSuccessSub').textContent = 'Logged in as +91 ' + phone;
+  goStep('l-s3','l-s2');
+}
+
+// ─── SIGNUP ───────────────────────────────────────────────────────
+async function signupSendOtp() {
+  const name = document.getElementById('signupName').value.trim();
+  const phone = document.getElementById('signupPhone').value.trim();
+  if(!name) { showToast('Enter your name ❌','error'); return; }
+  if(phone.length !== 10 || !/^\d+$/.test(phone)) {
+    showToast('Enter valid 10-digit number ❌','error'); return;
+  }
+  const btn = document.getElementById('signupSendBtn');
+  btn.classList.add('loading'); btn.textContent = 'Sending...';
+
+  try {
+    signupOtpExpected = await sendOtpToServer(phone);
+    document.getElementById('signupPhoneDisp').textContent = '+91 ' + phone;
+    goStep('s-s2','s-s1');
+    showToast('OTP sent ✅');
+  } catch(e) {
+    showToast(e.message || 'Error sending OTP ❌', 'error');
+  } finally {
+    btn.classList.remove('loading'); btn.textContent = 'Send OTP →';
+  }
+}
+
+function signupVerifyOtp() {
+  const boxes = document.getElementById('signupOtpRow').querySelectorAll('.otp-box');
+  const otp = Array.from(boxes).map(b=>b.value).join('');
+  if(otp.length < 4) { showToast('Enter 4-digit OTP ❌','error'); return; }
+
+  if(otp !== signupOtpExpected) {
+    showToast('Wrong OTP! Try again ❌','error');
+    boxes.forEach(b => b.style.borderColor = 'red');
+    setTimeout(() => boxes.forEach(b => b.style.borderColor = ''), 1500);
+    return;
+  }
+
+  const name = document.getElementById('signupName').value;
+  const phone = document.getElementById('signupPhone').value;
+  localStorage.setItem('flatzy_user', JSON.stringify({phone, role: selectedRole, name}));
+  document.getElementById('signupSuccessSub').textContent = 'Welcome, ' + name + '! 🎉';
+  goStep('s-s3','s-s2');
+}
+
+// ─── RESEND OTP ───────────────────────────────────────────────────
+async function resendOtp(flow) {
+  const phone = flow === 'login'
+    ? document.getElementById('loginPhone').value
+    : document.getElementById('signupPhone').value;
+  showToast('Resending OTP...');
+  try {
+    const otp = await sendOtpToServer(phone);
+    if(flow === 'login') loginOtpExpected = otp;
+    else signupOtpExpected = otp;
+    showToast('OTP resent ✅');
+  } catch(e) {
+    showToast('Failed to resend ❌', 'error');
+  }
+}
+
+// ─── REDIRECT ─────────────────────────────────────────────────────
+function redirectAfterLogin() {
+  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
+  if(user.role === 'owner') window.location = 'owner.html';
+  else window.location = 'home.html';
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (type==='error'?' error':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+};
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+window.googleLogin = async function() {
+  const btn = document.getElementById('googleLoginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    localStorage.setItem('flatzy_user', JSON.stringify({
+      name: user.displayName,
+      email: user.email,
+      uid: user.uid,
+      photo: user.photoURL,
+      role: 'tenant'
+    }));
+    showToast('Welcome ' + user.displayName + '! ✅');
+    setTimeout(() => {
+      const u = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
+      window.location = u.role === 'owner' ? 'owner.html' : 'index.html';
+    }, 1200);
+  } catch(e) {
+    showToast('Google login failed: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<span style="font-size:1.1rem">🔵</span> Continue with Google';
+  }
+};
+</script>
+</body>
+</html>

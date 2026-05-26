@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Dashboard – Flatzy</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); }
+
+/* OWNER HEADER */
+.owner-header {
+  background: linear-gradient(120deg, #0F1C2E 0%, #1A3A6E 100%);
+  padding: 5.5rem 5% 2.5rem; color: white;
+}
+.owner-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.4rem; }
+.owner-header p { color: rgba(255,255,255,0.65); font-size: 0.9rem; }
+.owner-tabs { display: flex; gap: 0; background: rgba(255,255,255,0.1); border-radius: 12px; padding: 4px; margin-top: 1.5rem; width: fit-content; }
+.otab { padding: 0.6rem 1.4rem; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'Syne',sans-serif; font-weight: 700; font-size: 0.88rem; cursor: pointer; border-radius: 9px; transition: all 0.2s; }
+.otab.active { background: white; color: var(--primary); }
+
+/* CONTENT */
+.owner-content { padding: 2rem 5%; }
+
+/* STATS */
+.owner-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+.ostat { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 1.2rem; box-shadow: var(--shadow-sm); }
+.ostat .num { font-family: 'Syne',sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+.ostat .lbl { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
+
+/* ADD PROPERTY FORM */
+.add-form-card { background: white; border: 1.5px solid var(--border); border-radius: 18px; padding: 2rem; box-shadow: var(--shadow-sm); }
+.add-form-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; }
+.form-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.form-section:last-child { border-bottom: none; margin-bottom: 0; }
+.form-section-title { font-family: 'Syne',sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+
+/* AMENITY CHECKBOXES */
+.amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.amenity-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.7rem; background: var(--dark2); border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 0.82rem; color: var(--muted); transition: all 0.15s; }
+.amenity-item:hover { border-color: var(--primary); color: var(--primary); }
+.amenity-item.checked { background: var(--primary-light); border-color: var(--primary); color: var(--primary); font-weight: 700; }
+.amenity-item input { display: none; }
+
+/* PHOTO UPLOAD */
+.photo-drop { border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--dark2); }
+.photo-drop:hover { border-color: var(--primary); background: var(--primary-light); }
+.photo-drop-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.photo-thumbs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+.photo-thumb { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 2px solid var(--border); }
+.photo-thumb-placeholder { width: 72px; height: 72px; background: var(--primary-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--border); }
+
+/* LISTINGS TABLE */
+.listings-list { display: flex; flex-direction: column; gap: 1rem; }
+.listing-row { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 1.2rem; display: flex; gap: 1rem; align-items: center; box-shadow: var(--shadow-sm); transition: border-color 0.2s; }
+.listing-row:hover { border-color: var(--primary); }
+.listing-emoji { font-size: 2.5rem; width: 54px; text-align: center; flex-shrink: 0; }
+.listing-info { flex: 1; }
+.listing-title { font-family: 'Syne',sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+.listing-meta { font-size: 0.82rem; color: var(--muted); display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.listing-price { font-family: 'Syne',sans-serif; font-weight: 800; color: var(--primary); font-size: 1.05rem; margin-right: 1rem; }
+.listing-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+.act-btn { padding: 0.4rem 0.8rem; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: none; font-family: 'Syne',sans-serif; transition: all 0.2s; }
+.act-btn.edit { background: var(--primary-light); color: var(--primary); }
+.act-btn.del { background: #FEE2E2; color: #DC2626; }
+.act-btn.edit:hover { background: var(--primary); color: white; }
+.act-btn.del:hover { background: #DC2626; color: white; }
+
+/* STATUS BADGE */
+.status-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; }
+.status-badge.active { background: #D1FAE5; color: #065F46; }
+.status-badge.pending { background: #FEF3C7; color: #92400E; }
+
+/* CONFIRM MODAL */
+.confirm-modal { max-width: 380px; text-align: center; }
+.confirm-icon { font-size: 3rem; margin-bottom: 1rem; }
+.confirm-btns { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+  <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+  <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+</a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html" class="active">Owner Dashboard</a>
+  </div>
+  <div style="display:flex;gap:0.5rem;align-items:center;">
+    <span style="font-size:0.9rem;color:var(--muted);" id="navName"></span>
+    <button onclick="logout()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.85rem;">Logout</button>
+  </div>
+</nav>
+
+<!-- OWNER HEADER -->
+<div class="owner-header">
+  <h1>🏠 Owner Dashboard</h1>
+  <p>Manage your listings and reach thousands of tenants directly.</p>
+  <div class="owner-tabs">
+    <button class="otab active" id="otab-listings" onclick="switchOTab('listings')">My Listings</button>
+    <button class="otab" id="otab-add" onclick="switchOTab('add')">+ Add Property</button>
+    <button class="otab" id="otab-stats" onclick="switchOTab('stats')">Analytics</button>
+  </div>
+</div>
+
+<div class="owner-content">
+
+  <!-- MY LISTINGS TAB -->
+  <div id="tab-listings">
+    <div class="owner-stats" id="ownerStats"></div>
+    <div class="listings-list" id="listingsList">
+      <div class="empty-state" id="listingsEmpty" style="display:none;">
+        <div class="empty-icon">📋</div>
+        <p>No listings yet. Click <strong>Add Property</strong> to get started!</p>
+        <br><button class="btn-primary" onclick="switchOTab('add')">+ Add Your First Property</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD PROPERTY TAB -->
+  <div id="tab-add" style="display:none;">
+    <div class="add-form-card">
+      <h3>📝 Post New Property</h3>
+
+      <div class="form-section">
+        <div class="form-section-title">Basic Info</div>
+        <div class="form-group"><label>Property Title</label><input type="text" id="pTitle" placeholder="e.g. Spacious 2BHK in Wandgori"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Property Type</label>
+            <select id="pType"><option>Flat</option><option>PG</option><option>Hostel</option><option>Studio</option><option>Room</option></select>
+          </div>
+          <div class="form-group"><label>BHK / Room Type</label>
+            <select id="pBhk"><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>Studio</option><option>PG</option><option>Hostel</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Area / Locality</label>
+            <select id="pArea"><option>Wandgori</option><option>Higna</option><option>Digdoh</option><option>Kalamna</option><option>Butibori</option><option>Besa</option><option>Other</option></select>
+          </div>
+          <div class="form-group"><label>Floor</label>
+            <select id="pFloor"><option>Ground</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th+</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>Full Address</label><input type="text" id="pAddress" placeholder="House/flat no, street, landmark"></div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Rent & Furnishing</div>
+        <div class="form-row">
+          <div class="form-group"><label>Monthly Rent (₹)</label><input type="number" id="pRent" placeholder="e.g. 8500"></div>
+          <div class="form-group"><label>Security Deposit (₹)</label><input type="number" id="pDeposit" placeholder="e.g. 17000"></div>
+        </div>
+        <div class="form-group"><label>Furnishing</label>
+          <select id="pFurnish"><option>Furnished</option><option>Semi-Furnished</option><option>Unfurnished</option></select>
+        </div>
+        <div class="form-group"><label>Available From</label><input type="date" id="pAvailable"></div>
+        <div class="form-group"><label>Preferred Tenants</label>
+          <select id="pTenants"><option>Any</option><option>Bachelor Boys</option><option>Bachelor Girls</option><option>Family</option><option>Working Professionals</option></select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Amenities</div>
+        <div class="amenity-grid">
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🅿️ Parking</label>
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">💧 24hr Water</label>
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">⚡ Power Backup</label>
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">📶 WiFi Ready</label>
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">❄️ AC Installed</label>
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🛗 Lift</label>
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🔒 CCTV</label>
+          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🧹 Housekeeping</label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Description & Photos</div>
+        <div class="form-group"><label>Description</label><textarea id="pDesc" rows="3" placeholder="Describe your property…"></textarea></div>
+        <div class="photo-drop" onclick="document.getElementById('photoInput').click()">
+          <div class="photo-drop-icon">📷</div>
+          <div style="font-weight:700;font-size:0.9rem;">Click to add photos</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">JPG, PNG up to 5MB each</div>
+          <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="previewPhotos(this)">
+        </div>
+        <div class="photo-thumbs" id="photoThumbs"></div>
+      </div>
+
+      <div class="form-section" style="border-bottom:none;">
+        <div class="form-section-title">Your Contact</div>
+        <div class="form-row">
+          <div class="form-group"><label>Your Name</label><input type="text" id="pOwnerName" placeholder="Name shown to tenants"></div>
+          <div class="form-group"><label>WhatsApp / Phone</label><input type="tel" id="pOwnerPhone" placeholder="10-digit number"></div>
+        </div>
+      </div>
+
+      <button class="btn-full primary" onclick="submitProperty()">🚀 Post Property</button>
+    </div>
+  </div>
+
+  <!-- ANALYTICS TAB -->
+  <div id="tab-stats" style="display:none;">
+    <div class="owner-stats" id="analyticsStats"></div>
+    <div class="add-form-card" style="margin-top:1.5rem;">
+      <h3>📊 Listing Performance</h3>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.5rem;">Track views and inquiries for each of your properties.</p>
+      <div id="analyticsTable" style="margin-top:1.5rem;"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal confirm-modal">
+    <div class="confirm-icon">🗑️</div>
+    <div class="modal-title">Delete Listing?</div>
+    <div class="modal-sub">This will permanently remove the property from Flatzy. This action cannot be undone.</div>
+    <div class="confirm-btns">
+      <button class="btn-full secondary" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-full" style="background:#DC2626;color:white;" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let pendingDeleteId = null;
+
+const DEMO = [
+  {id:1,title:'Spacious 2BHK Flat',area:'Wandgori',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',owner:'Demo Owner',phone:'9800000001',views:24,inquiries:3},
+  {id:5,title:'3BHK Family Flat',area:'Wandgori',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',owner:'Demo Owner',phone:'9800000001',views:11,inquiries:1},
+];
+
+function getOwnerProps() {
+  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
+  const stored = JSON.parse(localStorage.getItem('flatzy_properties')||'[]');
+  // Show demo + user's own
+  if(user.role === 'owner') return [...DEMO, ...stored.filter(p=>p.ownerPhone===user.phone)];
+  return stored.filter(p=>p.ownerPhone===user.phone);
+}
+
+function init() {
+  const user = JSON.parse(localStorage.getItem('flatzy_user')||'{}');
+  document.getElementById('navName').textContent = user.name || '';
+  // Pre-fill owner fields
+  if(user.name) document.getElementById('pOwnerName').value = user.name;
+  if(user.phone) document.getElementById('pOwnerPhone').value = user.phone;
+  renderListings();
+  renderAnalytics();
+}
+
+function switchOTab(tab) {
+  ['listings','add','stats'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+    document.getElementById('otab-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+function renderListings() {
+  const props = getOwnerProps();
+  const list = document.getElementById('listingsList');
+  const stats = document.getElementById('ownerStats');
+
+  stats.innerHTML = `
+    <div class="ostat"><div class="num">${props.length}</div><div class="lbl">Total Listings</div></div>
+    <div class="ostat"><div class="num">${props.reduce((a,p)=>a+(p.views||0),0)}</div><div class="lbl">Total Views</div></div>
+    <div class="ostat"><div class="num">${props.reduce((a,p)=>a+(p.inquiries||0),0)}</div><div class="lbl">Inquiries</div></div>
+    <div class="ostat"><div class="num">₹${props.reduce((a,p)=>a+Number(p.rent),0).toLocaleString('en-IN')}</div><div class="lbl">Total Rent Value</div></div>
+  `;
+
+  if(!props.length) {
+    list.innerHTML = '<div class="empty-state" style="display:block;"><div class="empty-icon">📋</div><p>No listings yet. <a href="#" onclick="switchOTab(\'add\')">Add your first property →</a></p></div>';
+    return;
+  }
+
+  list.innerHTML = props.map(p => `
+    <div class="listing-row">
+      <div class="listing-emoji">${p.emoji||'🏠'}</div>
+      <div class="listing-info">
+        <div class="listing-title">${p.title}</div>
+        <div class="listing-meta">
+          <span>📍 ${p.area}</span>
+          <span>🛏 ${p.bhk}</span>
+          <span>🏗 ${p.furnish}</span>
+          <span class="status-badge active">✓ Active</span>
+        </div>
+        <div style="margin-top:0.4rem;font-size:0.78rem;color:var(--muted);">👁 ${p.views||0} views · 📞 ${p.inquiries||0} inquiries</div>
+      </div>
+      <div class="listing-price">₹${Number(p.rent).toLocaleString('en-IN')}</div>
+      <div class="listing-actions">
+        <button class="act-btn edit" onclick="editProp(${p.id})">Edit</button>
+        <button class="act-btn del" onclick="deleteProp(${p.id})">Del</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAnalytics() {
+  const props = getOwnerProps();
+  const stats = document.getElementById('analyticsStats');
+  const table = document.getElementById('analyticsTable');
+
+  stats.innerHTML = `
+    <div class="ostat"><div class="num">${props.reduce((a,p)=>a+(p.views||0),0)}</div><div class="lbl">Total Views</div></div>
+    <div class="ostat"><div class="num">${props.reduce((a,p)=>a+(p.inquiries||0),0)}</div><div class="lbl">Total Inquiries</div></div>
+    <div class="ostat"><div class="num">${props.length ? Math.round(props.reduce((a,p)=>a+(p.views||0),0)/props.length) : 0}</div><div class="lbl">Avg Views/Listing</div></div>
+  `;
+
+  if(!props.length) { table.innerHTML = '<p style="color:var(--muted)">No listings to analyze yet.</p>'; return; }
+  table.innerHTML = props.map(p=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-weight:700;font-size:0.95rem;">${p.title}</div><div style="font-size:0.8rem;color:var(--muted);">📍 ${p.area} · ${p.bhk}</div></div>
+      <div style="text-align:right;"><div style="font-size:0.85rem;color:var(--muted);">👁 ${p.views||0} views</div><div style="font-size:0.85rem;color:var(--primary);font-weight:700;">📞 ${p.inquiries||0} inquiries</div></div>
+    </div>
+  `).join('');
+}
+
+async function submitProperty() {
+  const title = document.getElementById('pTitle').value.trim();
+  const rent = document.getElementById('pRent').value.trim();
+  const phone = document.getElementById('pOwnerPhone').value.trim();
+  const ownerName = document.getElementById('pOwnerName').value.trim();
+  if(!title) { showToast('Enter property title','error'); return; }
+  if(!rent) { showToast('Enter monthly rent','error'); return; }
+  if(!phone || phone.length!==10) { showToast('Enter valid 10-digit phone','error'); return; }
+
+  const checkedAmenities = Array.from(document.querySelectorAll('.amenity-item.checked')).map(el=>el.textContent.trim());
+
+  const prop = {
+    id: Date.now(),
+    title, rent: Number(rent),
+    type: document.getElementById('pType').value,
+    bhk: document.getElementById('pBhk').value,
+    area: document.getElementById('pArea').value,
+    floor: document.getElementById('pFloor').value,
+    address: document.getElementById('pAddress').value,
+    deposit: document.getElementById('pDeposit').value,
+    furnish: document.getElementById('pFurnish').value,
+    available: document.getElementById('pAvailable').value,
+    tenants: document.getElementById('pTenants').value,
+    desc: document.getElementById('pDesc').value,
+    amenities: checkedAmenities,
+    ownerName, ownerPhone: phone,
+    emoji: ['🏠','🏡','🏢','🏘️','🏨'][Math.floor(Math.random()*5)],
+    views: 0, inquiries: 0,
+    postedAt: new Date().toISOString()
+  };
+
+  try {
+    const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js");
+    const { getFirestore, collection, addDoc } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js");
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+      authDomain: "flatzyhomes.firebaseapp.com",
+      projectId: "flatzyhomes",
+      storageBucket: "flatzyhomes.firebasestorage.app",
+      messagingSenderId: "519957313457",
+      appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+    };
+
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    await addDoc(collection(db, "properties"), prop);
+
+    // Backup locally too
+    const stored = JSON.parse(localStorage.getItem('flatzy_properties')||'[]');
+    stored.push(prop);
+    localStorage.setItem('flatzy_properties', JSON.stringify(stored));
+
+    showToast('Property posted successfully! 🎉');
+    setTimeout(()=>{ switchOTab('listings'); renderListings(); renderAnalytics(); }, 1200);
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  }
+
+  // Reset form
+  ['pTitle','pRent','pDeposit','pAddress','pDesc','pOwnerName','pOwnerPhone'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('.amenity-item.checked').forEach(el=>el.classList.remove('checked'));
+  document.getElementById('photoThumbs').innerHTML='';
+}
+
+function previewPhotos(input) {
+  const thumbs = document.getElementById('photoThumbs');
+  thumbs.innerHTML = '';
+  Array.from(input.files).slice(0,6).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.className = 'photo-thumb'; img.src = e.target.result;
+      thumbs.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function editProp(id) { showToast('Edit feature coming soon! ✏️'); }
+
+function deleteProp(id) {
+  pendingDeleteId = id;
+  document.getElementById('deleteModal').classList.add('active');
+}
+
+function confirmDelete() {
+  const stored = JSON.parse(localStorage.getItem('flatzy_properties')||'[]');
+  localStorage.setItem('flatzy_properties', JSON.stringify(stored.filter(p=>p.id!==pendingDeleteId)));
+  closeModal('deleteModal');
+  showToast('Listing deleted');
+  renderListings(); renderAnalytics();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function logout() { localStorage.removeItem('flatzy_user'); window.location='index.html'; }
+
+function showToast(msg,err=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(err?' error':'');
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script>
+</body>
+</html>
