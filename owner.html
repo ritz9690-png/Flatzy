@@ -441,46 +441,61 @@ window.submitProperty = async function() {
 const CLOUD_NAME = 'dhi8byas2';
 const UPLOAD_PRESET = 'Flatzy_upload';
 let uploadedPhotoUrls = [];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB per file
+const MAX_FILES = 6;
 
-// ── Photo Upload to Cloudinary ────────────────────────────────────
+// ── Photo Upload to Cloudinary (with size checks & partial-failure handling)
 window.previewPhotos = async function(input) {
   const thumbs = document.getElementById('photoThumbs');
-  const files = Array.from(input.files).slice(0, 6);
+  const files = Array.from(input.files).slice(0, MAX_FILES);
   if (!files.length) return;
 
   thumbs.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:0.5rem;">⏳ Uploading photos...</div>';
   uploadedPhotoUrls = [];
 
-  const uploadPromises = files.map(file => {
-    return new Promise((resolve, reject) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', UPLOAD_PRESET);
-      formData.append('folder', 'Flatzy');
+  const promises = files.map(file => {
+    if (file.size > MAX_FILE_SIZE) {
+      return Promise.reject(new Error(`File too large: ${file.name}`));
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('folder', 'Flatzy');
 
-      fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: formData
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.secure_url) resolve(data.secure_url);
-        else reject('Upload failed');
-      })
-      .catch(reject);
+    return fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Upload request failed');
+      return res.json();
+    })
+    .then(data => {
+      if (data && data.secure_url) return data.secure_url;
+      throw new Error((data && data.error && data.error.message) ? data.error.message : 'Upload failed');
     });
   });
 
-  try {
-    const urls = await Promise.all(uploadPromises);
-    uploadedPhotoUrls = urls;
-    thumbs.innerHTML = urls.map(url =>
-      `<img class="photo-thumb" src="${url}" alt="Property photo">`
-    ).join('');
-    showToast(`✅ ${urls.length} photo(s) uploaded!`);
-  } catch(e) {
-    thumbs.innerHTML = '<div style="color:#DC2626;font-size:0.85rem;">❌ Upload failed. Check internet & try again.</div>';
-    showToast('Photo upload failed', true);
+  const results = await Promise.allSettled(promises);
+  const success = results.filter(r => r.status === 'fulfilled').map(r => r.value);
+  const failed = results.filter(r => r.status === 'rejected');
+
+  if (success.length) {
+    uploadedPhotoUrls = success;
+    thumbs.innerHTML = success.map(url => `<img class="photo-thumb" src="${url}" alt="Property photo">`).join('');
+    const msg = failed.length ? `✅ ${success.length} uploaded, ${failed.length} failed` : `✅ ${success.length} photo(s) uploaded!`;
+    showToast(msg);
+  }
+
+  if (failed.length) {
+    console.warn('Photo upload errors:', failed.map(f => f.reason));
+    // If none succeeded, show explicit error UI
+    if (!success.length) {
+      thumbs.innerHTML = '<div style="color:#DC2626;font-size:0.85rem;">❌ Upload failed. Check internet & try again.</div>';
+      showToast('Photo upload failed', true);
+    } else {
+      showToast(`${failed.length} photo(s) failed to upload`, true);
+    }
   }
 };
 
