@@ -1,583 +1,639 @@
 /* ============================================================
-   FLATZY — Professional Photo Lightbox
-   Features: Fullscreen, Zoom In/Out, Pan, Swipe, Keyboard Nav,
-             Arrows, Thumbnails, Counter, Smooth Animations
+   FLATZY — Lightbox
+   LAPTOP : hover pe arrows + zoom aate hain
+   MOBILE : tap pe arrows + zoom aate hain (2.5 sec baad hide)
+            swipe left/right for navigation
+            pinch to zoom in/out
    ============================================================ */
 
-(function() {
-'use strict';
+(function () {
+  'use strict';
 
-// ── Inject CSS ────────────────────────────────────────────────────
-const css = `
-/* LIGHTBOX OVERLAY */
-#flLightbox {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  background: rgba(5, 10, 20, 0.97);
-  backdrop-filter: blur(12px);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: none;
-}
-#flLightbox.active {
-  display: flex;
-  animation: flFadeIn 0.25s ease;
-}
-@keyframes flFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
+  /* ═══════════════════════════════════════════════════════════
+     CSS
+  ═══════════════════════════════════════════════════════════ */
+  const css = `
+  /* ── BASE LIGHTBOX ── */
+  #flLightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0,0,0,0.93);
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    font-family: sans-serif;
+  }
+  #flLightbox.active {
+    display: flex;
+    animation: flFadeIn 0.22s ease;
+  }
+  @keyframes flFadeIn { from { opacity:0 } to { opacity:1 } }
 
-/* TOP BAR */
-#flTopBar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.2rem;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
-  z-index: 10;
-  gap: 1rem;
-}
-#flCounter {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.85);
-  letter-spacing: 1px;
-  background: rgba(255,255,255,0.1);
-  padding: 0.3rem 0.9rem;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-#flTitle {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
-  color: rgba(255,255,255,0.7);
-  flex: 1;
-  text-align: center;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-#flTopActions {
-  display: flex;
-  gap: 0.5rem;
-}
-.fl-icon-btn {
-  width: 38px; height: 38px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: white;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-.fl-icon-btn:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.3); }
-.fl-icon-btn:active { transform: scale(0.92); }
+  /* ── CLOSE BTN — always visible ── */
+  #flClose {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.14);
+    border: 1.5px solid rgba(255,255,255,0.28);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1.2rem;
+    z-index: 30;
+    backdrop-filter: blur(6px);
+    transition: background 0.2s;
+  }
+  #flClose:hover  { background: rgba(220,50,50,0.75); }
+  #flClose:active { transform: scale(0.9); }
 
-/* MAIN IMAGE STAGE */
-#flStage {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  cursor: grab;
-}
-#flStage.dragging { cursor: grabbing; }
-#flStage.zoom-in-cursor { cursor: zoom-in; }
-#flStage.zoom-out-cursor { cursor: zoom-out; }
+  /* ── COUNTER — always visible ── */
+  #flCounter {
+    position: absolute;
+    top: 18px; left: 18px;
+    background: rgba(0,0,0,0.55);
+    color: rgba(255,255,255,0.88);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    z-index: 30;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
 
-#flImgWrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.08s linear;
-  will-change: transform;
-}
-#flImg {
-  max-width: min(90vw, 1200px);
-  max-height: 72vh;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 8px;
-  display: block;
-  box-shadow: 0 20px 80px rgba(0,0,0,0.6);
-  transition: opacity 0.22s ease, transform 0.22s ease;
-  pointer-events: none;
-  -webkit-user-drag: none;
-}
-#flImg.switching { opacity: 0; transform: scale(0.96); }
-#flImg.switching-in { opacity: 1; transform: scale(1); }
+  /* ── STAGE ── */
+  #flStage {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+  }
+  #flStage.dragging { cursor: grabbing; }
 
-/* EMOJI PLACEHOLDER */
-#flEmoji {
-  font-size: 8rem;
-  display: none;
-  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
-}
+  #flImgWrap {
+    display: flex; align-items: center; justify-content: center;
+    will-change: transform;
+    transition: transform 0.18s ease;
+  }
+  #flImg {
+    max-width: min(88vw, 1100px);
+    max-height: 82vh;
+    width: auto; height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+    transition: opacity 0.2s ease;
+    display: block;
+  }
+  #flImg.fade { opacity: 0; }
 
-/* NAV ARROWS */
-.fl-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px; height: 48px;
-  background: rgba(255,255,255,0.12);
-  border: 1.5px solid rgba(255,255,255,0.2);
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: white;
-  font-size: 1.3rem;
-  z-index: 10;
-  backdrop-filter: blur(4px);
-}
-.fl-arrow:hover { background: rgba(26,111,232,0.6); border-color: rgba(26,111,232,0.8); transform: translateY(-50%) scale(1.05); }
-.fl-arrow:active { transform: translateY(-50%) scale(0.95); }
-#flPrev { left: 1rem; }
-#flNext { right: 1rem; }
-.fl-arrow.hidden { opacity: 0; pointer-events: none; }
+  /* ── SPINNER ── */
+  #flSpinner {
+    position: absolute;
+    width: 44px; height: 44px;
+    border: 3px solid rgba(255,255,255,0.15);
+    border-top-color: #1A6FE8;
+    border-radius: 50%;
+    animation: flSpin 0.7s linear infinite;
+    display: none;
+    pointer-events: none;
+  }
+  @keyframes flSpin { to { transform: rotate(360deg) } }
 
-/* BOTTOM CONTROLS */
-#flBottomBar {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  padding: 1.2rem 1.2rem 1.5rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-}
+  /* ══════════════════════════════════════════════════
+     LAPTOP — hover se sab dikhta hai
+  ══════════════════════════════════════════════════ */
 
-/* ZOOM CONTROLS */
-#flZoomBar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 12px;
-  padding: 0.35rem 0.6rem;
-}
-.fl-zoom-btn {
-  width: 32px; height: 32px;
-  background: rgba(255,255,255,0.08);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
-}
-.fl-zoom-btn:hover { background: rgba(255,255,255,0.2); }
-.fl-zoom-btn:active { transform: scale(0.9); }
-#flZoomLevel {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.8);
-  min-width: 44px;
-  text-align: center;
-}
+  /* arrows */
+  .fl-arrow {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 54px; height: 54px;
+    background: rgba(255,255,255,0.13);
+    border: 2px solid rgba(255,255,255,0.26);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1.7rem;
+    z-index: 20;
+    backdrop-filter: blur(6px);
+    transition: opacity 0.22s, background 0.2s, transform 0.18s;
+    opacity: 0;           /* hidden by default */
+  }
+  .fl-arrow.hidden { display: none !important; }
+  #flPrev { left: 16px; }
+  #flNext { right: 16px; }
 
-/* THUMBNAILS */
-#flThumbs {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  max-width: min(90vw, 600px);
-  padding: 0 4px 2px;
-  scrollbar-width: none;
-}
-#flThumbs::-webkit-scrollbar { display: none; }
-.fl-thumb {
-  width: 52px; height: 40px;
-  border-radius: 6px;
-  overflow: hidden;
-  flex-shrink: 0;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.2s;
-  opacity: 0.55;
-  background: rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-}
-.fl-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.fl-thumb span { font-size: 1.3rem; }
-.fl-thumb.active { border-color: #1A6FE8; opacity: 1; transform: scale(1.06); }
-.fl-thumb:hover { opacity: 0.9; }
+  /* show on desktop hover */
+  @media (hover: hover) {
+    #flLightbox:hover .fl-arrow { opacity: 1; }
+    .fl-arrow:hover {
+      background: rgba(26,111,232,0.75);
+      border-color: #1A6FE8;
+      transform: translateY(-50%) scale(1.08);
+    }
+    .fl-arrow:active { transform: translateY(-50%) scale(0.94); }
+  }
 
-/* LOADING SPINNER */
-#flSpinner {
-  position: absolute;
-  width: 40px; height: 40px;
-  border: 3px solid rgba(255,255,255,0.15);
-  border-top-color: #1A6FE8;
-  border-radius: 50%;
-  animation: flSpin 0.7s linear infinite;
-  display: none;
-}
-@keyframes flSpin { to { transform: rotate(360deg); } }
+  /* zoom group */
+  #flZoomGroup {
+    position: absolute;
+    top: 68px; right: 14px;
+    display: flex; flex-direction: column;
+    gap: 6px;
+    z-index: 30;
+    opacity: 0;           /* hidden by default */
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    #flLightbox:hover #flZoomGroup {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+  .fl-zbtn {
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.13);
+    border: 1.5px solid rgba(255,255,255,0.26);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1.35rem;
+    font-weight: bold;
+    backdrop-filter: blur(6px);
+    transition: background 0.2s;
+    line-height: 1;
+  }
+  .fl-zbtn:hover  { background: rgba(26,111,232,0.75); border-color: #1A6FE8; }
+  .fl-zbtn:active { transform: scale(0.91); }
+  #flZoomLabel {
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 4px 2px;
+    letter-spacing: 0.5px;
+  }
 
-/* MOBILE TWEAKS */
-@media (max-width: 600px) {
-  #flImg { max-height: 65vh; max-width: 95vw; }
-  #flPrev { left: 0.4rem; }
-  #flNext { right: 0.4rem; }
-  .fl-arrow { width: 40px; height: 40px; font-size: 1.1rem; border-radius: 10px; }
-  #flTitle { display: none; }
-  .fl-thumb { width: 44px; height: 34px; }
-}
-`;
+  /* thumbnails */
+  #flThumbs {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex; justify-content: center;
+    gap: 7px;
+    padding: 16px 16px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 100%);
+    overflow-x: auto;
+    scrollbar-width: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  #flThumbs::-webkit-scrollbar { display: none; }
+  @media (hover: hover) {
+    #flLightbox:hover #flThumbs {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+  .fl-thumb {
+    width: 58px; height: 44px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2.5px solid transparent;
+    transition: all 0.18s;
+    opacity: 0.5;
+    background: rgba(255,255,255,0.1);
+  }
+  .fl-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .fl-thumb.active { border-color: #1A6FE8; opacity: 1; transform: scale(1.08); }
+  .fl-thumb:hover  { opacity: 0.88; }
 
-const style = document.createElement('style');
-style.textContent = css;
-document.head.appendChild(style);
+  /* ══════════════════════════════════════════════════
+     MOBILE — tap se dikhta hai (touch-show-ui class)
+  ══════════════════════════════════════════════════ */
+  @media (hover: none) {
+    /* arrows — default thoda visible rakho taaki pata chale */
+    .fl-arrow {
+      opacity: 0.35;
+      width: 48px; height: 48px;
+      font-size: 1.4rem;
+    }
+    #flPrev { left: 8px; }
+    #flNext { right: 8px; }
 
-// ── Build HTML ────────────────────────────────────────────────────
-const html = `
-<div id="flLightbox">
-  <!-- Top Bar -->
-  <div id="flTopBar">
+    /* tap se puri tarah dikhao */
+    #flLightbox.touch-show-ui .fl-arrow {
+      opacity: 1;
+    }
+    #flLightbox.touch-show-ui #flZoomGroup {
+      opacity: 1;
+      pointer-events: all;
+    }
+    #flLightbox.touch-show-ui #flThumbs {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* zoom group mobile size */
+    #flZoomGroup { top: 62px; right: 10px; }
+    .fl-zbtn { width: 40px; height: 40px; font-size: 1.2rem; }
+
+    /* image size mobile */
+    #flImg { max-height: 76vh; max-width: 96vw; }
+
+    /* thumbs mobile */
+    .fl-thumb { width: 48px; height: 37px; }
+
+    /* no hover effect on mobile arrows */
+    .fl-arrow:hover {
+      background: rgba(255,255,255,0.13);
+      border-color: rgba(255,255,255,0.26);
+      transform: translateY(-50%);
+    }
+    .fl-arrow:active {
+      background: rgba(26,111,232,0.75);
+      transform: translateY(-50%) scale(0.94);
+    }
+  }
+  `;
+
+  const styleEl = document.createElement('style');
+  styleEl.textContent = css;
+  document.head.appendChild(styleEl);
+
+  /* ═══════════════════════════════════════════════════════════
+     HTML
+  ═══════════════════════════════════════════════════════════ */
+  document.body.insertAdjacentHTML('beforeend', `
+  <div id="flLightbox">
     <span id="flCounter">1 / 1</span>
-    <span id="flTitle"></span>
-    <div id="flTopActions">
-      <div class="fl-icon-btn" id="flResetBtn" title="Reset zoom">⊡</div>
-      <div class="fl-icon-btn" id="flCloseBtn" title="Close (Esc)">✕</div>
-    </div>
-  </div>
+    <div id="flClose">✕</div>
 
-  <!-- Stage -->
-  <div id="flStage">
-    <div id="flSpinner"></div>
-    <div id="flImgWrap">
-      <img id="flImg" src="" alt="Property photo">
-      <div id="flEmoji"></div>
+    <div id="flZoomGroup">
+      <div class="fl-zbtn" id="flZIn">+</div>
+      <div id="flZoomLabel">100%</div>
+      <div class="fl-zbtn" id="flZOut">−</div>
+      <div class="fl-zbtn" id="flZReset">⊡</div>
     </div>
-    <div class="fl-arrow" id="flPrev">&#8249;</div>
-    <div class="fl-arrow" id="flNext">&#8250;</div>
-  </div>
 
-  <!-- Bottom Bar -->
-  <div id="flBottomBar">
-    <div id="flZoomBar">
-      <button class="fl-zoom-btn" id="flZoomOut">−</button>
-      <span id="flZoomLevel">100%</span>
-      <button class="fl-zoom-btn" id="flZoomIn">+</button>
+    <div id="flStage">
+      <div id="flSpinner"></div>
+      <div id="flImgWrap">
+        <img id="flImg" src="" alt="photo">
+      </div>
+      <div class="fl-arrow" id="flPrev">&#8249;</div>
+      <div class="fl-arrow" id="flNext">&#8250;</div>
     </div>
+
     <div id="flThumbs"></div>
   </div>
-</div>
-`;
-document.body.insertAdjacentHTML('beforeend', html);
+  `);
 
-// ── State ─────────────────────────────────────────────────────────
-let photos = [];
-let current = 0;
-let scale = 1;
-let panX = 0, panY = 0;
-let isDragging = false;
-let dragStartX = 0, dragStartY = 0;
-let lastPanX = 0, lastPanY = 0;
-let lastTouchDist = 0;
-let lastTouchMid = null;
-let isOpen = false;
+  /* ═══════════════════════════════════════════════════════════
+     STATE
+  ═══════════════════════════════════════════════════════════ */
+  let photos = [], current = 0, isOpen = false;
+  let scale = 1, panX = 0, panY = 0;
+  let isDragging = false, dragStartX = 0, dragStartY = 0;
+  let lastPanX = 0, lastPanY = 0;
+  let isPinching = false, lastPinchDist = 0;
+  let touchStartX = 0, touchStartY = 0, touchMoved = false;
+  let uiTimer = null;
 
-const lb = document.getElementById('flLightbox');
-const img = document.getElementById('flImg');
-const emoji = document.getElementById('flEmoji');
-const wrap = document.getElementById('flImgWrap');
-const stage = document.getElementById('flStage');
-const counter = document.getElementById('flCounter');
-const titleEl = document.getElementById('flTitle');
-const thumbsEl = document.getElementById('flThumbs');
-const spinner = document.getElementById('flSpinner');
-const zoomLevelEl = document.getElementById('flZoomLevel');
+  const lb      = document.getElementById('flLightbox');
+  const img     = document.getElementById('flImg');
+  const wrap    = document.getElementById('flImgWrap');
+  const stage   = document.getElementById('flStage');
+  const counter = document.getElementById('flCounter');
+  const spinner = document.getElementById('flSpinner');
+  const zoomLbl = document.getElementById('flZoomLabel');
+  const thumbEl = document.getElementById('flThumbs');
 
-// ── Open / Close ──────────────────────────────────────────────────
-window.flOpen = function(photoList, index, title) {
-  photos = Array.isArray(photoList) ? photoList : [photoList];
-  current = index || 0;
-  isOpen = true;
-  document.body.style.overflow = 'hidden';
-  lb.classList.add('active');
-  titleEl.textContent = title || '';
-  resetZoom();
-  renderThumbs();
-  loadPhoto(current);
-};
+  const ZOOM_MIN = 0.5, ZOOM_MAX = 4, ZOOM_STEP = 0.4;
+  const isMobile = () => window.matchMedia('(hover: none)').matches;
 
-window.flClose = function() {
-  lb.classList.remove('active');
-  document.body.style.overflow = '';
-  isOpen = false;
-  img.src = '';
-};
-
-document.getElementById('flCloseBtn').onclick = flClose;
-document.getElementById('flResetBtn').onclick = resetZoom;
-
-lb.addEventListener('click', function(e) {
-  if (e.target === lb || e.target === stage) flClose();
-});
-
-// ── Navigation ────────────────────────────────────────────────────
-function go(n) {
-  const next = (current + n + photos.length) % photos.length;
-  if (next === current) return;
-  current = next;
-  resetZoom();
-  loadPhoto(current);
-}
-
-document.getElementById('flPrev').onclick = () => go(-1);
-document.getElementById('flNext').onclick = () => go(1);
-
-function updateArrows() {
-  const prev = document.getElementById('flPrev');
-  const next = document.getElementById('flNext');
-  if (photos.length <= 1) { prev.classList.add('hidden'); next.classList.add('hidden'); }
-  else { prev.classList.remove('hidden'); next.classList.remove('hidden'); }
-}
-
-// ── Load Photo ────────────────────────────────────────────────────
-function loadPhoto(idx) {
-  counter.textContent = (idx + 1) + ' / ' + photos.length;
-  updateArrows();
-  updateThumbs(idx);
-
-  const p = photos[idx];
-  const isUrl = p && (p.startsWith('http') || p.startsWith('/') || p.startsWith('data:'));
-
-  img.classList.add('switching');
-  setTimeout(() => {
-    if (isUrl) {
-      spinner.style.display = 'block';
-      emoji.style.display = 'none';
-      img.style.display = 'block';
-      img.onload = () => { spinner.style.display = 'none'; img.classList.remove('switching'); };
-      img.onerror = () => { spinner.style.display = 'none'; img.style.display = 'none'; emoji.textContent = '🏠'; emoji.style.display = 'block'; img.classList.remove('switching'); };
-      img.src = p;
-    } else {
-      spinner.style.display = 'none';
-      img.style.display = 'none';
-      emoji.textContent = p || '🏠';
-      emoji.style.display = 'block';
-      img.classList.remove('switching');
-    }
-    applyTransform();
-  }, 120);
-}
-
-// ── Zoom ──────────────────────────────────────────────────────────
-const ZOOM_MIN = 0.5, ZOOM_MAX = 5, ZOOM_STEP = 0.35;
-
-document.getElementById('flZoomIn').onclick = () => zoomBy(ZOOM_STEP);
-document.getElementById('flZoomOut').onclick = () => zoomBy(-ZOOM_STEP);
-
-function zoomBy(delta, cx, cy) {
-  const stageRect = stage.getBoundingClientRect();
-  const pivotX = cx ?? stageRect.width / 2;
-  const pivotY = cy ?? stageRect.height / 2;
-  const oldScale = scale;
-  scale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, scale + delta));
-  const ratio = scale / oldScale;
-  panX = pivotX - ratio * (pivotX - panX);
-  panY = pivotY - ratio * (pivotY - panY);
-  clampPan();
-  applyTransform();
-  updateZoomUI();
-}
-
-function resetZoom() {
-  scale = 1; panX = 0; panY = 0;
-  applyTransform();
-  updateZoomUI();
-}
-
-function clampPan() {
-  if (scale <= 1) { panX = 0; panY = 0; return; }
-  const stageRect = stage.getBoundingClientRect();
-  const imgW = (img.naturalWidth || 300) * scale;
-  const imgH = (img.naturalHeight || 200) * scale;
-  const maxPanX = Math.max(0, (imgW - stageRect.width) / 2);
-  const maxPanY = Math.max(0, (imgH - stageRect.height) / 2);
-  panX = Math.min(maxPanX, Math.max(-maxPanX, panX));
-  panY = Math.min(maxPanY, Math.max(-maxPanY, panY));
-}
-
-function applyTransform() {
-  wrap.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-  wrap.style.transition = isDragging ? 'none' : 'transform 0.18s ease';
-}
-
-function updateZoomUI() {
-  zoomLevelEl.textContent = Math.round(scale * 100) + '%';
-}
-
-// Double click to zoom
-stage.addEventListener('dblclick', function(e) {
-  if (scale > 1.1) {
+  /* ═══════════════════════════════════════════════════════════
+     OPEN / CLOSE
+  ═══════════════════════════════════════════════════════════ */
+  window.flOpen = function (list, idx, title) {
+    photos  = Array.isArray(list) ? list : [list];
+    current = idx || 0;
+    isOpen  = true;
+    document.body.style.overflow = 'hidden';
+    lb.classList.add('active');
     resetZoom();
-  } else {
-    const r = stage.getBoundingClientRect();
-    zoomBy(1.5, e.clientX - r.left, e.clientY - r.top);
+    renderThumbs();
+    loadPhoto(current);
+    if (isMobile()) showUI(); // mobile pe open hote hi UI dikhao
+  };
+
+  window.flClose = function () {
+    lb.classList.remove('active', 'touch-show-ui');
+    document.body.style.overflow = '';
+    isOpen = false;
+    img.src = '';
+    clearTimeout(uiTimer);
+  };
+
+  document.getElementById('flClose').onclick = flClose;
+  lb.addEventListener('click', e => { if (e.target === lb) flClose(); });
+
+  /* ═══════════════════════════════════════════════════════════
+     MOBILE UI SHOW / HIDE
+  ═══════════════════════════════════════════════════════════ */
+  function showUI() {
+    lb.classList.add('touch-show-ui');
+    clearTimeout(uiTimer);
+    uiTimer = setTimeout(() => lb.classList.remove('touch-show-ui'), 2500);
   }
-});
 
-// Mouse wheel zoom
-stage.addEventListener('wheel', function(e) {
-  e.preventDefault();
-  const r = stage.getBoundingClientRect();
-  const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-  zoomBy(delta, e.clientX - r.left, e.clientY - r.top);
-}, { passive: false });
-
-// ── Mouse Drag ────────────────────────────────────────────────────
-stage.addEventListener('mousedown', function(e) {
-  if (e.target === stage || e.target === wrap || e.target === img) {
-    isDragging = true;
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-    lastPanX = panX;
-    lastPanY = panY;
-    stage.classList.add('dragging');
-    wrap.style.transition = 'none';
+  /* ═══════════════════════════════════════════════════════════
+     NAVIGATION
+  ═══════════════════════════════════════════════════════════ */
+  function go(dir) {
+    const next = (current + dir + photos.length) % photos.length;
+    if (next === current) return;
+    current = next;
+    resetZoom();
+    loadPhoto(current);
   }
-});
 
-window.addEventListener('mousemove', function(e) {
-  if (!isDragging) return;
-  panX = lastPanX + (e.clientX - dragStartX);
-  panY = lastPanY + (e.clientY - dragStartY);
-  clampPan();
-  applyTransform();
-});
+  document.getElementById('flPrev').onclick = e => { e.stopPropagation(); go(-1); };
+  document.getElementById('flNext').onclick = e => { e.stopPropagation(); go(1); };
 
-window.addEventListener('mouseup', function(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  stage.classList.remove('dragging');
-  // Swipe gesture for navigation
-  const dx = e.clientX - dragStartX;
-  const dy = Math.abs(e.clientY - dragStartY);
-  if (Math.abs(dx) > 60 && dy < 60 && scale <= 1.05) {
-    go(dx < 0 ? 1 : -1);
+  function updateArrows() {
+    const hide = photos.length <= 1;
+    document.getElementById('flPrev').classList.toggle('hidden', hide);
+    document.getElementById('flNext').classList.toggle('hidden', hide);
   }
-});
 
-// ── Touch Events ──────────────────────────────────────────────────
-let touchStartX = 0, touchStartY = 0;
-let touchMoved = false;
+  /* ═══════════════════════════════════════════════════════════
+     LOAD PHOTO
+  ═══════════════════════════════════════════════════════════ */
+  function loadPhoto(idx) {
+    counter.textContent = (idx + 1) + ' / ' + photos.length;
+    updateArrows();
+    updateThumbs(idx);
 
-stage.addEventListener('touchstart', function(e) {
-  if (e.touches.length === 1) {
-    isDragging = true;
-    touchMoved = false;
-    touchStartX = dragStartX = e.touches[0].clientX;
-    touchStartY = dragStartY = e.touches[0].clientY;
-    lastPanX = panX; lastPanY = panY;
-    wrap.style.transition = 'none';
-  } else if (e.touches.length === 2) {
-    isDragging = false;
-    lastTouchDist = getTouchDist(e.touches);
-    lastTouchMid = getTouchMid(e.touches, stage.getBoundingClientRect());
+    img.classList.add('fade');
+    spinner.style.display = 'block';
+
+    setTimeout(() => {
+      img.onload  = () => { spinner.style.display = 'none'; img.classList.remove('fade'); };
+      img.onerror = () => { spinner.style.display = 'none'; img.classList.remove('fade'); };
+      img.src = photos[idx];
+      applyTransform();
+    }, 120);
   }
-  e.preventDefault();
-}, { passive: false });
 
-stage.addEventListener('touchmove', function(e) {
-  e.preventDefault();
-  if (e.touches.length === 2) {
-    // Pinch zoom
-    const dist = getTouchDist(e.touches);
-    const mid = getTouchMid(e.touches, stage.getBoundingClientRect());
-    const delta = (dist - lastTouchDist) * 0.012;
-    zoomBy(delta, mid.x, mid.y);
-    lastTouchDist = dist;
-    lastTouchMid = mid;
-  } else if (e.touches.length === 1 && isDragging) {
-    touchMoved = true;
-    panX = lastPanX + (e.touches[0].clientX - dragStartX);
-    panY = lastPanY + (e.touches[0].clientY - dragStartY);
+  /* ═══════════════════════════════════════════════════════════
+     ZOOM
+  ═══════════════════════════════════════════════════════════ */
+  document.getElementById('flZIn').onclick    = e => { e.stopPropagation(); zoomBy(ZOOM_STEP); };
+  document.getElementById('flZOut').onclick   = e => { e.stopPropagation(); zoomBy(-ZOOM_STEP); };
+  document.getElementById('flZReset').onclick = e => { e.stopPropagation(); resetZoom(); };
+
+  function zoomBy(delta, cx, cy) {
+    const r  = stage.getBoundingClientRect();
+    const px = cx ?? r.width / 2;
+    const py = cy ?? r.height / 2;
+    const old = scale;
+    scale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, scale + delta));
+    const ratio = scale / old;
+    panX = px - ratio * (px - panX);
+    panY = py - ratio * (py - panY);
     clampPan();
     applyTransform();
+    updateZoomUI();
   }
-}, { passive: false });
 
-stage.addEventListener('touchend', function(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-  if (touchMoved && Math.abs(dx) > 55 && dy < 70 && scale <= 1.05) {
-    go(dx < 0 ? 1 : -1);
+  function resetZoom() {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+    updateZoomUI();
   }
-});
 
-function getTouchDist(touches) {
-  const dx = touches[0].clientX - touches[1].clientX;
-  const dy = touches[0].clientY - touches[1].clientY;
-  return Math.sqrt(dx*dx + dy*dy);
-}
-function getTouchMid(touches, rect) {
-  return {
-    x: (touches[0].clientX + touches[1].clientX) / 2 - rect.left,
-    y: (touches[0].clientY + touches[1].clientY) / 2 - rect.top
-  };
-}
+  function clampPan() {
+    if (scale <= 1.05) { panX = 0; panY = 0; return; }
+    const r    = stage.getBoundingClientRect();
+    const maxX = Math.max(0, (img.naturalWidth  * scale - r.width)  / 2);
+    const maxY = Math.max(0, (img.naturalHeight * scale - r.height) / 2);
+    panX = Math.min(maxX, Math.max(-maxX, panX));
+    panY = Math.min(maxY, Math.max(-maxY, panY));
+  }
 
-// ── Keyboard ──────────────────────────────────────────────────────
-document.addEventListener('keydown', function(e) {
-  if (!isOpen) return;
-  if (e.key === 'Escape') flClose();
-  else if (e.key === 'ArrowLeft') go(-1);
-  else if (e.key === 'ArrowRight') go(1);
-  else if (e.key === '+' || e.key === '=') zoomBy(ZOOM_STEP);
-  else if (e.key === '-') zoomBy(-ZOOM_STEP);
-  else if (e.key === '0') resetZoom();
-});
+  function applyTransform() {
+    wrap.style.transition = isDragging ? 'none' : 'transform 0.18s ease';
+    wrap.style.transform  = `translate(${panX}px,${panY}px) scale(${scale})`;
+  }
 
-// ── Thumbnails ────────────────────────────────────────────────────
-function renderThumbs() {
-  thumbsEl.innerHTML = photos.map((p, i) => {
-    const isUrl = p && (p.startsWith('http') || p.startsWith('/') || p.startsWith('data:'));
-    return `<div class="fl-thumb${i === current ? ' active' : ''}" onclick="window.flGoTo(${i})" data-idx="${i}">
-      ${isUrl ? `<img src="${p}" alt="thumb ${i+1}">` : `<span>${p || '🏠'}</span>`}
-    </div>`;
-  }).join('');
-}
+  function updateZoomUI() {
+    zoomLbl.textContent = Math.round(scale * 100) + '%';
+  }
 
-function updateThumbs(idx) {
-  document.querySelectorAll('.fl-thumb').forEach((t, i) => {
-    t.classList.toggle('active', i === idx);
+  /* wheel zoom — laptop only */
+  stage.addEventListener('wheel', e => {
+    e.preventDefault();
+    const r = stage.getBoundingClientRect();
+    zoomBy(e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP, e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+
+  /* double click zoom — laptop */
+  stage.addEventListener('dblclick', e => {
+    if (scale > 1.05) { resetZoom(); return; }
+    const r = stage.getBoundingClientRect();
+    zoomBy(1.5, e.clientX - r.left, e.clientY - r.top);
   });
-  const active = document.querySelector('.fl-thumb.active');
-  if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-}
 
-window.flGoTo = function(idx) {
-  current = idx;
-  resetZoom();
-  loadPhoto(current);
-};
+  /* ═══════════════════════════════════════════════════════════
+     MOUSE DRAG — LAPTOP
+  ═══════════════════════════════════════════════════════════ */
+  stage.addEventListener('mousedown', e => {
+    if (e.target === stage || e.target === wrap || e.target === img) {
+      isDragging = true;
+      dragStartX = e.clientX; dragStartY = e.clientY;
+      lastPanX = panX; lastPanY = panY;
+      stage.classList.add('dragging');
+    }
+  });
 
-})(); // end IIFE
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    panX = lastPanX + (e.clientX - dragStartX);
+    panY = lastPanY + (e.clientY - dragStartY);
+    clampPan(); applyTransform();
+  });
+
+  window.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    stage.classList.remove('dragging');
+    const dx = e.clientX - dragStartX;
+    const dy = Math.abs(e.clientY - dragStartY);
+    if (scale <= 1.05 && Math.abs(dx) > 50 && dy < 60) go(dx < 0 ? 1 : -1);
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     TOUCH — MOBILE
+  ═══════════════════════════════════════════════════════════ */
+  stage.addEventListener('touchstart', e => {
+    e.preventDefault();
+
+    if (e.touches.length === 1) {
+      // Single finger — show UI on tap, prepare swipe/drag
+      isPinching  = false;
+      touchMoved  = false;
+      isDragging  = true;
+      touchStartX = dragStartX = e.touches[0].clientX;
+      touchStartY = dragStartY = e.touches[0].clientY;
+      lastPanX = panX; lastPanY = panY;
+      wrap.style.transition = 'none';
+
+    } else if (e.touches.length === 2) {
+      isDragging = false;
+      isPinching = true;
+      lastPinchDist = pinchDist(e.touches);
+    }
+
+  }, { passive: false });
+
+  stage.addEventListener('touchmove', e => {
+    e.preventDefault();
+
+    if (e.touches.length === 2 && isPinching) {
+      /* ── Pinch zoom ── */
+      const d   = pinchDist(e.touches);
+      const r   = stage.getBoundingClientRect();
+      const mid = {
+        x: (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left,
+        y: (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top
+      };
+      zoomBy((d - lastPinchDist) * 0.013, mid.x, mid.y);
+      lastPinchDist = d;
+
+    } else if (e.touches.length === 1 && isDragging) {
+      touchMoved    = true;
+      const dx = e.touches[0].clientX - dragStartX;
+      const dy = e.touches[0].clientY - dragStartY;
+
+      if (scale <= 1.05) {
+        /* rubber-band horizontal feedback while swiping */
+        wrap.style.transform = `translate(${dx * 0.28}px,0px) scale(1)`;
+      } else {
+        /* zoomed — pan freely */
+        panX = lastPanX + dx;
+        panY = lastPanY + dy;
+        clampPan(); applyTransform();
+      }
+    }
+
+  }, { passive: false });
+
+  stage.addEventListener('touchend', e => {
+    /* ── After pinch ── */
+    if (isPinching) {
+      isPinching = false;
+      if (scale <= 1.05) resetZoom();
+      return;
+    }
+
+    if (!isDragging) return;
+    isDragging = false;
+
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const dx   = endX - touchStartX;
+    const dy   = Math.abs(endY - touchStartY);
+
+    if (!touchMoved) {
+      /* TAP — show UI (arrows + zoom + thumbs) */
+      showUI();
+      panX = 0; panY = 0; applyTransform();
+      return;
+    }
+
+    if (scale <= 1.05 && Math.abs(dx) > 40 && dy < 85) {
+      /* ── Swipe left/right → navigate ── */
+      go(dx < 0 ? 1 : -1);
+    } else {
+      /* snap back */
+      panX = 0; panY = 0; applyTransform();
+    }
+  });
+
+  /* double-tap to zoom — mobile */
+  let lastTap = 0;
+  stage.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTap < 280 && e.changedTouches.length === 1) {
+      if (scale > 1.05) { resetZoom(); }
+      else {
+        const r  = stage.getBoundingClientRect();
+        const cx = e.changedTouches[0].clientX - r.left;
+        const cy = e.changedTouches[0].clientY - r.top;
+        zoomBy(1.5, cx, cy);
+      }
+    }
+    lastTap = now;
+  });
+
+  function pinchDist(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     KEYBOARD — laptop
+  ═══════════════════════════════════════════════════════════ */
+  document.addEventListener('keydown', e => {
+    if (!isOpen) return;
+    if      (e.key === 'Escape')              flClose();
+    else if (e.key === 'ArrowLeft')           go(-1);
+    else if (e.key === 'ArrowRight')          go(1);
+    else if (e.key === '+' || e.key === '=')  zoomBy(ZOOM_STEP);
+    else if (e.key === '-')                   zoomBy(-ZOOM_STEP);
+    else if (e.key === '0')                   resetZoom();
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     THUMBNAILS
+  ═══════════════════════════════════════════════════════════ */
+  function renderThumbs() {
+    thumbEl.innerHTML = photos.map((p, i) =>
+      `<div class="fl-thumb${i === current ? ' active' : ''}" onclick="window.flGoTo(${i})">
+         <img src="${p}" alt="thumb ${i+1}" loading="lazy">
+       </div>`
+    ).join('');
+  }
+
+  function updateThumbs(idx) {
+    document.querySelectorAll('.fl-thumb').forEach((t, i) =>
+      t.classList.toggle('active', i === idx));
+    const a = document.querySelector('.fl-thumb.active');
+    if (a) a.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+
+  window.flGoTo = function (idx) {
+    current = idx; resetZoom(); loadPhoto(idx);
+  };
+
+})();
