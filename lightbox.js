@@ -136,6 +136,7 @@
 
   /* show on desktop hover */
   @media (hover: hover) {
+    .fl-arrow { opacity: 0.7; }
     #flLightbox:hover .fl-arrow { opacity: 1; }
     .fl-arrow:hover {
       background: rgba(26,111,232,0.75);
@@ -338,11 +339,13 @@
     current = idx || 0;
     isOpen  = true;
     document.body.style.overflow = 'hidden';
+    // Ensure lightbox is on top of all modals
+    document.body.appendChild(lb);
     lb.classList.add('active');
     resetZoom();
     renderThumbs();
     loadPhoto(current);
-    if (isMobile()) showUI(); // mobile pe open hote hi UI dikhao
+    showUI(); // always show arrows on open
   };
 
   window.flClose = function () {
@@ -362,7 +365,7 @@
   function showUI() {
     lb.classList.add('touch-show-ui');
     clearTimeout(uiTimer);
-    uiTimer = setTimeout(() => lb.classList.remove('touch-show-ui'), 2500);
+    uiTimer = setTimeout(() => lb.classList.remove('touch-show-ui'), 4000);
   }
 
   /* ═══════════════════════════════════════════════════════════
