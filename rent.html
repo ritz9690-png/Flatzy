@@ -397,12 +397,9 @@ window.showDetail = function(p) {
         <div class="contact-owner-info">
           <div class="contact-owner-name">🏠 ${p.ownerName||p.owner||'Owner'}</div>
           <div class="contact-owner-label">Property Owner · Direct Contact</div>
-          ${revealed?`<div class="phone-revealed">📞 +91 ${p.ownerPhone||p.phone}</div>`:''}
+          <div style="font-size:0.85rem;color:#10b981;margin-top:0.3rem;font-weight:600;">💬 Message Dealer for Owner Number</div>
         </div>
-        ${revealed
-          ? `<a href="tel:+91${p.ownerPhone||p.phone}" class="reveal-btn">📞 Call Now</a>`
-          : `<button class="reveal-btn" onclick="revealContact('${p.id}','${p.ownerPhone||p.phone}','${p.ownerName||p.owner||'Owner'}')">Reveal Number 🔓</button>`
-        }
+        <button class="reveal-btn" onclick="revealContact('${p.id}','${p.ownerPhone||p.phone||''}','${p.ownerName||p.owner||'Owner'}')">💬 WhatsApp</button>
       </div>
     </div>
   `;
@@ -415,29 +412,26 @@ window.revealContact = function(id, phone, name) {
     setTimeout(() => window.location = 'login.html', 1500);
     return;
   }
-  // Find the property details for the message
   const prop = allProps.find(p => p.id === id);
   const area = prop ? prop.area : '';
   const bhk  = prop ? prop.bhk  : '';
+  const title = prop ? prop.title : '';
   const ownerName = name || (prop ? (prop.ownerName || prop.owner || 'Owner') : 'Owner');
 
-  // Build WhatsApp message
-  const msg = `I'm viewing ${area} ${bhk} flat\nOwner name:- ${ownerName}\nGive me detail property details?`;
-  const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+  // Message goes to FLATZY number — owner number hidden
+  const msg = `Hi Flatzy! 🏠\nI'm viewing: *${title}*\nArea: ${area} | Type: ${bhk}\nOwner: ${ownerName}\n\nPlease give me the owner's contact details?`;
+  const flatzyNumber = '917387798079';
+  const waUrl = `https://wa.me/${flatzyNumber}?text=${encodeURIComponent(msg)}`;
 
-  // Open WhatsApp directly
   window.open(waUrl, '_blank');
 
   contactRevealed[id] = true;
   const card = document.getElementById('detailContent').querySelector('.contact-card');
   if (card) {
     const btn = card.querySelector('.reveal-btn');
-    if (btn) btn.outerHTML = `<a href="${waUrl}" target="_blank" class="reveal-btn" style="background:#25D366;">💬 WhatsApp</a>`;
-    const info = card.querySelector('.contact-owner-info');
-    if (info && !card.querySelector('.phone-revealed'))
-      info.innerHTML += `<div class="phone-revealed">📞 +91 ${phone}</div>`;
+    if (btn) btn.outerHTML = `<a href="${waUrl}" target="_blank" class="reveal-btn" style="background:#25D366;">💬 Message Sent!</a>`;
   }
-  showToast('WhatsApp opening! 💬');
+  showToast('Connecting you to Flatzy! 💬');
 };
 
 window.closeModal = function() { document.getElementById('detailModal').classList.remove('active'); };
