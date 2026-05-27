@@ -361,14 +361,16 @@ function renderGrid(list) {
 // ── Detail Modal ──────────────────────────────────────────────────
 window.showDetail = function(p) {
   const revealed = contactRevealed[p.id];
+  window._flPhotos = p.photos || [];
+  window._flTitle  = p.title || '';
   document.getElementById('detailContent').innerHTML = `
     <button class="modal-close" onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;z-index:10;">✕</button>
     <div class="detail-gallery">
       ${p.photos && p.photos.length
         ? `<div style="display:flex;gap:6px;overflow-x:auto;border-radius:14px 14px 0 0;cursor:pointer;-webkit-overflow-scrolling:touch;">
             ${p.photos.map((url,i) => `<img src="${url}" alt="photo ${i+1}"
-              onclick="event.stopPropagation();event.preventDefault();flOpen(${JSON.stringify(p.photos)},${i},'${p.title.replace(/'/g,"\\'")}');"
-              ontouchend="event.stopPropagation();event.preventDefault();flOpen(${JSON.stringify(p.photos)},${i},'${p.title.replace(/'/g,"\\'")}');"
+              onclick="event.stopPropagation();event.preventDefault();flOpen(window._flPhotos,${i},window._flTitle);"
+              ontouchend="event.stopPropagation();event.preventDefault();flOpen(window._flPhotos,${i},window._flTitle);"
               style="height:200px;min-width:${i===0?'100%':'120px'};max-width:${i===0?'100%':'120px'};object-fit:cover;border-radius:${i===0?'14px 14px 0 0':'8px'};flex-shrink:0;cursor:zoom-in;touch-action:manipulation;">`).join('')}
            </div>`
         : p.emoji||'🏠'
