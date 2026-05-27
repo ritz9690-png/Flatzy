@@ -701,7 +701,7 @@ async function init() {
   try {
     const snapshot = await getDocs(collection(db, 'properties'));
     const firestoreProps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    ALL_PROPS = [...DEMO_PROPS, ...firestoreProps];
+    ALL_PROPS = [...firestoreProps, ...DEMO_PROPS];
   } catch(e) {
     console.warn('Firestore fetch failed, showing demo only:', e.message);
     // Still show demo props — no crash
@@ -711,8 +711,8 @@ async function init() {
   const statEl = document.getElementById('statProps');
   if(statEl) statEl.textContent = ALL_PROPS.length + '+';
 
-  // Featured grid — latest 6
-  grid.innerHTML = ALL_PROPS.slice(0,6).map(renderCard).join('');
+  // Featured grid — latest 8
+  grid.innerHTML = ALL_PROPS.slice(0,8).map(renderCard).join('');
 
   // Area counts
   ['Wandongri','Higna','Lokmanya Nagar','Digdoh','Kalamna','Butibori'].forEach(a => {
