@@ -385,7 +385,7 @@ nav.topnav::after {
   font-size: 0.73rem; font-weight: 700; border: 1px solid rgba(26,111,232,0.2);
 }
 
-.card-body { padding: 1.1rem; }
+.card-body { padding: 1.1rem;background-color: #afd6e4;} 
 .card-title {
   font-family: 'Syne', sans-serif; font-size: 0.96rem; font-weight: 700;
   margin-bottom: 0.25rem; color: var(--text);
@@ -702,4 +702,34 @@ footer::after {
   .nav-btn:hover       { transform: none; box-shadow: none; }
   .schedule-btn:hover  { transform: none; }
   .enquire-btn:hover   { transform: none; }
+}
+.property-card{
+    background: rgb(2, 2, 2);
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+
+    /* remove hard border feel */
+    border: 1px solid rgba(232, 26, 222, 0.847);
+
+    /* soft realistic shadow */
+    box-shadow:
+        0 4px 10px rgb(93, 112, 190),
+        0 10px 25px rgba(65, 91, 104, 0.897);
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+
+.property-card:hover{
+    transform: translateY(-8px) scale(1.01);
+
+    /* premium floating shadow */
+    box-shadow:
+        0 12px 24px rgba(0,0,0,0.08),
+        0 24px 50px rgba(26,111,232,0.18);
+
+    border-color: rgba(26,111,232,0.18);
 }
