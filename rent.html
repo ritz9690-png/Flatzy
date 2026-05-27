@@ -6,6 +6,7 @@
 <title>Browse Properties – Flatzy Nagpur</title>
 <link rel="icon" type="image/png" href="favicon.jpeg">
 <link rel="stylesheet" href="style.css">
+<script src="lightbox.js"></script>
 <style>
 body { background: var(--dark2); }
 
@@ -214,6 +215,25 @@ body { background: var(--dark2); }
 
 <div class="toast" id="toast"></div>
 
+<!-- FLATZY LIGHTBOX HTML — required by lightbox.js -->
+<div id="flLightbox">
+  <div id="flClose">✕</div>
+  <div id="flCounter">1 / 1</div>
+  <div id="flStage">
+    <div id="flImgWrap"><img id="flImg" src="" alt=""></div>
+    <div id="flSpinner" style="display:none;position:absolute;color:white;font-size:2rem;">⏳</div>
+  </div>
+  <button id="flPrev">&#8249;</button>
+  <button id="flNext">&#8250;</button>
+  <div id="flZoomBar">
+    <button id="flZOut">−</button>
+    <span id="flZoomLabel">100%</span>
+    <button id="flZIn">+</button>
+    <button id="flZReset">⊙</button>
+  </div>
+  <div id="flThumbs"></div>
+</div>
+
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -365,8 +385,10 @@ window.showDetail = function(p) {
     <button class="modal-close" onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;z-index:10;">✕</button>
     <div class="detail-gallery">
       ${p.photos && p.photos.length
-        ? `<div style="display:flex;gap:6px;overflow-x:auto;border-radius:14px 14px 0 0;">
-            ${p.photos.map((url,i) => `<img src="${url}" alt="photo ${i+1}" style="height:200px;min-width:${i===0?'100%':'120px'};max-width:${i===0?'100%':'120px'};object-fit:cover;border-radius:${i===0?'14px 14px 0 0':'8px'};flex-shrink:0;">`).join('')}
+        ? `<div style="display:flex;gap:6px;overflow-x:auto;border-radius:14px 14px 0 0;cursor:pointer;">
+            ${p.photos.map((url,i) => `<img src="${url}" alt="photo ${i+1}"
+              onclick="event.stopPropagation();flOpen(${JSON.stringify(p.photos)},${i},'${p.title.replace(/'/g,"\\'")}');"
+              style="height:200px;min-width:${i===0?'100%':'120px'};max-width:${i===0?'100%':'120px'};object-fit:cover;border-radius:${i===0?'14px 14px 0 0':'8px'};flex-shrink:0;cursor:zoom-in;">`).join('')}
            </div>`
         : p.emoji||'🏠'
       }
