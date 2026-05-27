@@ -363,12 +363,12 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
   <p>Share Flatzy with your friends. When they find a home through your link, you get paid. Simple!</p>
   <div class="earn-pill">
     <div class="earn-item">
-      <div class="earn-num">₹500</div>
+      <div class="earn-num">₹750</div>
       <div class="earn-lbl">Per Referral</div>
     </div>
     <div class="earn-divider"></div>
     <div class="earn-item">
-      <div class="earn-num">₹2,000</div>
+      <div class="earn-num">₹3,000</div>
       <div class="earn-lbl">Max/Month</div>
     </div>
     <div class="earn-divider"></div>
@@ -429,7 +429,7 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
         <div class="step-num">4</div>
         <div class="step-text">
           <div class="step-title">You Get Paid 💰</div>
-          <div class="step-desc">₹500 credited to your UPI/bank within 7 working days. No questions asked!</div>
+          <div class="step-desc">₹750 credited to your UPI/bank within 7 working days. No questions asked!</div>
         </div>
       </div>
     </div>
@@ -444,28 +444,28 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
           <div class="reward-icon">🥉</div>
           <div class="reward-count"><strong>1–2</strong> referrals</div>
         </div>
-        <div class="reward-amount">₹500 each</div>
+        <div class="reward-amount">₹750 each</div>
       </div>
       <div class="reward-tier">
         <div class="reward-tier-left">
           <div class="reward-icon">🥈</div>
           <div class="reward-count"><strong>3–5</strong> referrals</div>
         </div>
-        <div class="reward-amount">₹600 each</div>
+        <div class="reward-amount">₹900 each</div>
       </div>
       <div class="reward-tier">
         <div class="reward-tier-left">
           <div class="reward-icon">🥇</div>
           <div class="reward-count"><strong>6–10</strong> referrals</div>
         </div>
-        <div class="reward-amount">₹750 each</div>
+        <div class="reward-amount">₹1,100 each</div>
       </div>
       <div class="reward-tier" style="border-color:var(--gold);background:var(--gold-light);">
         <div class="reward-tier-left">
           <div class="reward-icon">👑</div>
           <div class="reward-count"><strong>10+</strong> referrals</div>
         </div>
-        <div class="reward-amount" style="color:#d97706;">₹1,000 each</div>
+        <div class="reward-amount" style="color:#d97706;">₹1,500 each</div>
       </div>
     </div>
   </div>
@@ -551,7 +551,7 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
       <li>Referral reward is paid only after the referred friend successfully finds a property through Flatzy.</li>
       <li>The referred person must sign up using your referral code at the time of registration.</li>
       <li>Rewards are credited to your UPI ID within 7 working days of confirmation.</li>
-      <li>Maximum earnings are capped at ₹2,000 per calendar month per referrer.</li>
+      <li>Maximum earnings are capped at ₹3,000 per calendar month per referrer.</li>
       <li>Self-referrals or fake accounts are strictly not allowed and will result in disqualification.</li>
       <li>Flatzy reserves the right to modify or discontinue the program at any time.</li>
       <li>Any disputes will be settled at Flatzy's discretion. Decision is final.</li>
@@ -676,7 +676,7 @@ async function loadStats(phone) {
       if(n >= 10) earnings += 1000;
       else if(n >= 6) earnings += 750;
       else if(n >= 3) earnings += 600;
-      else earnings += 500;
+      else earnings += 750;
     });
 
     document.getElementById('statTotal').textContent    = total;
@@ -711,7 +711,7 @@ async function loadHistorySimple(phone) {
       const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
       const statusClass = r.status === 'paid' ? 'paid' : 'pending';
       const statusText  = r.status === 'paid' ? '✓ Paid' : '⏳ Pending';
-      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹500';
+      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹750';
       return `
         <div class="history-row">
           <div class="history-left">
@@ -751,7 +751,7 @@ async function loadHistory(phone) {
       const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
       const statusClass = r.status === 'paid' ? 'paid' : 'pending';
       const statusText  = r.status === 'paid' ? '✓ Paid' : '⏳ Pending';
-      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹500';
+      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹750';
       return `
         <div class="history-row">
           <div class="history-left">

@@ -168,7 +168,7 @@ nav.topnav {
 .card-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
 .card-badge { position: absolute; top: 10px; left: 10px; background: var(--primary); color: white; padding: 0.22rem 0.65rem; border-radius: 6px; font-size: 0.73rem; font-weight: 600; }
 .card-type { position: absolute; top: 10px; right: 10px; background: white; color: var(--primary); padding: 0.22rem 0.65rem; border-radius: 6px; font-size: 0.73rem; font-weight: 700; border: 1px solid var(--border); }
-.card-body { padding: 1.1rem;background-color: #afd6e4 }
+.card-body { padding: 1.1rem; }
 .card-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--text); }
 .card-location { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.8rem; }
 .card-details { display: flex; gap: 0.6rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
@@ -336,33 +336,154 @@ footer { background: #0F1C2E; border-top: 1px solid rgba(255,255,255,0.08); padd
 .mss-wrap { position: relative; }
 .mss-icon { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); font-size: 1rem; pointer-events: none; }
 @media (max-width: 768px) { .mobile-search-sticky { display: block; } }
-.property-card{
-    background: rgb(13, 9, 9);
-    border-radius: 18px;
-    overflow: hidden;
-    cursor: pointer;
 
-    /* remove hard border feel */
-    border: 1px solid rgb(0, 0, 0);
+/* ============================================================
+   FLATZY — ENHANCED HOVER EFFECTS & ANIMATIONS
+   ============================================================ */
 
-    /* soft realistic shadow */
-    box-shadow:
-        0 4px 10px rgb(18, 74, 153),
-        0 10px 25px rgba(65, 120, 209, 0.159);
+/* ── NAV LINKS — underline slide effect ── */
+.nav-links a {
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after { width: 100%; }
 
-    transition:
-        transform 0.35s ease,
-        box-shadow 0.35s ease,
-        border-color 0.35s ease;
+/* ── BOTTOM NAV — bounce tap ── */
+.bn-item {
+  transition: color 0.2s, transform 0.15s;
+}
+.bn-item:active { transform: scale(0.88); }
+.bn-item.active .bn-icon {
+  filter: drop-shadow(0 2px 6px rgba(26,111,232,0.35));
 }
 
-.property-card:hover{
-    transform: translateY(-8px) scale(1.01);
+/* ── PROPERTY CARD — image zoom on hover ── */
+.property-card .card-img img {
+  transition: transform 0.35s ease;
+}
+.property-card:hover .card-img img {
+  transform: scale(1.06);
+}
+.property-card:hover .card-title {
+  color: var(--primary);
+}
+.property-card:hover .contact-btn {
+  background: var(--primary-dark);
+}
 
-    /* premium floating shadow */
-    box-shadow:
-        0 12px 24px rgba(0,0,0,0.08),
-        0 24px 50px rgba(26,111,232,0.18);
+/* ── BUTTONS — ripple glow ── */
+.btn-primary {
+  position: relative; overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.15);
+  opacity: 0; border-radius: inherit;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover::after { opacity: 1; }
+.btn-primary:active { transform: scale(0.97); }
 
-    border-color: rgba(26,111,232,0.18);
+.btn-outline:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(26,111,232,0.18);
+}
+.btn-outline:active { transform: scale(0.97); }
+
+/* ── NAV BUTTON pulse on hover ── */
+.nav-btn:not(.outline):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(26,111,232,0.35);
+}
+
+/* ── FOOTER LINKS — color slide ── */
+.footer-col a {
+  position: relative; padding-left: 0;
+  transition: color 0.2s, padding-left 0.2s;
+}
+.footer-col a:hover {
+  color: #60A5FA !important;
+  padding-left: 6px;
+}
+
+/* ── FORM INPUTS — glow on focus ── */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  box-shadow: 0 0 0 3px rgba(26,111,232,0.12);
+}
+
+/* ── MODAL CLOSE ── */
+.modal-close {
+  transition: background 0.2s, transform 0.15s;
+}
+.modal-close:hover { transform: rotate(90deg); background: var(--border); }
+
+/* ── CHIPS ── */
+.chip {
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+  cursor: default;
+}
+.chip:hover { transform: scale(1.05); }
+.chip.primary:hover { background: var(--primary); color: white; }
+
+/* ── SCHEDULE / ENQUIRE BTNS ── */
+.schedule-btn, .enquire-btn {
+  transition: all 0.2s;
+}
+.schedule-btn:hover { transform: translateY(-1px); }
+.enquire-btn:hover { transform: translateY(-1px); }
+
+/* ── CARD IMAGE PLACEHOLDER emoji bounce ── */
+.card-img-placeholder {
+  transition: transform 0.2s;
+}
+.property-card:hover .card-img-placeholder {
+  transform: scale(1.15);
+}
+
+/* ── SCROLLBAR smooth pulse ── */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* ── SECTION TAG animate in ── */
+.section-tag {
+  position: relative;
+  display: inline-block;
+}
+
+/* ── TOAST slide with bounce ── */
+.toast.show {
+  animation: toastBounce 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes toastBounce {
+  from { transform: translateY(120px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── PAGE LOAD fade-in ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.property-card {
+  animation: fadeUp 0.4s ease both;
+}
+
+/* ── MOBILE: disable hover transforms (touch devices) ── */
+@media (hover: none) {
+  .property-card:hover { transform: none; }
+  .btn-primary:hover   { transform: none; }
+  .btn-outline:hover   { transform: none; }
+  .nav-btn:hover       { transform: none; box-shadow: none; }
 }

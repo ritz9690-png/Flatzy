@@ -53,6 +53,36 @@ body { background: linear-gradient(135deg,#EBF2FF 0%,#F8FBFF 60%,#E8F4FD 100%); 
   padding: 0.8rem 1rem; font-size: 0.8rem; color: #0369a1;
   text-align: center; margin-bottom: 1.5rem; line-height: 1.5;
 }
+
+/* Refer code input */
+.refer-input-wrap {
+  margin-bottom: 1.2rem;
+}
+.refer-input-wrap label {
+  display: block; font-size: 0.75rem; font-weight: 700;
+  color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+}
+.refer-input-row {
+  display: flex; gap: 0.5rem; align-items: center;
+}
+.refer-input {
+  flex: 1; background: var(--dark2); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 0.65rem 1rem;
+  font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+  color: var(--text); outline: none; transition: border-color 0.2s;
+  text-transform: uppercase; letter-spacing: 2px; font-weight: 700;
+}
+.refer-input:focus { border-color: var(--primary); background: white; }
+.refer-input::placeholder { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--muted); }
+.refer-valid-badge {
+  display: none; background: #d1fae5; color: #065f46;
+  border-radius: 8px; padding: 0.4rem 0.7rem;
+  font-size: 0.75rem; font-weight: 700; white-space: nowrap;
+  align-items: center; gap: 0.3rem;
+}
+.refer-valid-badge.show { display: flex; }
+.refer-skip { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; text-align: right; }
 </style>
 </head>
 <body>
@@ -86,8 +116,20 @@ body { background: linear-gradient(135deg,#EBF2FF 0%,#F8FBFF 60%,#E8F4FD 100%); 
       <div class="role-opt" id="role-owner" onclick="selectRole('owner')">
         <div class="role-icon">🏠</div>
         <div class="role-name">Owner</div>
-        <div class="role-desc">Have property to rent</div>
+        <div class="role-desc">List via WhatsApp 💬</div>
       </div>
+    </div>
+
+    <!-- REFER CODE INPUT -->
+    <div class="refer-input-wrap" id="referWrap">
+      <label>🎁 Have a Referral Code? (Optional)</label>
+      <div class="refer-input-row">
+        <input type="text" class="refer-input" id="referCodeInput"
+          placeholder="e.g. FLZ6087" maxlength="10"
+          oninput="checkReferCode(this.value)">
+        <div class="refer-valid-badge" id="referBadge">✓ Valid!</div>
+      </div>
+      <div class="refer-skip">Skip if you don't have one</div>
     </div>
 
     <div class="info-note">
@@ -112,11 +154,50 @@ body { background: linear-gradient(135deg,#EBF2FF 0%,#F8FBFF 60%,#E8F4FD 100%); 
 
 <script>
 let selectedRole = 'tenant';
+let validatedReferCode = '';
 
 function selectRole(role) {
+  if (role === 'owner') {
+    // Redirect owner directly to WhatsApp
+    const msg = encodeURIComponent("Hi! I want to list my property on Flatzy Nagpur. Please help me.");
+    window.open("https://wa.me/917385866455?text=" + msg, '_blank');
+    return;
+  }
   selectedRole = role;
   document.getElementById('role-tenant').classList.toggle('selected', role === 'tenant');
   document.getElementById('role-owner').classList.toggle('selected', role === 'owner');
+  // Hide refer field for owners
+  const wrap = document.getElementById('referWrap');
+  if (wrap) wrap.style.display = 'block';
+}
+
+// Auto-read ?ref= from URL and pre-fill
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const refCode = params.get('ref') || params.get('code') || '';
+  if (refCode) {
+    window.addEventListener('DOMContentLoaded', () => {
+      const inp = document.getElementById('referCodeInput');
+      if (inp) {
+        inp.value = refCode.toUpperCase();
+        checkReferCode(refCode);
+      }
+    });
+  }
+})();
+
+function checkReferCode(val) {
+  const clean = val.toUpperCase().trim();
+  const badge = document.getElementById('referBadge');
+  // Basic format check: starts with FLZ + 4 digits
+  const valid = /^FLZ\d{4}$/.test(clean);
+  if (valid) {
+    validatedReferCode = clean;
+    badge.classList.add('show');
+  } else {
+    validatedReferCode = '';
+    badge.classList.remove('show');
+  }
 }
 
 function showToast(msg, type='') {
@@ -130,7 +211,7 @@ function showToast(msg, type='') {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -181,6 +262,51 @@ window.googleLogin = async function() {
       lastLogin: new Date().toISOString()
     }, { merge: true });
 
+    // ── Save referral if code given & new user ────────────────────
+    const refCode = (typeof validatedReferCode !== 'undefined' ? validatedReferCode : '') ||
+                    document.getElementById('referCodeInput')?.value?.toUpperCase().trim() || '';
+
+    if (refCode && /^FLZ\d{4}$/.test(refCode) && !existing.exists()) {
+      try {
+        // Find referrer by code
+        // using top-level imports
+        const refQ = query(collection(db, 'referrers'), where('code', '==', refCode));
+        const refSnap = await getDocs(refQ);
+
+        if (!refSnap.empty) {
+          const referrerDoc = refSnap.docs[0];
+          const referrer = referrerDoc.data();
+
+          // Save referral record
+          await addDoc(collection(db, 'referrals'), {
+            referrerCode:  refCode,
+            referrerPhone: referrer.phone || '',
+            referrerName:  referrer.name  || '',
+            refereeUid:    user.uid,
+            refereeName:   user.displayName || '',
+            refereeEmail:  user.email || '',
+            status:        'pending',
+            amount:        500,
+            createdAt:     new Date().toISOString()
+          });
+
+          // Increment referrer's count
+          await updateDoc(referrerDoc.ref, {
+            totalReferrals: (referrer.totalReferrals || 0) + 1
+          });
+
+          showToast('Welcome! Referral code applied ✅');
+        } else {
+          showToast('Welcome ' + user.displayName + '! ✅');
+        }
+      } catch(refErr) {
+        console.warn('Referral save error:', refErr.message);
+        showToast('Welcome ' + user.displayName + '! ✅');
+      }
+    } else {
+      showToast('Welcome ' + user.displayName + '! ✅');
+    }
+
     // Save to localStorage
     localStorage.setItem('flatzy_user', JSON.stringify({
       name: user.displayName,
@@ -190,10 +316,9 @@ window.googleLogin = async function() {
       role: role
     }));
 
-    showToast('Welcome ' + user.displayName + '! ✅');
     setTimeout(() => {
       window.location = role === 'owner' ? 'owner.html' : 'index.html';
-    }, 1000);
+    }, 1200);
 
   } catch(e) {
     let msg = 'Google login failed ❌';

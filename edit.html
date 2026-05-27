@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Property – Flatzy</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); padding-bottom: 80px; }
+
+/* ── PAGE HEADER ── */
+.edit-header {
+  background: linear-gradient(120deg, #0F1C2E 0%, #1a3a6e 100%);
+  padding: 5.5rem 5% 2rem; color: white;
+}
+.edit-header h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.3rem; }
+.edit-header p { color: rgba(255,255,255,0.6); font-size: 0.88rem; }
+
+/* ── BACK BUTTON ── */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  color: white; padding: 0.45rem 1rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  text-decoration: none; margin-bottom: 1.2rem;
+  font-family: 'Syne', sans-serif; transition: background 0.2s;
+}
+.back-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* ── EDIT CONTENT ── */
+.edit-content { padding: 2rem 5%; }
+.edit-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 18px; padding: 2rem; box-shadow: var(--shadow-sm);
+  max-width: 720px; margin: 0 auto;
+}
+.edit-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; }
+
+/* ── FORM SECTIONS ── */
+.form-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.form-section:last-of-type { border-bottom: none; margin-bottom: 0; }
+.form-section-title {
+  font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+  color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;
+}
+
+/* ── AMENITY CHECKBOXES ── */
+.amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.amenity-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.55rem 0.8rem; background: var(--dark2);
+  border: 1.5px solid var(--border); border-radius: 8px;
+  cursor: pointer; font-size: 0.82rem; color: var(--muted);
+  transition: all 0.15s; user-select: none; font-weight: 500;
+}
+.amenity-item:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.amenity-item.checked {
+  background: var(--primary-light); border-color: var(--primary);
+  color: var(--primary); font-weight: 700;
+}
+.am-check {
+  display: none; width: 16px; height: 16px;
+  background: var(--primary); color: white; border-radius: 4px;
+  font-size: 0.65rem; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.amenity-item.checked .am-check { display: flex; }
+
+/* ── PHOTO UPLOAD ── */
+.photo-drop {
+  border: 2px dashed var(--border); border-radius: 12px;
+  padding: 1.5rem; text-align: center; cursor: pointer;
+  transition: all 0.2s; background: var(--dark2); margin-top: 0.8rem;
+}
+.photo-drop:hover { border-color: var(--primary); background: var(--primary-light); }
+.photo-drop-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.photo-thumbs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; position: relative; }
+.photo-thumb-wrap { position: relative; display: inline-block; }
+.photo-thumb {
+  width: 80px; height: 80px; object-fit: cover;
+  border-radius: 8px; border: 2px solid var(--border);
+  display: block; transition: opacity 0.2s;
+}
+.photo-thumb-wrap:hover .photo-thumb { opacity: 0.7; }
+.photo-remove {
+  position: absolute; top: -6px; right: -6px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #ef4444; color: white; border: none;
+  font-size: 0.65rem; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; font-weight: 800;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* ── STATUS BANNER ── */
+.loading-banner {
+  text-align: center; padding: 3rem;
+  color: var(--muted); font-size: 0.95rem;
+}
+
+/* ── SAVE BTN ── */
+.save-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: white; border-top: 1.5px solid var(--border);
+  padding: 1rem 5%; display: flex; gap: 1rem;
+  z-index: 500; box-shadow: 0 -4px 20px rgba(26,111,232,0.1);
+}
+.save-btn {
+  flex: 1; background: var(--primary); color: white;
+  border: none; padding: 0.85rem; border-radius: 12px;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(26,111,232,0.3);
+}
+.save-btn:hover { background: var(--primary-dark); }
+.save-btn:disabled { background: var(--muted); box-shadow: none; cursor: not-allowed; }
+.cancel-btn {
+  background: var(--dark2); color: var(--text);
+  border: 1.5px solid var(--border); padding: 0.85rem 1.5rem;
+  border-radius: 12px; font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+}
+.cancel-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ── CURRENT PHOTOS SECTION ── */
+.current-photos-label {
+  font-size: 0.75rem; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;
+}
+
+@media(max-width:768px) {
+  .edit-header { padding: 4.5rem 4% 1.5rem; }
+  .edit-content { padding: 1rem 4%; }
+  .edit-card { padding: 1.2rem; }
+  .amenity-grid { grid-template-columns: 1fr 1fr; }
+  .save-bar { padding: 0.8rem 4%; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html" class="active">Owner Dashboard</a>
+  </div>
+  <div style="display:flex;gap:0.5rem;align-items:center;">
+    <span style="font-size:0.9rem;color:var(--muted);" id="navName"></span>
+    <button onclick="logout()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.85rem;">Logout</button>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="edit-header">
+  <a href="owner.html" class="back-btn">← Back to Dashboard</a>
+  <h1>✏️ Edit Property</h1>
+  <p>Update your listing details. Changes will go live instantly.</p>
+</div>
+
+<!-- EDIT CONTENT -->
+<div class="edit-content">
+  <div id="loadingBanner" class="loading-banner">⏳ Loading property details...</div>
+
+  <div class="edit-card" id="editCard" style="display:none;">
+    <h3>📝 Edit Listing</h3>
+
+    <!-- BASIC INFO -->
+    <div class="form-section">
+      <div class="form-section-title">Basic Info</div>
+      <div class="form-group">
+        <label>Property Title</label>
+        <input type="text" id="eTitle" placeholder="e.g. Spacious 2BHK in Wandgori">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Property Type</label>
+          <select id="eType">
+            <option>Flat</option><option>PG</option><option>Hostel</option>
+            <option>Studio</option><option>Room</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>BHK / Room Type</label>
+          <select id="eBhk">
+            <option>1 BHK</option><option>2 BHK</option><option>3 BHK</option>
+            <option>Studio</option><option>PG</option><option>Hostel</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Area / Locality</label>
+          <select id="eArea">
+            <option>Wandongri</option><option>Higna</option><option>Lokmanya Nagar</option>
+            <option>Digdoh</option><option>Kalamna</option><option>Butibori</option>
+            <option>Koradi</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Floor</label>
+          <select id="eFloor">
+            <option>Ground</option><option>1st</option><option>2nd</option>
+            <option>3rd</option><option>4th+</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Full Address</label>
+        <input type="text" id="eAddress" placeholder="House/flat no, street, landmark">
+      </div>
+    </div>
+
+    <!-- RENT & FURNISHING -->
+    <div class="form-section">
+      <div class="form-section-title">Rent & Furnishing</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Monthly Rent (₹)</label>
+          <input type="number" id="eRent" placeholder="e.g. 8500">
+        </div>
+        <div class="form-group">
+          <label>Security Deposit (₹)</label>
+          <input type="number" id="eDeposit" placeholder="e.g. 17000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Furnishing</label>
+        <select id="eFurnish">
+          <option>Furnished</option><option>Semi-Furnished</option><option>Unfurnished</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Available From</label>
+        <input type="date" id="eAvailable">
+      </div>
+      <div class="form-group">
+        <label>Preferred Tenants</label>
+        <select id="eTenants">
+          <option>Any</option><option>Bachelor Boys</option><option>Bachelor Girls</option>
+          <option>Family</option><option>Working Professionals</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- AMENITIES -->
+    <div class="form-section">
+      <div class="form-section-title">Amenities <span style="font-size:0.72rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">(tap to select multiple)</span></div>
+      <div class="amenity-grid" id="eAmenityGrid">
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🅿️ Parking</div>
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>💧 24hr Water</div>
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>⚡ Power Backup</div>
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>📶 WiFi Ready</div>
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>❄️ AC Installed</div>
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🛗 Lift</div>
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🔒 CCTV</div>
+        <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🧹 Housekeeping</div>
+      </div>
+    </div>
+
+    <!-- DESCRIPTION & PHOTOS -->
+    <div class="form-section">
+      <div class="form-section-title">Description & Photos</div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="eDesc" rows="3" placeholder="Describe your property…"></textarea>
+      </div>
+
+      <!-- Current Photos -->
+      <div id="currentPhotosWrap" style="display:none; margin-bottom:1rem;">
+        <div class="current-photos-label">Current Photos</div>
+        <div class="photo-thumbs" id="currentPhotoThumbs"></div>
+      </div>
+
+      <!-- Upload New Photos -->
+      <div class="current-photos-label" style="margin-top:0.8rem;">Add / Replace Photos</div>
+      <div class="photo-drop" onclick="document.getElementById('ePhotoInput').click()">
+        <div class="photo-drop-icon">📷</div>
+        <div style="font-weight:700;font-size:0.9rem;">Click to add photos</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">JPG, PNG up to 5MB each · New photos will be added</div>
+        <input type="file" id="ePhotoInput" accept="image/*" multiple style="display:none" onchange="uploadNewPhotos(this)">
+      </div>
+      <div class="photo-thumbs" id="newPhotoThumbs"></div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="form-section" style="border-bottom:none;">
+      <div class="form-section-title">Your Contact</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="eOwnerName" placeholder="Name shown to tenants">
+        </div>
+        <div class="form-group">
+          <label>WhatsApp / Phone</label>
+          <input type="tel" id="eOwnerPhone" placeholder="10-digit number">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIXED SAVE BAR -->
+<div class="save-bar" id="saveBar" style="display:none;">
+  <button class="cancel-btn" onclick="window.location='owner.html'">Cancel</button>
+  <button class="save-btn" id="saveBtn" onclick="saveChanges()">💾 Save Changes</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+};
+
+const fbApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+
+// ── Cloudinary ────────────────────────────────────────────────────
+const CLOUD_NAME    = 'dhl8byas2';
+const UPLOAD_PRESET = 'flatzy_upload';
+
+let propId       = null;
+let currentUser  = null;
+let existingPhotos = []; // urls already saved
+let newPhotoUrls   = []; // newly uploaded urls
+
+// ── Auth Guard ────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (!user) { window.location = 'login.html'; return; }
+  currentUser = user;
+  document.getElementById('navName').textContent = user.displayName?.split(' ')[0] || '';
+  loadProperty();
+});
+
+// ── Load Property ─────────────────────────────────────────────────
+async function loadProperty() {
+  const params = new URLSearchParams(window.location.search);
+  propId = params.get('id');
+
+  if (!propId) {
+    document.getElementById('loadingBanner').innerHTML = '❌ No property ID found. <a href="owner.html">Go back</a>';
+    return;
+  }
+
+  try {
+    const snap = await getDoc(doc(db, 'properties', propId));
+    if (!snap.exists()) {
+      document.getElementById('loadingBanner').innerHTML = '❌ Property not found. <a href="owner.html">Go back</a>';
+      return;
+    }
+
+    const p = { id: snap.id, ...snap.data() };
+
+    // Security: only owner can edit
+    if (p.ownerUid && p.ownerUid !== currentUser.uid) {
+      document.getElementById('loadingBanner').innerHTML = '🔒 You are not authorized to edit this property.';
+      return;
+    }
+
+    prefillForm(p);
+    document.getElementById('loadingBanner').style.display = 'none';
+    document.getElementById('editCard').style.display     = 'block';
+    document.getElementById('saveBar').style.display      = 'flex';
+
+  } catch(e) {
+    document.getElementById('loadingBanner').innerHTML = '❌ Error loading property: ' + e.message;
+  }
+}
+
+// ── Pre-fill Form ─────────────────────────────────────────────────
+function prefillForm(p) {
+  setVal('eTitle',      p.title      || '');
+  setVal('eRent',       p.rent       || '');
+  setVal('eDeposit',    p.deposit    || '');
+  setVal('eAddress',    p.address    || '');
+  setVal('eDesc',       p.desc       || '');
+  setVal('eOwnerName',  p.ownerName  || '');
+  setVal('eOwnerPhone', p.ownerPhone || p.phone || '');
+  setVal('eAvailable',  p.available  || '');
+  setSelectVal('eType',    p.type);
+  setSelectVal('eBhk',     p.bhk);
+  setSelectVal('eArea',    p.area);
+  setSelectVal('eFloor',   p.floor);
+  setSelectVal('eFurnish', p.furnish);
+  setSelectVal('eTenants', p.tenants);
+
+  // Pre-select amenities
+  if (p.amenities && p.amenities.length) {
+    document.querySelectorAll('#eAmenityGrid .amenity-item').forEach(el => {
+      const label = el.textContent.replace('✓','').trim();
+      if (p.amenities.some(a => a.trim() === label)) {
+        el.classList.add('checked');
+      }
+    });
+  }
+
+  // Show existing photos
+  existingPhotos = p.photos || (p.mainPhoto ? [p.mainPhoto] : []);
+  renderExistingPhotos();
+}
+
+function renderExistingPhotos() {
+  const wrap   = document.getElementById('currentPhotosWrap');
+  const thumbs = document.getElementById('currentPhotoThumbs');
+  if (!existingPhotos.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  thumbs.innerHTML = existingPhotos.map((url, i) => `
+    <div class="photo-thumb-wrap">
+      <img class="photo-thumb" src="${url}" alt="photo ${i+1}">
+      <button class="photo-remove" onclick="removeExistingPhoto(${i})" title="Remove">✕</button>
+    </div>
+  `).join('');
+}
+
+window.removeExistingPhoto = function(idx) {
+  existingPhotos.splice(idx, 1);
+  renderExistingPhotos();
+  showToast('Photo removed. Save to apply.');
+};
+
+// ── Upload New Photos ─────────────────────────────────────────────
+window.uploadNewPhotos = async function(input) {
+  const thumbs = document.getElementById('newPhotoThumbs');
+  const files  = Array.from(input.files).slice(0, 8);
+  if (!files.length) return;
+
+  thumbs.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:0.5rem;">⏳ Uploading...</div>';
+
+  const promises = files.map(file => {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', UPLOAD_PRESET);
+    return fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd })
+      .then(r => r.json())
+      .then(d => d.secure_url || null);
+  });
+
+  try {
+    const urls = (await Promise.all(promises)).filter(Boolean);
+    newPhotoUrls = [...newPhotoUrls, ...urls];
+    thumbs.innerHTML = newPhotoUrls.map((url, i) => `
+      <div class="photo-thumb-wrap">
+        <img class="photo-thumb" src="${url}" alt="new photo">
+        <button class="photo-remove" onclick="removeNewPhoto(${i})" title="Remove">✕</button>
+      </div>
+    `).join('');
+    showToast(`✅ ${urls.length} photo(s) uploaded!`);
+  } catch(e) {
+    thumbs.innerHTML = '<div style="color:#DC2626;font-size:0.85rem;">❌ Upload failed. Try again.</div>';
+    showToast('Upload failed', true);
+  }
+};
+
+window.removeNewPhoto = function(idx) {
+  newPhotoUrls.splice(idx, 1);
+  const thumbs = document.getElementById('newPhotoThumbs');
+  thumbs.innerHTML = newPhotoUrls.map((url, i) => `
+    <div class="photo-thumb-wrap">
+      <img class="photo-thumb" src="${url}" alt="new">
+      <button class="photo-remove" onclick="removeNewPhoto(${i})">✕</button>
+    </div>
+  `).join('');
+};
+
+// ── Save Changes ──────────────────────────────────────────────────
+window.saveChanges = async function() {
+  const title = document.getElementById('eTitle').value.trim();
+  const rent  = document.getElementById('eRent').value.trim();
+  const phone = document.getElementById('eOwnerPhone').value.trim();
+
+  if (!title) { showToast('Enter property title', true); return; }
+  if (!rent)  { showToast('Enter monthly rent', true);   return; }
+  if (!phone || phone.length !== 10) { showToast('Enter valid 10-digit phone', true); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '⏳ Saving...'; btn.disabled = true;
+
+  const amenities = Array.from(document.querySelectorAll('#eAmenityGrid .amenity-item.checked'))
+    .map(el => el.textContent.replace('✓','').trim());
+
+  // Merge existing + new photos
+  const allPhotos = [...existingPhotos, ...newPhotoUrls];
+
+  const updates = {
+    title,
+    rent:       Number(rent),
+    deposit:    document.getElementById('eDeposit').value || '',
+    type:       document.getElementById('eType').value,
+    bhk:        document.getElementById('eBhk').value,
+    area:       document.getElementById('eArea').value,
+    floor:      document.getElementById('eFloor').value,
+    address:    document.getElementById('eAddress').value,
+    furnish:    document.getElementById('eFurnish').value,
+    available:  document.getElementById('eAvailable').value,
+    tenants:    document.getElementById('eTenants').value,
+    desc:       document.getElementById('eDesc').value,
+    ownerName:  document.getElementById('eOwnerName').value,
+    ownerPhone: phone,
+    amenities,
+    photos:     allPhotos,
+    mainPhoto:  allPhotos[0] || null,
+    updatedAt:  new Date().toISOString()
+  };
+
+  try {
+    await updateDoc(doc(db, 'properties', propId), updates);
+    showToast('✅ Property updated successfully!');
+    setTimeout(() => window.location = 'owner.html', 1400);
+  } catch(e) {
+    showToast('❌ Save failed: ' + e.message, true);
+    btn.textContent = '💾 Save Changes'; btn.disabled = false;
+  }
+};
+
+// ── Helpers ───────────────────────────────────────────────────────
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function setSelectVal(id, val) {
+  const el = document.getElementById(id);
+  if (!el || !val) return;
+  for (let opt of el.options) {
+    if (opt.value === val || opt.text === val) { opt.selected = true; break; }
+  }
+}
+
+window.toggleAmenity = function(el) { el.classList.toggle('checked'); };
+
+window.logout = async function() {
+  await signOut(auth);
+  localStorage.removeItem('flatzy_user');
+  window.location = 'index.html';
+};
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (err ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+
+</body>
+</html>

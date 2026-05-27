@@ -42,6 +42,8 @@ body { background: var(--dark2); }
 .amenity-item:hover { border-color: var(--primary); color: var(--primary); }
 .amenity-item.checked { background: var(--primary-light); border-color: var(--primary); color: var(--primary); font-weight: 700; }
 .amenity-item input { display: none; }
+.am-check { display: none; width: 16px; height: 16px; background: var(--primary); color: white; border-radius: 4px; font-size: 0.65rem; align-items: center; justify-content: center; flex-shrink: 0; }
+.amenity-item.checked .am-check { display: flex; }
 
 /* PHOTO UPLOAD */
 .photo-drop { border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--dark2); }
@@ -180,15 +182,15 @@ body { background: var(--dark2); }
 
       <div class="form-section">
         <div class="form-section-title">Amenities</div>
-        <div class="amenity-grid">
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🅿️ Parking</label>
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">💧 24hr Water</label>
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">⚡ Power Backup</label>
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">📶 WiFi Ready</label>
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">❄️ AC Installed</label>
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🛗 Lift</label>
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🔒 CCTV</label>
-          <label class="amenity-item" onclick="this.classList.toggle('checked')"><input type="checkbox">🧹 Housekeeping</label>
+        <div class="amenity-grid" id="amenityGrid">
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🅿️ Parking</div>
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>💧 24hr Water</div>
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>⚡ Power Backup</div>
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>📶 WiFi Ready</div>
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>❄️ AC Installed</div>
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🛗 Lift</div>
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🔒 CCTV</div>
+          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🧹 Housekeeping</div>
         </div>
       </div>
 
@@ -392,7 +394,7 @@ window.submitProperty = async function() {
   const btn = document.querySelector('#tab-add .btn-full.primary');
   if(btn) { btn.textContent = '⏳ Posting...'; btn.disabled = true; }
 
-  const checkedAmenities = Array.from(document.querySelectorAll('.amenity-item.checked')).map(el=>el.textContent.trim());
+  const checkedAmenities = Array.from(document.querySelectorAll('#amenityGrid .amenity-item.checked')).map(el=>el.textContent.replace('✓','').trim());
 
   const prop = {
     title, rent: Number(rent),
@@ -485,7 +487,7 @@ window.previewPhotos = async function(input) {
 };
 
 // ── Edit / Delete ─────────────────────────────────────────────────
-window.editPropFn  = function(id) { showToast('Edit feature coming soon! ✏️'); };
+window.editPropFn = function(id) { window.location = 'edit.html?id=' + id; };
 
 window.deletePropFn = function(id) {
   pendingDeleteId = id;

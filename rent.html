@@ -386,7 +386,7 @@ window.showDetail = function(p) {
         <div class="detail-price-unit">/month</div>
       </div>
       <div class="detail-deposit">Security Deposit: ₹${Number(p.deposit||p.rent*2).toLocaleString('en-IN')}</div>
-      ${p.amenities?.length?`<div class="detail-section-title">Amenities</div><div class="amenity-list">${p.amenities.map(a=>`<span class="amen-pill">${a}</span>`).join('')}</div>`:''}
+      ${p.amenities?.length?`<div class="detail-section-title">Amenities <span style="font-size:0.7rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">(Subject to Availability)</span></div><div class="amenity-list">${p.amenities.map(a=>`<span class="amen-pill">${a}</span>`).join('')}</div>`:''}
       ${p.desc?`<div class="detail-section-title">Description</div><div class="detail-desc">${p.desc}</div>`:''}
       <div class="contact-card">
         <div class="contact-owner-info">
@@ -410,16 +410,29 @@ window.revealContact = function(id, phone, name) {
     setTimeout(() => window.location = 'login.html', 1500);
     return;
   }
+  // Find the property details for the message
+  const prop = allProps.find(p => p.id === id);
+  const area = prop ? prop.area : '';
+  const bhk  = prop ? prop.bhk  : '';
+  const ownerName = name || (prop ? (prop.ownerName || prop.owner || 'Owner') : 'Owner');
+
+  // Build WhatsApp message
+  const msg = `I'm viewing ${area} ${bhk} flat\nOwner name:- ${ownerName}\nGive me detail property details?`;
+  const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+
+  // Open WhatsApp directly
+  window.open(waUrl, '_blank');
+
   contactRevealed[id] = true;
   const card = document.getElementById('detailContent').querySelector('.contact-card');
   if (card) {
     const btn = card.querySelector('.reveal-btn');
-    if (btn) btn.outerHTML = `<a href="tel:+91${phone}" class="reveal-btn">📞 Call Now</a>`;
+    if (btn) btn.outerHTML = `<a href="${waUrl}" target="_blank" class="reveal-btn" style="background:#25D366;">💬 WhatsApp</a>`;
     const info = card.querySelector('.contact-owner-info');
     if (info && !card.querySelector('.phone-revealed'))
       info.innerHTML += `<div class="phone-revealed">📞 +91 ${phone}</div>`;
   }
-  showToast('Contact revealed! 📞');
+  showToast('WhatsApp opening! 💬');
 };
 
 window.closeModal = function() { document.getElementById('detailModal').classList.remove('active'); };

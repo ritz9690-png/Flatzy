@@ -57,6 +57,12 @@ body { background: var(--dark2); }
   background: white; border: 1.5px solid var(--border);
   border-radius: 20px; padding: 2rem;
   box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.story-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(26,111,232,0.12);
+  border-color: #93c5fd;
 }
 .story-card p {
   font-size: 0.95rem; line-height: 1.8;
@@ -75,6 +81,11 @@ body { background: var(--dark2); }
   border-radius: 20px; padding: 2.5rem 2rem;
   text-align: center; margin-bottom: 1.5rem;
   box-shadow: var(--shadow-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.mission-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(26,111,232,0.25);
 }
 .mission-card h2 {
   font-size: 1.6rem; font-weight: 800;
@@ -175,6 +186,12 @@ body { background: var(--dark2); }
   display: flex; justify-content: space-around;
   flex-wrap: wrap; gap: 1rem;
   box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.stats-strip:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(26,111,232,0.10);
+  border-color: #93c5fd;
 }
 .stat-item { text-align: center; }
 .stat-num {
@@ -272,7 +289,7 @@ body { background: var(--dark2); }
   <div class="section-title" style="text-align:left;margin-bottom:1rem;">Our Story</div>
   <div class="story-card">
     <p>Flatzy was born from the vision of <strong>Sarvadnya Bhoyar</strong>, a Computer Science student at YCCE Nagpur. As a student himself, he experienced the struggles of finding quality rental properties — confusing listings, poor communication, and hidden broker fees made the process stressful.</p>
-    <p>Determined to solve this problem, he built a platform focused on <a href="#">verified listings, user trust, and customer-first support</a>. What started as a college project has now grown into a startup helping people across Nagpur find homes easily and confidently.</p>
+    <p>Determined to solve this problem, he built a platform focused on <a href="#">verified listings, user trust, and customer-first support</a> — helping people across Nagpur find homes easily and confidently.</p>
     <p>Our story is one of passion, innovation, and the belief that technology can make the rental experience smoother, safer, and more reliable for everyone.</p>
   </div>
 
@@ -291,15 +308,15 @@ body { background: var(--dark2); }
       <div class="stat-lbl">Areas in Nagpur</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">100%</div>
-      <div class="stat-lbl">Trusted and Verified SITE</div>
+      <div class="stat-num">0</div>
+      <div class="stat-lbl">Brokerage Fees</div>
     </div>
   </div>
 
   <!-- OUR MISSION -->
   <div class="mission-card">
     <h2>Our Mission</h2>
-    <p>Our mission is to <span>revolutionize the rental experience</span> by providing a transparent, reliable, and user-friendly platform that connects people with their perfect homes. As a startup built by a <strong>Computer Science student from YCCE</strong>, we are driven by innovation, fresh ideas, and the passion to solve real problems. We're committed to building trust, fostering community, and making quality housing accessible to everyone.</p>
+    <p>Our mission is to <span>revolutionize the rental experience</span> by providing a transparent, reliable, and user-friendly platform that connects people with their perfect homes. We are driven by innovation, fresh ideas, and the passion to solve real problems. We're committed to building trust, fostering community, and making quality housing accessible to everyone.</p>
   </div>
 
   <!-- OUR VALUES -->
