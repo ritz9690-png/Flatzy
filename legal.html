@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: #f8fafc; }
+
+.page-hero {
+  margin-top: 64px;
+  background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
+  padding: 3rem 5% 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(96,180,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.page-hero .badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+  color: #fff; padding: 0.4rem 1rem; border-radius: 100px;
+  font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem;
+}
+.page-hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800; color: white; margin-bottom: 0.5rem; letter-spacing: -1px;
+}
+.page-hero p { color: rgba(255,255,255,0.65); font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+/* TABS */
+.tab-bar {
+  display: flex; gap: 0; justify-content: center;
+  position: relative; z-index: 1;
+}
+.tab-btn {
+  padding: 0.85rem 2.5rem;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+  color: rgba(255,255,255,0.6); background: transparent;
+  border: none; border-bottom: 3px solid transparent;
+  cursor: pointer; transition: all 0.2s;
+}
+.tab-btn.active {
+  color: white;
+  border-bottom: 3px solid #60b4ff;
+  background: rgba(255,255,255,0.08);
+}
+.tab-btn:hover:not(.active) { color: rgba(255,255,255,0.85); }
+
+/* CONTENT */
+.content-wrap {
+  max-width: 800px; margin: 0 auto;
+  padding: 2rem 5% 5rem;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.legal-card {
+  background: white; border: 1.5px solid #e5e7eb;
+  border-radius: 20px; padding: 1.8rem 2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.legal-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(26,111,232,0.10);
+  border-color: #93c5fd;
+}
+.legal-card h2 {
+  font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800;
+  color: #1a1a2e; margin-bottom: 0.8rem;
+  padding-bottom: 0.6rem; border-bottom: 2px solid #EBF2FF;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.legal-card p, .legal-card li {
+  font-size: 0.88rem; color: #4b5563; line-height: 1.85; margin-bottom: 0.5rem;
+}
+.legal-card ul { padding-left: 1.2rem; margin-bottom: 0.5rem; }
+.legal-card li { margin-bottom: 0.3rem; }
+.legal-card strong { color: #1a1a2e; }
+
+.info-box {
+  border-radius: 12px; padding: 1rem 1.2rem;
+  font-size: 0.85rem; line-height: 1.6; margin-bottom: 1rem;
+}
+.info-box.blue { background: #f0f9ff; border: 1.5px solid #bae6fd; color: #0369a1; }
+.info-box.orange { background: #fff7ed; border: 1.5px solid #fed7aa; color: #c2410c; }
+
+.updated-note {
+  font-size: 0.75rem; color: #9ca3af;
+  text-align: center; margin-bottom: 1.2rem;
+}
+
+@media(max-width:480px) {
+  .tab-btn { padding: 0.75rem 1.3rem; font-size: 0.82rem; }
+}
+</style>
+</head>
+<body class="has-bottom-nav">
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+    <a href="about.html">About</a>
+  </div>
+  <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <a href="login.html" class="nav-btn outline">Login</a>
+    <a href="login.html" class="nav-btn">Sign Up Free</a>
+  </div>
+  <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
+    <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
+    <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
+    <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
+  </div>
+</nav>
+
+<!-- HERO + TABS -->
+<div class="page-hero">
+  <div class="badge">📄 Legal</div>
+  <h1>Privacy & Terms</h1>
+  <p>Flatzy Nagpur · Last updated: January 2025</p>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('policy', this)">🔒 Privacy Policy</button>
+    <button class="tab-btn" onclick="switchTab('terms', this)">📋 Terms & Conditions</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content-wrap">
+
+  <!-- ── PRIVACY POLICY ── -->
+  <div class="tab-panel active" id="panel-policy">
+
+    <div class="updated-note">Effective Date: 1st January 2025 · Flatzy Nagpur</div>
+
+    <div class="info-box blue">
+      🛡️ <strong>Your privacy matters to us.</strong> Flatzy collects only the information needed to help you find a home. We never sell your data to third parties.
+    </div>
+
+    <div class="legal-card">
+      <h2>📋 1. Information We Collect</h2>
+      <p>When you use Flatzy, we may collect:</p>
+      <ul>
+        <li><strong>Google Account Info:</strong> Name, email, and profile photo when you sign in with Google.</li>
+        <li><strong>Usage Data:</strong> Pages visited, properties viewed, search filters used.</li>
+        <li><strong>Contact Info:</strong> Phone number if you register as a referrer or property owner.</li>
+        <li><strong>Property Listings:</strong> Details, photos, and contact info submitted by owners.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>🎯 2. How We Use Your Information</h2>
+      <ul>
+        <li>To show you relevant property listings in Nagpur.</li>
+        <li>To allow property owners and tenants to connect directly.</li>
+        <li>To process referral rewards and track referral activity.</li>
+        <li>To improve the Flatzy platform and user experience.</li>
+        <li>To send important updates about your listings or account.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>🔗 3. How We Share Your Information</h2>
+      <p>We do <strong>not sell</strong> your personal data. We share only in these cases:</p>
+      <ul>
+        <li><strong>Owner/Tenant Contact:</strong> When you reveal a number, that interaction is direct between both parties.</li>
+        <li><strong>Firebase (Google):</strong> Our database and auth are powered by Google Firebase.</li>
+        <li><strong>Legal Requirements:</strong> If required by law or government authority.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>🍪 4. Cookies & Local Storage</h2>
+      <p>Flatzy uses browser local storage to remember your login session and preferences. We do not use third-party advertising cookies.</p>
+    </div>
+
+    <div class="legal-card">
+      <h2>🔐 5. Data Security</h2>
+      <p>Your data is stored securely on Google Firebase servers with industry-standard encryption. We use Google Sign-In so no passwords are stored on our servers.</p>
+    </div>
+
+    <div class="legal-card">
+      <h2>👤 6. Your Rights</h2>
+      <ul>
+        <li>You can request deletion of your account and data at any time.</li>
+        <li>You can update your profile through your Google account.</li>
+        <li>You can opt out by contacting us on WhatsApp.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>📞 7. Contact Us</h2>
+      <p>💬 <strong>WhatsApp:</strong> <a href="https://wa.me/917385866455" target="_blank" style="color:#1a6fe8;font-weight:600;">+91 73858 66455</a></p>
+      <p>🌐 <strong>Website:</strong> flatzyhomes.web.app</p>
+    </div>
+
+  </div>
+
+  <!-- ── TERMS & CONDITIONS ── -->
+  <div class="tab-panel" id="panel-terms">
+
+    <div class="updated-note">Effective Date: 1st January 2025 · Flatzy Nagpur</div>
+
+    <div class="info-box orange">
+      ⚠️ By using Flatzy, you agree to these Terms & Conditions. Please read carefully before using our platform.
+    </div>
+
+    <div class="legal-card">
+      <h2>📌 1. About Flatzy</h2>
+      <p>Flatzy is an online property listing platform operating in Nagpur, Maharashtra. We connect property owners directly with tenants — without any brokerage or commission.</p>
+      <p>Flatzy is a platform service only. We are not a real estate agency, broker, or party to any rental agreement.</p>
+    </div>
+
+    <div class="legal-card">
+      <h2>✅ 2. Eligibility</h2>
+      <ul>
+        <li>You must be at least 18 years of age to use Flatzy.</li>
+        <li>You must provide accurate information during registration.</li>
+        <li>You must have a valid Google account to sign in.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>🏠 3. For Property Owners</h2>
+      <ul>
+        <li>You must be the legal owner or authorized agent of any listed property.</li>
+        <li>All listing information must be accurate and truthful.</li>
+        <li>Flatzy reserves the right to remove listings that violate our guidelines.</li>
+        <li>You are solely responsible for the rental agreement with your tenant.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>🔍 4. For Tenants</h2>
+      <ul>
+        <li>Flatzy provides listings for informational purposes only. We do not guarantee availability.</li>
+        <li>You are responsible for verifying property details before making any payment.</li>
+        <li>Flatzy is not liable for disputes between tenants and owners.</li>
+        <li><strong>Do not make advance payments without physically visiting the property.</strong></li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>🎁 5. Refer & Earn Program</h2>
+      <ul>
+        <li>Rewards paid only after referred user successfully finds a home through Flatzy.</li>
+        <li>Maximum earning capped at ₹3,000 per calendar month per referrer.</li>
+        <li>Flatzy may modify or discontinue the referral program at any time.</li>
+        <li>Fraudulent referrals will result in permanent disqualification.</li>
+        <li>Rewards paid via UPI within 7 working days of verification.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>🚫 6. Prohibited Activities</h2>
+      <ul>
+        <li>Posting fake, duplicate, or misleading property listings.</li>
+        <li>Harassing, threatening, or abusing other users.</li>
+        <li>Using Flatzy for any illegal activity.</li>
+        <li>Attempting to scrape, hack, or reverse engineer the platform.</li>
+        <li>Impersonating another person or creating multiple accounts.</li>
+      </ul>
+    </div>
+
+    <div class="legal-card">
+      <h2>⚖️ 7. Disclaimer of Liability</h2>
+      <p>Flatzy is a <strong>listing platform only</strong>. We do not guarantee listing accuracy, take responsibility for rental disputes, or verify every photo submitted by owners.</p>
+      <p>Always visit a property in person before committing to a rental.</p>
+    </div>
+
+    <div class="legal-card">
+      <h2>⚖️ 8. Governing Law</h2>
+      <p>These terms are governed by the laws of India. Any disputes shall be subject to the jurisdiction of courts in Nagpur, Maharashtra.</p>
+    </div>
+
+    <div class="legal-card">
+      <h2>📞 9. Contact Us</h2>
+      <p>💬 <strong>WhatsApp:</strong> <a href="https://wa.me/917385866455" target="_blank" style="color:#1a6fe8;font-weight:600;">+91 73858 66455</a></p>
+      <p>🌐 <strong>Website:</strong> flatzyhomes.web.app</p>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Flat<span>zy</span></div>
+      <div class="footer-desc">Nagpur's trusted property platform. Find flats, PGs and hostels in Wandgori, Higna, Digdoh and more. No brokers, no fees.</div>
+      <div style="margin-top:1rem;">
+        <a href="https://wa.me/917385866455" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">💬 WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="rent.html">Browse Properties</a>
+      <a href="owner.html">List Property</a>
+      <a href="refer.html">Refer & Earn</a>
+      <a href="about.html">About Us</a>
+      <a href="legal.html?tab=policy">Privacy Policy</a>
+      <a href="legal.html?tab=terms">Terms & Conditions</a>
+    </div>
+    <div class="footer-col">
+      <h4>Areas</h4>
+      <a href="rent.html?area=Wandgori">Wandongri</a>
+      <a href="rent.html?area=Higna">Higna</a>
+      <a href="rent.html?area=Digdoh">Digdoh</a>
+      <a href="rent.html?area=Kalamna">Kalamna</a>
+      <a href="rent.html?area=Butibori">Butibori</a>
+      <a href="rent.html?area=Besa">Koradi</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Flatzy Nagpur. All rights reserved.</div>
+    <div class="footer-copy">Made with ❤️ for Nagpur</div>
+  </div>
+</footer>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span>Home</a>
+  <a href="rent.html" class="bn-item"><span class="bn-icon">🔍</span>Browse</a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item"><span class="bn-icon">🎁</span>Refer</a>
+  <a href="login.html" class="bn-item"><span class="bn-icon">👤</span>Profile</a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  btn.classList.add('active');
+  // Update URL without reload
+  const url = new URL(window.location);
+  url.searchParams.set('tab', tab);
+  history.replaceState(null, '', url);
+}
+
+// Auto-open tab from URL param e.g. legal.html?tab=terms
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  if (tab === 'terms') {
+    const btn = document.querySelectorAll('.tab-btn')[1];
+    switchTab('terms', btn);
+  }
+})();
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const app = getApps().length ? getApps()[0] : initializeApp({
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+});
+const auth = getAuth(app);
+onAuthStateChanged(auth, user => {
+  document.getElementById('navGuest').style.display = user ? 'none' : 'flex';
+  document.getElementById('navUser').style.display  = user ? 'flex' : 'none';
+  if (user) {
+    document.getElementById('navName').textContent = user.displayName?.split(' ')[0] || '';
+    const p = document.getElementById('navPhoto');
+    if (user.photoURL) { p.src = user.photoURL; p.style.display = 'block'; }
+  }
+});
+window.logoutUser = async function() {
+  await signOut(auth);
+  localStorage.removeItem('flatzy_user');
+  window.location = 'index.html';
+};
+</script>
+</body>
+</html>
