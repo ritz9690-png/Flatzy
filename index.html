@@ -8,16 +8,23 @@
 <link rel="icon" type="image/png" href="favicon.jpeg">
 <style>
 /* ---- HERO ---- */
+/* topnav base styles from style.css — only overrides here */
 .topnav{
-  position: fixed;
-  top: 0;
-  left: 0;
+  flex-direction: column;
+  align-items: stretch;
+  height: auto;
+  padding: 0;
+}
+.topnav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4%;
+  height: 62px;
   width: 100%;
-  z-index: 999;
-  background: white;
 }
 .hero{
-  margin-top: var(--nav-h);
+  margin-top: calc(var(--nav-h) + 34px); /* 62px nav + ~34px social strip */
   min-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -27,7 +34,7 @@
   overflow: hidden;
 }
 @media(max-width:768px) {
-  .hero { min-height: 65vh; padding: 2.5rem 5% 2.5rem; }
+  .hero { min-height: 65vh; padding: 2.5rem 5% 2.5rem; margin-top: calc(var(--nav-h) + 34px); }
   .hero h1 { font-size: 2.3rem; letter-spacing: -1.5px; }
   .hero p { font-size: 0.95rem; }
   .hero-btns { gap: 0.8rem; }
@@ -212,8 +219,60 @@
 </head>
 <body class="has-bottom-nav">
 
+<!-- SOCIAL STRIP CSS -->
+<style>
+.social-strip-wrap {
+  overflow: hidden;
+  background: linear-gradient(90deg, #0f172a, #1a3a6e, #0f172a);
+  padding: 0.5rem 0;
+  width: 100%;
+}
+.social-strip-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: socialScrollReverse 22s linear infinite;
+  align-items: center;
+}
+.social-strip-track span {
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ssep { color: #60b4ff !important; font-size: 0.7rem !important; }
+@keyframes socialScrollReverse {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+</style>
+
 <!-- NAV -->
 <nav class="topnav">
+
+  <!-- SOCIAL WELCOME STRIP (top of nav, reversed direction) -->
+  <div class="social-strip-wrap">
+    <div class="social-strip-track">
+      <span>🏠 Welcome to Flatzy Nagpur</span>
+      <span class="ssep">✦</span>
+      <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
+      <span class="ssep">✦</span>
+      <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
+      <span class="ssep">✦</span>
+      <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
+      <span class="ssep">✦</span>
+      <span>🏠 Welcome to Flatzy Nagpur</span>
+      <span class="ssep">✦</span>
+      <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
+      <span class="ssep">✦</span>
+      <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
+      <span class="ssep">✦</span>
+      <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
+      <span class="ssep">✦</span>
+    </div>
+  </div>
+
+  <div class="topnav-row">
   <a href="index.html" class="logo">
   <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
   <span>Flat<span style="color:#0ea5e9;">zy</span></span>
@@ -232,62 +291,13 @@
     <a href="login.html" class="nav-btn">Sign Up Free</a>
   </div>
   <!-- Nav: shown when logged in -->
-  <div id="navUser" style="display:none;flex;gap:0.5rem;align-items:center;">
+  <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
     <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
     <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
     <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
   </div>
+  </div><!-- /.topnav-row -->
 </nav>
-
-<!-- SOCIAL WELCOME STRIP (above hero) -->
-<div class="social-strip-wrap">
-  <div class="social-strip-track">
-    <span>🏠 Welcome to Flatzy</span>
-    <span class="ssep">✦</span>
-    <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
-    <span class="ssep">✦</span>
-    <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
-    <span class="ssep">✦</span>
-    <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
-    <span class="ssep">✦</span>
-    <span>🏠 Welcome to Flatzy</span>
-    <span class="ssep">✦</span>
-    <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
-    <span class="ssep">✦</span>
-    <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
-    <span class="ssep">✦</span>
-    <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
-    <span class="ssep">✦</span>
-  </div>
-</div>
-
-<style>
-.social-strip-wrap {
-  overflow: hidden;
-  background: linear-gradient(90deg, #0f172a, #1a3a6e, #0f172a);
-  padding: 0.5rem 0;
-  position: relative;
-  z-index: 998;
-}
-.social-strip-track {
-  display: flex;
-  gap: 2rem;
-  width: max-content;
-  animation: socialScroll 22s linear infinite;
-  align-items: center;
-}
-.social-strip-track span {
-  color: #e2e8f0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.ssep { color: #60b4ff !important; font-size: 0.7rem !important; }
-@keyframes socialScroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-</style>
 
 <!-- HERO -->
 <section class="hero">

@@ -89,9 +89,16 @@ nav.topnav {
 nav.topnav::after {
   content: '';
   position: absolute;
-  bottom: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent 0%, var(--primary) 40%, var(--accent) 60%, transparent 100%);
-  opacity: 0.5;
+  bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent 0%, var(--primary) 20%, var(--accent) 50%, #a855f7 70%, var(--primary) 85%, transparent 100%);
+  background-size: 200% 100%;
+  opacity: 1;
+  animation: navLineShimmer 3s linear infinite;
+  box-shadow: 0 0 8px rgba(26,111,232,0.6), 0 0 16px rgba(14,165,233,0.4);
+}
+@keyframes navLineShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
 }
 
 .logo {
