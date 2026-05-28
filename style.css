@@ -576,6 +576,55 @@ footer::after {
 .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 1.2rem; }
 
 /* ============================================================
+   SOCIAL LINK TICKER STRIP (white bg, below search/lifestyle)
+   ============================================================ */
+.social-link-strip {
+  overflow: hidden;
+  background: #ffffff;
+  border-top: 1px solid rgba(26,111,232,0.10);
+  border-bottom: 1px solid rgba(26,111,232,0.10);
+  padding: 0.55rem 0;
+  position: relative;
+}
+.social-link-strip::before,
+.social-link-strip::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2;
+  pointer-events: none;
+}
+.social-link-strip::before {
+  left: 0;
+  background: linear-gradient(to right, #ffffff 0%, transparent 100%);
+}
+.social-link-strip::after {
+  right: 0;
+  background: linear-gradient(to left, #ffffff 0%, transparent 100%);
+}
+.social-link-track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: socialLinkScroll 28s linear infinite;
+  align-items: center;
+}
+.social-link-track:hover { animation-play-state: paused; }
+.social-link-track a, .social-link-track span {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 0.8rem; font-weight: 600;
+  white-space: nowrap; text-decoration: none;
+  transition: color 0.2s;
+}
+.social-link-track a { color: var(--primary); }
+.social-link-track a:hover { color: var(--primary-dark); }
+.social-link-track span.sls-sep { color: var(--border); font-size: 0.7rem; }
+.social-link-track span.sls-welcome { color: var(--muted); }
+.social-link-track img { border-radius: 4px; vertical-align: middle; }
+@keyframes socialLinkScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ============================================================
    CHIPS / BADGES
    ============================================================ */
 .chip {
