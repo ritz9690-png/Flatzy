@@ -566,13 +566,9 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
     <path d="M16 0C7.163 0 0 7.163 0 16c0 2.827.738 5.476 2.027 7.776L0 32l8.443-2.013A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.07 22.243c-.334.937-1.95 1.793-2.7 1.907-.694.106-1.574.15-2.54-.16-.587-.19-1.34-.443-2.3-.868-4.042-1.746-6.68-5.835-6.88-6.108-.193-.273-1.573-2.094-1.573-3.993 0-1.9.994-2.834 1.347-3.22a1.42 1.42 0 011.02-.476c.254 0 .508.003.73.014.234.012.548-.089.858.654.32.766 1.087 2.665 1.183 2.858.097.193.16.42.032.677-.128.257-.193.416-.386.64-.193.224-.407.5-.58.672-.194.193-.395.4-.17.784.226.384.1 1.573 2.1 2.57 2.1 1 2.73 1.52 3.114 1.72.384.193.608.16.832-.096.224-.257.96-1.12 1.216-1.504.256-.384.512-.32.864-.192.352.128 2.24 1.056 2.624 1.248.384.193.64.288.736.448.096.16.096.928-.238 1.866z"/>
   </svg>
 </a>
-
-<div class="toast" id="toast"></div>
-
 <!-- ── FIREBASE + LOGIC ──────────────────────────────────────────── -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, doc, getDoc, setDoc, addDoc,
   getDocs, query, where, orderBy, serverTimestamp
@@ -609,6 +605,13 @@ async function loadHeroStat() {
 // ── Init: check if user is logged in / registered ─────────────────
 async function init() {
   loadHeroStat();
+
+  // Auto-fill name from Google login
+  const user = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
+  if(user.name) {
+    const nameInput = document.getElementById('regName');
+    if(nameInput && !nameInput.value) nameInput.value = user.name;
+  }
 
   // Check if already registered via localStorage
   const phone = localStorage.getItem('flatzy_refer_phone');
@@ -726,6 +729,46 @@ async function loadHistorySimple(phone) {
   }
 }
 
+// ── Load history ──────────────────────────────────────────────────
+async function loadHistory(phone) {
+  try {
+    const q = query(
+      collection(db, 'referrals'),
+      where('referrerPhone', '==', phone),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    const list = document.getElementById('historyList');
+
+    if(snap.empty) return; // keep empty state
+
+    list.innerHTML = snap.docs.map(d => {
+      const r = d.data();
+      const initials = r.refereeName ? r.refereeName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) : '??';
+      const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
+      const statusClass = r.status === 'paid' ? 'paid' : 'pending';
+      const statusText  = r.status === 'paid' ? '✓ Paid' : '⏳ Pending';
+      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹750';
+      return `
+        <div class="history-row">
+          <div class="history-left">
+            <div class="history-avatar">${initials}</div>
+            <div>
+              <div class="history-name">${r.refereeName || 'Anonymous'}</div>
+              <div class="history-date">📅 ${date}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.7rem;">
+            <span class="history-status ${statusClass}">${statusText}</span>
+            <span class="history-amount">${amt}</span>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    console.warn('History load error:', e.message);
+  }
+}
+
 // ── Register referrer ─────────────────────────────────────────────
 window.registerReferrer = async function() {
   const name  = document.getElementById('regName').value.trim();
@@ -797,7 +840,7 @@ window.shareWhatsApp = function() {
   const code = myReferralCode || 'FLATZY••••';
   const link = document.getElementById('shareLink').value || 'https://flatzyhomes.netlify.app';
   const msg = encodeURIComponent(
-    `🏠 *Flatzy Nagpur* — Find flats, PGs & hostels with ZERO brokerage!\n\n` +
+    `🏠 *Flatzy Nagpur* — Find flats, PGs & hostels !\n\n` +
     `Use my referral code *${code}* when you sign up and get priority support.\n\n` +
     `👉 ${link}\n\n` +
     `Nagpur mein ghar dhundh raho? Flatzy try karo! 🔥`
@@ -814,7 +857,23 @@ window.showToast = function(msg, type='') {
   setTimeout(() => t.classList.remove('show'), 3000);
 };
 
-// ── Auth nav ──────────────────────────────────────────────────────
+// ── Boot ──────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const app = getApps().length ? getApps()[0] : initializeApp({
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+});
 const auth = getAuth(app);
 onAuthStateChanged(auth, user => {
   document.getElementById('navGuest').style.display = user ? 'none' : 'flex';
@@ -823,20 +882,11 @@ onAuthStateChanged(auth, user => {
     document.getElementById('navName').textContent = user.displayName?.split(' ')[0] || '';
     const p = document.getElementById('navPhoto');
     if (user.photoURL) { p.src = user.photoURL; p.style.display = 'block'; }
-    // Auto-fill name from Google login
-    const nameInput = document.getElementById('regName');
-    if (nameInput && !nameInput.value) nameInput.value = user.displayName || '';
   }
   document.getElementById('navLogoutBtn').onclick = async () => {
     await signOut(auth);
     localStorage.removeItem('flatzy_user');
-    localStorage.removeItem('flatzy_refer_phone');
     window.location.reload();
   };
 });
-
-// ── Boot ──────────────────────────────────────────────────────────
-init();
 </script>
-</body>
-</html>
