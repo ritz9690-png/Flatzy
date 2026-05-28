@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); }
+.page-hero {
+  margin-top: var(--nav-h);
+  background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
+  padding: 4rem 5% 3rem; text-align: center; position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(96,180,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.page-hero h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white; letter-spacing: -1px; margin-bottom: 0.8rem; }
+.page-hero h1 span { color: #60b4ff; }
+.page-hero p { color: rgba(255,255,255,0.7); font-size: 0.95rem; max-width: 500px; margin: 0 auto; line-height: 1.7; }
+.faq-wrap { max-width: 800px; margin: 0 auto; padding: 2.5rem 5%; }
+.faq-cat { font-family: 'Syne',sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin: 2rem 0 1rem; }
+.faq-item { background: white; border: 1.5px solid var(--border); border-radius: 14px; margin-bottom: 0.8rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: border-color 0.2s; }
+.faq-item:hover { border-color: #93c5fd; }
+.faq-q { width: 100%; background: none; border: none; padding: 1.1rem 1.4rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: 'Syne',sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--text); text-align: left; gap: 1rem; }
+.faq-icon { font-size: 1.1rem; transition: transform 0.3s; flex-shrink: 0; color: var(--primary); }
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.2s; font-size: 0.9rem; color: var(--muted); line-height: 1.75; }
+.faq-item.open .faq-a { max-height: 300px; padding: 0 1.4rem 1.2rem; }
+.faq-cta { background: linear-gradient(135deg,#0F1C2E,#1A3A6E); border-radius: 18px; padding: 2rem; text-align: center; margin: 2rem 0; }
+.faq-cta h3 { color: white; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+.faq-cta p { color: rgba(255,255,255,0.65); font-size: 0.88rem; margin-bottom: 1.2rem; }
+</style>
+</head>
+<body class="has-bottom-nav">
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Flat<span>zy</span></div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="owner.html" class="sb-link">📋 List Property</a>
+    <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
+    <a href="about.html" class="sb-link">ℹ️ About Us</a>
+    <div class="sb-divider"></div>
+    <a href="faq.html" class="sb-link active">❓ FAQ</a>
+    <a href="services.html" class="sb-link">⭐ Our Services</a>
+    <a href="whats-new.html" class="sb-link">🆕 What's New</a>
+    <div class="sb-divider"></div>
+    <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
+    <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+  </nav>
+  <div class="sidebar-social">
+    <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="#" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+  </div>
+</aside>
+
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <button class="sidebar-toggle" onclick="openSidebar()" title="Menu">☰</button>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+    <a href="refer.html" style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🎁 Refer &amp; Earn</a>
+    <a href="about.html">About</a>
+    <a href="faq.html" class="active">FAQ</a>
+  </div>
+  <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <a href="login.html" class="nav-btn outline">Login</a>
+    <a href="login.html" class="nav-btn">Sign Up Free</a>
+  </div>
+  <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
+    <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
+    <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Frequently Asked <span>Questions</span></h1>
+  <p>Sabse common sawaalon ke jawab — ekdum seedha aur clear.</p>
+</div>
+
+<div class="faq-wrap">
+
+  <div class="faq-cat">🏠 Property & Listings</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Flatzy pe listings kaisi verify hoti hain? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Har listing Flatzy team dwara manually check ki jaati hai. Owner ka phone verify hota hai aur property photos authentic hoti hain. Koi fake listing nahi.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Kya Flatzy pe listings free hain? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Haan! Flatzy ek 100% Trusted Platform hai. Tenants ke liye browsing bilkul free hai aur owners bhi apni property list kar sakte hain bina kisi hidden charge ke.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Kya main seedha owner se baat kar sakta hoon? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Bilkul! Flatzy pe owner ka direct WhatsApp number milta hai. Koi middleman nahi, koi delay nahi — seedha contact karo aur deal karo.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Flatzy kaun se areas cover karta hai? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Abhi Flatzy Nagpur ke Wandongri, Higna, Digdoh, Kalamna, Butibori aur Koradi areas mein available hai. Aur areas jald aa rahe hain!</div>
+  </div>
+
+  <div class="faq-cat">👤 Account & Login</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Account banana zaroori hai kya? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Browse karne ke liye account ki zaroorat nahi. Lekin property list karne ya saved searches ke liye account banana hoga — jo ekdum free hai.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Main apna password bhool gaya, kya karoon? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Login page pe "Forgot Password" option hai. Wahan apna email dalo — reset link turant aayega. WhatsApp pe bhi help mil sakti hai.</div>
+  </div>
+
+  <div class="faq-cat">🏢 For Property Owners</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Main apni property kaise list karoon? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Owner Dashboard pe jaao, "Add Property" click karo, details bharo aur photos upload karo. 5 minute mein aapki listing live ho jaayegi!</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Kitni properties list kar sakta hoon? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Ek account se multiple properties list kar sakte ho. Koi limit nahi hai abhi ke liye.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Property list karne ke baad edit ya delete kar sakte hain? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Haan! Owner Dashboard mein jaake apni kisi bhi listing ko edit ya delete kar sakte ho kabhi bhi.</div>
+  </div>
+
+  <div class="faq-cat">💬 Support</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Koi problem aaye toh kaise contact karoon? <span class="faq-icon">+</span></button>
+    <div class="faq-a">WhatsApp pe 7387798079 pe message karo — team typically minutes mein reply karti hai. Instagram pe bhi @flatzyrentals pe message kar sakte ho.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Kya Flatzy ka mobile app available hai? <span class="faq-icon">+</span></button>
+    <div class="faq-a">Flatzy app jald hi Google Play aur App Store pe aane wala hai! WhatsApp pe message karo aur launch hote hi notification pao.</div>
+  </div>
+
+  <div class="faq-cta">
+    <h3>Aur koi sawaal hai? 🤔</h3>
+    <p>Humari team hamesha ready hai aapki help ke liye.</p>
+    <a href="https://wa.me/917387798079?text=Hi Flatzy! Mujhe ek sawaal poochna tha." target="_blank" class="btn-primary" style="display:inline-flex;align-items:center;gap:0.5rem;">
+      <img src="whatsapp21.jpeg" width="18" height="18" style="border-radius:3px;"> WhatsApp Pe Poochho
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Flat<span>zy</span></div>
+      <div class="footer-desc">Nagpur's trusted property platform.</div>
+      <div style="margin-top:1rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+        <a href="https://wa.me/917387798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;"> WhatsApp</a>
+        <a href="https://www.instagram.com/flatzyrentals" target="_blank" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;"> Instagram</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Pages</h4>
+      <a href="faq.html">FAQ</a>
+      <a href="services.html">Our Services</a>
+      <a href="whats-new.html">What's New</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="rent.html">Browse Properties</a>
+      <a href="owner.html">List Property</a>
+      <a href="refer.html">Refer & Earn</a>
+      <a href="legal.html?tab=policy">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Flatzy Nagpur. All rights reserved.</div>
+    <div class="footer-copy">Made with ❤️ for Nagpur</div>
+  </div>
+</footer>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span>Home</a>
+  <a href="rent.html" class="bn-item"><span class="bn-icon">🔍</span>Browse</a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item"><span class="bn-icon">🎁</span>Refer</a>
+  <a href="faq.html" class="bn-item active"><span class="bn-icon">❓</span>FAQ</a>
+</nav>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>

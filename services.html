@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Services – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); }
+.page-hero {
+  margin-top: var(--nav-h);
+  background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
+  padding: 4rem 5% 3rem; text-align: center; position: relative; overflow: hidden;
+}
+.page-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 50%,rgba(96,180,255,0.15) 0%,transparent 60%); pointer-events:none; }
+.page-hero h1 { font-size:clamp(2rem,5vw,3rem); font-weight:800; color:white; letter-spacing:-1px; margin-bottom:0.8rem; }
+.page-hero h1 span { color:#60b4ff; }
+.page-hero p { color:rgba(255,255,255,0.7); font-size:0.95rem; max-width:500px; margin:0 auto; line-height:1.7; }
+.services-wrap { max-width: 1000px; margin: 0 auto; padding: 2.5rem 5%; }
+.services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.service-card {
+  background: white; border: 1.5px solid var(--border); border-radius: 20px;
+  padding: 2rem 1.5rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 32px rgba(26,111,232,0.14); border-color: #93c5fd; }
+.service-icon { font-size: 2.8rem; margin-bottom: 1rem; }
+.service-title { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--text); margin-bottom:0.6rem; }
+.service-desc { font-size:0.88rem; color:var(--muted); line-height:1.75; margin-bottom:1rem; }
+.service-badge { display:inline-block; background:var(--primary-light); color:var(--primary); border:1px solid #93c5fd; font-size:0.72rem; font-weight:700; padding:0.25rem 0.7rem; border-radius:20px; }
+.trust-banner {
+  background: linear-gradient(135deg,#0F1C2E,#1A3A6E);
+  border-radius: 20px; padding: 2.5rem; text-align:center; margin-bottom: 2rem;
+}
+.trust-banner h2 { color:white; font-size:1.6rem; font-weight:800; margin-bottom:0.8rem; }
+.trust-banner p { color:rgba(255,255,255,0.65); font-size:0.9rem; max-width:500px; margin:0 auto 1.5rem; line-height:1.7; }
+.trust-stats { display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-top:1.5rem; }
+.trust-stat { text-align:center; }
+.trust-stat .num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:#60b4ff; }
+.trust-stat .lbl { font-size:0.75rem; color:rgba(255,255,255,0.6); margin-top:2px; }
+.process-steps { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
+.step-card { background:white; border:1.5px solid var(--border); border-radius:16px; padding:1.5rem 1rem; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.step-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--primary); margin-bottom:0.5rem; }
+.step-title { font-weight:700; font-size:0.9rem; color:var(--text); margin-bottom:0.4rem; }
+.step-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; }
+</style>
+</head>
+<body class="has-bottom-nav">
+
+<!-- SIDEBAR -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Flat<span>zy</span></div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="owner.html" class="sb-link">📋 List Property</a>
+    <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
+    <a href="about.html" class="sb-link">ℹ️ About Us</a>
+    <div class="sb-divider"></div>
+    <a href="faq.html" class="sb-link">❓ FAQ</a>
+    <a href="services.html" class="sb-link active">⭐ Our Services</a>
+    <a href="whats-new.html" class="sb-link">🆕 What's New</a>
+    <div class="sb-divider"></div>
+    <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
+    <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+  </nav>
+  <div class="sidebar-social">
+    <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="#" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+  </div>
+</aside>
+
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <button class="sidebar-toggle" onclick="openSidebar()" title="Menu">☰</button>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+    <a href="refer.html" style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🎁 Refer &amp; Earn</a>
+    <a href="about.html">About</a>
+    <a href="services.html" class="active">Services</a>
+  </div>
+  <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <a href="login.html" class="nav-btn outline">Login</a>
+    <a href="login.html" class="nav-btn">Sign Up Free</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Our <span>Services</span></h1>
+  <p>Flatzy pe woh sab kuch milega jo ek tenant ya property owner ko chahiye — trusted, transparent aur fast.</p>
+</div>
+
+<div class="services-wrap">
+
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🔍</div>
+      <div class="service-title">Property Search</div>
+      <div class="service-desc">Smart filters se apne budget, area aur type ke hisaab se perfect property dhundho. Hundreds of verified listings — ek jagah.</div>
+      <span class="service-badge">✅ Free for Tenants</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📋</div>
+      <div class="service-title">Property Listing</div>
+      <div class="service-desc">Owner ho? Apni property 5 minutes mein list karo. Photos upload karo, details bharo aur thousands of tenants tak pahuncho.</div>
+      <span class="service-badge">✅ Free for Owners</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">✅</div>
+      <div class="service-title">Verified Listings</div>
+      <div class="service-desc">Har listing Flatzy team dwara verify ki jaati hai. No fake posts, no fraud. Sirf genuine, authentic properties.</div>
+      <span class="service-badge">🔒 100% Trusted</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📞</div>
+      <div class="service-title">Direct Owner Contact</div>
+      <div class="service-desc">Seedha owner se baat karo WhatsApp pe. Koi middleman nahi, koi delay nahi. Turant connection.</div>
+      <span class="service-badge">⚡ Instant</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📅</div>
+      <div class="service-title">Visit Scheduling</div>
+      <div class="service-desc">Property visit schedule karna ab aasaan hai. WhatsApp pe ek click mein visit book karo apni convenient time pe.</div>
+      <span class="service-badge">🗓️ Hassle-Free</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🎁</div>
+      <div class="service-title">Refer & Earn</div>
+      <div class="service-desc">Dosto ko Flatzy refer karo aur rewards kamao! Jitna zyada refer, utna zyada earn. Nagpur ka sabse rewarding program.</div>
+      <span class="service-badge">💰 Earn Rewards</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">💬</div>
+      <div class="service-title">WhatsApp Support</div>
+      <div class="service-desc">Koi bhi sawaal ho, 7387798079 pe WhatsApp karo. Team typically minutes mein reply karti hai — 7 days a week.</div>
+      <span class="service-badge">⏱️ Fast Response</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📊</div>
+      <div class="service-title">Owner Analytics</div>
+      <div class="service-desc">Owner Dashboard pe dekho kitne log aapki listing dekh rahe hain, kitne inquiries aayi — sab kuch ek jagah.</div>
+      <span class="service-badge">📈 Real-time</span>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📱</div>
+      <div class="service-title">Mobile App (Coming Soon)</div>
+      <div class="service-desc">Flatzy app jald hi launch hoga Google Play aur App Store pe. Push notifications, instant alerts aur much more!</div>
+      <span class="service-badge">🚀 Coming Soon</span>
+    </div>
+  </div>
+
+  <div class="trust-banner">
+    <h2>💯 100% Trusted Platform</h2>
+    <p>Flatzy pe koi hidden charges nahi, koi fake listings nahi. Bas transparent aur trusted service — Nagpur ke liye.</p>
+    <div class="trust-stats">
+      <div class="trust-stat"><div class="num">500+</div><div class="lbl">Happy Tenants</div></div>
+      <div class="trust-stat"><div class="num">100+</div><div class="lbl">Verified Listings</div></div>
+      <div class="trust-stat"><div class="num">4.8⭐</div><div class="lbl">Average Rating</div></div>
+      <div class="trust-stat"><div class="num">6+</div><div class="lbl">Areas Covered</div></div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-bottom:1.2rem;">How It Works</div>
+  <div class="process-steps">
+    <div class="step-card"><div class="step-num">01</div><div class="step-title">Search & Filter</div><div class="step-desc">Area, budget aur type select karo</div></div>
+    <div class="step-card"><div class="step-num">02</div><div class="step-title">Contact Owner</div><div class="step-desc">WhatsApp pe seedha baat karo</div></div>
+    <div class="step-card"><div class="step-num">03</div><div class="step-title">Visit Property</div><div class="step-desc">Visit schedule karo aur dekho</div></div>
+    <div class="step-card"><div class="step-num">04</div><div class="step-title">Move In!</div><div class="step-desc">Deal finalize karo aur ghar shift ho jao</div></div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Flat<span>zy</span></div>
+      <div class="footer-desc">Nagpur's trusted property platform.</div>
+      <div style="margin-top:1rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+        <a href="https://wa.me/917387798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;"> WhatsApp</a>
+        <a href="https://www.instagram.com/flatzyrentals" target="_blank" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;"> Instagram</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Pages</h4>
+      <a href="faq.html">FAQ</a>
+      <a href="services.html">Our Services</a>
+      <a href="whats-new.html">What's New</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="rent.html">Browse Properties</a>
+      <a href="owner.html">List Property</a>
+      <a href="refer.html">Refer & Earn</a>
+      <a href="legal.html?tab=policy">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Flatzy Nagpur. All rights reserved.</div>
+    <div class="footer-copy">Made with ❤️ for Nagpur</div>
+  </div>
+</footer>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span>Home</a>
+  <a href="rent.html" class="bn-item"><span class="bn-icon">🔍</span>Browse</a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item"><span class="bn-icon">🎁</span>Refer</a>
+  <a href="services.html" class="bn-item active"><span class="bn-icon">⭐</span>Services</a>
+</nav>
+
+<script>
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>

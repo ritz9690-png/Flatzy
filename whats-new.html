@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's New – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--dark2); }
+.page-hero {
+  margin-top: var(--nav-h);
+  background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
+  padding: 4rem 5% 3rem; text-align: center; position: relative; overflow: hidden;
+}
+.page-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 50%,rgba(96,180,255,0.15) 0%,transparent 60%); pointer-events:none; }
+.page-hero h1 { font-size:clamp(2rem,5vw,3rem); font-weight:800; color:white; letter-spacing:-1px; margin-bottom:0.8rem; }
+.page-hero h1 span { color:#60b4ff; }
+.page-hero p { color:rgba(255,255,255,0.7); font-size:0.95rem; max-width:500px; margin:0 auto; line-height:1.7; }
+.news-wrap { max-width: 780px; margin: 0 auto; padding: 2.5rem 5%; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:linear-gradient(to bottom,#1a6fe8,#7c3aed,#1a6fe8); border-radius:2px; }
+.tl-item { position: relative; margin-bottom: 2rem; }
+.tl-dot { position:absolute; left:-2.45rem; top:1.1rem; width:14px; height:14px; border-radius:50%; background:var(--primary); border:3px solid white; box-shadow:0 0 0 3px rgba(26,111,232,0.25); }
+.tl-card { background:white; border:1.5px solid var(--border); border-radius:18px; padding:1.5rem; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:transform 0.2s,border-color 0.2s; }
+.tl-card:hover { transform:translateY(-3px); border-color:#93c5fd; }
+.tl-date { font-size:0.72rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem; }
+.tl-title { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:800; color:var(--text); margin-bottom:0.5rem; }
+.tl-desc { font-size:0.88rem; color:var(--muted); line-height:1.7; }
+.tl-tag { display:inline-block; margin-top:0.8rem; padding:0.25rem 0.8rem; border-radius:20px; font-size:0.72rem; font-weight:700; }
+.tag-new { background:#dcfce7; color:#166534; }
+.tag-update { background:#dbeafe; color:#1e40af; }
+.tag-coming { background:#fef3c7; color:#92400e; }
+.upcoming-section { background:linear-gradient(135deg,#0F1C2E,#1A3A6E); border-radius:20px; padding:2rem; margin:2rem 0; }
+.upcoming-section h3 { color:white; font-size:1.2rem; font-weight:800; margin-bottom:1.2rem; }
+.upcoming-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+.upcoming-item { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:1rem; }
+.upcoming-item .icon { font-size:1.6rem; margin-bottom:0.4rem; }
+.upcoming-item .title { color:white; font-weight:700; font-size:0.88rem; margin-bottom:0.3rem; }
+.upcoming-item .sub { color:rgba(255,255,255,0.55); font-size:0.78rem; }
+.notify-box { background:white; border:1.5px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center; margin-bottom:1.5rem; }
+.notify-box h4 { font-size:1rem; font-weight:800; margin-bottom:0.5rem; }
+.notify-box p { font-size:0.85rem; color:var(--muted); margin-bottom:1rem; }
+@media(max-width:480px){ .upcoming-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body class="has-bottom-nav">
+
+<!-- SIDEBAR -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Flat<span>zy</span></div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="owner.html" class="sb-link">📋 List Property</a>
+    <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
+    <a href="about.html" class="sb-link">ℹ️ About Us</a>
+    <div class="sb-divider"></div>
+    <a href="faq.html" class="sb-link">❓ FAQ</a>
+    <a href="services.html" class="sb-link">⭐ Our Services</a>
+    <a href="whats-new.html" class="sb-link active">🆕 What's New</a>
+    <div class="sb-divider"></div>
+    <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
+    <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+  </nav>
+  <div class="sidebar-social">
+    <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="#" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+  </div>
+</aside>
+
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <button class="sidebar-toggle" onclick="openSidebar()" title="Menu">☰</button>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+    <a href="refer.html" style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🎁 Refer &amp; Earn</a>
+    <a href="about.html">About</a>
+    <a href="whats-new.html" class="active">What's New</a>
+  </div>
+  <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <a href="login.html" class="nav-btn outline">Login</a>
+    <a href="login.html" class="nav-btn">Sign Up Free</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>What's <span>New</span> 🆕</h1>
+  <p>Latest updates, new features aur upcoming launches — Flatzy pe kya ho raha hai sab yahan milega.</p>
+</div>
+
+<div class="news-wrap">
+
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="tl-date">May 2025 — Latest</div>
+        <div class="tl-title">🎉 Social Media Launch — Instagram & LinkedIn</div>
+        <div class="tl-desc">Flatzy ab Instagram (@flatzyrentals) aur LinkedIn pe officially aa gaya hai! Follow karo for latest property updates, tips aur Nagpur rental news.</div>
+        <span class="tl-tag tag-new">🆕 New</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="tl-date">May 2025</div>
+        <div class="tl-title">📸 Cloudinary Photo Upload</div>
+        <div class="tl-desc">Ab owners apni property ki real photos upload kar sakte hain! Cloudinary integration se photos fast load hoti hain aur quality bhi best rehti hai.</div>
+        <span class="tl-tag tag-update">🔄 Update</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="tl-date">April 2025</div>
+        <div class="tl-title">💬 WhatsApp Chat Widget</div>
+        <div class="tl-desc">Website pe ab floating WhatsApp button hai! Ek click mein Flatzy team se directly baat karo — property dhundho, list karo ya koi bhi sawaal poochho.</div>
+        <span class="tl-tag tag-update">🔄 Update</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="tl-date">April 2025</div>
+        <div class="tl-title">🔥 Refer & Earn Program Launch</div>
+        <div class="tl-desc">Dosto ko Flatzy refer karo aur rewards kamao! Jitna zyada refer, utna zyada milega. Nagpur ka sabse exciting rental referral program.</div>
+        <span class="tl-tag tag-new">🆕 New</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="tl-date">March 2025</div>
+        <div class="tl-title">🏠 Owner Dashboard Launch</div>
+        <div class="tl-desc">Property owners ke liye powerful dashboard! Property add karo, edit karo, analytics dekho aur inquiries manage karo — sab ek jagah.</div>
+        <span class="tl-tag tag-new">🆕 New</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="tl-date">February 2025</div>
+        <div class="tl-title">🚀 Flatzy Website Launch</div>
+        <div class="tl-desc">Flatzy officially launch hua Nagpur ke liye! Verified listings, direct owner contact aur trusted platform ke saath Nagpur ka #1 property platform shuru hua.</div>
+        <span class="tl-tag tag-new">🎉 Launch</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="upcoming-section">
+    <h3>🚀 Coming Soon</h3>
+    <div class="upcoming-grid">
+      <div class="upcoming-item">
+        <div class="icon">📱</div>
+        <div class="title">Mobile App</div>
+        <div class="sub">Google Play & App Store pe jald!</div>
+      </div>
+      <div class="upcoming-item">
+        <div class="icon">🗺️</div>
+        <div class="title">Map View</div>
+        <div class="sub">Properties map pe dekho</div>
+      </div>
+      <div class="upcoming-item">
+        <div class="icon">🔔</div>
+        <div class="title">Push Notifications</div>
+        <div class="sub">Naye listings ka turant alert</div>
+      </div>
+      <div class="upcoming-item">
+        <div class="icon">🏙️</div>
+        <div class="title">More Cities</div>
+        <div class="sub">Nagpur ke baad aur cities</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notify-box">
+    <h4>🔔 Updates Miss Mat Karo!</h4>
+    <p>WhatsApp pe message karo aur hamesha latest updates sabse pehle pao.</p>
+    <a href="https://wa.me/917387798079?text=Hi Flatzy! Mujhe latest updates chahiye." target="_blank" class="btn-primary" style="display:inline-flex;align-items:center;gap:0.5rem;">
+      <img src="whatsapp21.jpeg" width="18" height="18" style="border-radius:3px;"> Notify Me
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Flat<span>zy</span></div>
+      <div class="footer-desc">Nagpur's trusted property platform.</div>
+      <div style="margin-top:1rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+        <a href="https://wa.me/917387798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;"> WhatsApp</a>
+        <a href="https://www.instagram.com/flatzyrentals" target="_blank" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;"> Instagram</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Pages</h4>
+      <a href="faq.html">FAQ</a>
+      <a href="services.html">Our Services</a>
+      <a href="whats-new.html">What's New</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="rent.html">Browse Properties</a>
+      <a href="owner.html">List Property</a>
+      <a href="refer.html">Refer & Earn</a>
+      <a href="legal.html?tab=policy">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Flatzy Nagpur. All rights reserved.</div>
+    <div class="footer-copy">Made with ❤️ for Nagpur</div>
+  </div>
+</footer>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span>Home</a>
+  <a href="rent.html" class="bn-item"><span class="bn-icon">🔍</span>Browse</a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item"><span class="bn-icon">🎁</span>Refer</a>
+  <a href="whats-new.html" class="bn-item active"><span class="bn-icon">🆕</span>New</a>
+</nav>
+
+<script>
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>
