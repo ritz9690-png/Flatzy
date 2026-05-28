@@ -249,6 +249,7 @@
       pointer-events: all;
     }
     #flLightbox.touch-show-ui #flThumbs {
+    
       opacity: 1;
       pointer-events: all;
     }

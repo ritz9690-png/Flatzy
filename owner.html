@@ -13,6 +13,22 @@ body { background: var(--dark2); }
 .owner-header {
   background: linear-gradient(120deg, #0F1C2E 0%, #1A3A6E 100%);
   padding: 5.5rem 5% 2.5rem; color: white;
+  position: relative;
+}
+.owner-wa-btn {
+  position: absolute; top: 5.5rem; right: 5%;
+  display: flex; align-items: center; gap: 0.5rem;
+  background: #25D366; color: white;
+  padding: 0.55rem 1rem; border-radius: 22px;
+  text-decoration: none; font-size: 0.8rem; font-weight: 700;
+  box-shadow: 0 3px 14px rgba(37,211,102,0.45);
+  transition: all 0.2s; white-space: nowrap;
+}
+.owner-wa-btn:hover { background: #1da851; transform: translateY(-1px); }
+.owner-wa-num { font-size: 0.72rem; opacity: 0.88; font-weight: 600; }
+@media(max-width: 480px) {
+  .owner-wa-btn { top: 4.8rem; right: 4%; padding: 0.45rem 0.8rem; }
+  .owner-wa-text { display: none; }
 }
 .owner-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.4rem; }
 .owner-header p { color: rgba(255,255,255,0.65); font-size: 0.9rem; }
@@ -115,6 +131,11 @@ body { background: var(--dark2); }
 
 <!-- OWNER HEADER -->
 <div class="owner-header">
+  <a class="owner-wa-btn" href="https://wa.me/917387798079?text=Hi%20Flatzy!%20I%20want%20to%20list%20my%20property%20on%20Flatzy%20Nagpur.%20Please%20guide%20me." target="_blank">
+    <img src="whatsapp21.jpeg" width="20" height="20" style="border-radius:4px;flex-shrink:0;" alt="WhatsApp">
+    <span class="owner-wa-text">List via WhatsApp</span>
+    <span class="owner-wa-num">+91 73877 98079</span>
+  </a>
   <h1>🏠 Owner Dashboard</h1>
   <p>Manage your listings and reach thousands of tenants directly.</p>
   <div class="owner-tabs">

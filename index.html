@@ -455,7 +455,7 @@
       <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:1.8rem;max-width:420px;">Get instant notifications for new listings, schedule visits, and contact owners — all from your phone. Available soon!</p>
       <div style="display:flex;gap:1rem;flex-wrap:wrap;">
         <a href="https://wa.me/917387798079?text=I want to know when the Flatzy app launches!" target="_blank" class="app-store-btn">
-          <span style="font-size:1.5rem;">▶️</span>
+          <img src="googlepay21.jpeg" width="32" height="32" style="border-radius:6px;object-fit:contain;" alt="Google Play">
           <div>
             <div style="font-size:0.65rem;opacity:0.8;">Coming Soon on</div>
             <div style="font-weight:700;font-size:0.9rem;">Google Play</div>
@@ -487,8 +487,10 @@
     <div>
       <div class="footer-logo">Flat<span>zy</span></div>
       <div class="footer-desc">Nagpur's trusted property platform. Find flats, PGs and hostels in Wandgori, Higna, Digdoh and more.</div>
-      <div style="margin-top:1rem;display:flex;gap:0.7rem;">
-        <a href="https://wa.me/917387798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">💬 WhatsApp</a>
+      <div style="margin-top:1rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+        <a href="https://wa.me/917387798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;"> WhatsApp</a>
+        <a href="https://www.instagram.com/flatzyrentals?igsh=ZjgxYmpkMXZoYWx4" target="_blank" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;"> Instagram</a>
+        <a href="#" target="_blank" style="background:#0077B5;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;"> LinkedIn</a>
       </div>
     </div>
     <div class="footer-col">
@@ -537,39 +539,179 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- WhatsApp Floating Button -->
-<a href="https://wa.me/917387798079" target="_blank" class="whatsapp-float" title="Chat on WhatsApp">
-  <svg viewBox="0 0 32 32" width="30" height="30" fill="white" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 0C7.163 0 0 7.163 0 16c0 2.827.738 5.476 2.027 7.776L0 32l8.443-2.013A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.07 22.243c-.334.937-1.95 1.793-2.7 1.907-.694.106-1.574.15-2.54-.16-.587-.19-1.34-.443-2.3-.868-4.042-1.746-6.68-5.835-6.88-6.108-.193-.273-1.573-2.094-1.573-3.993 0-1.9.994-2.834 1.347-3.22a1.42 1.42 0 011.02-.476c.254 0 .508.003.73.014.234.012.548-.089.858.654.32.766 1.087 2.665 1.183 2.858.097.193.16.42.032.677-.128.257-.193.416-.386.64-.193.224-.407.5-.58.672-.194.193-.395.4-.17.784.226.384.1 1.573 2.1 2.57 2.1 1 2.73 1.52 3.114 1.72.384.193.608.16.832-.096.224-.257.96-1.12 1.216-1.504.256-.384.512-.32.864-.192.352.128 2.24 1.056 2.624 1.248.384.193.64.288.736.448.096.16.096.928-.238 1.866z"/>
-  </svg>
-</a>
+<!-- WhatsApp Chat Widget -->
+<div id="waWidget">
+  <!-- Popup -->
+  <div class="wa-popup" id="waPopup">
+    <div class="wa-popup-header">
+      <div class="wa-popup-logo">
+        <img src="whatsapp21.jpeg" width="26" height="26" style="border-radius:50%;display:block;" alt="WhatsApp">
+      </div>
+      <div class="wa-popup-info">
+        <div class="wa-popup-name">Flatzy Nagpur</div>
+        <div class="wa-popup-status">Typically replies within minutes</div>
+      </div>
+      <button class="wa-popup-close" onclick="toggleWaWidget()">✕</button>
+    </div>
+    <div class="wa-popup-body">
+      <div class="wa-bubble">👋 Hi there! Welcome to <strong>Flatzy Nagpur</strong>.<br>How can we help you today?</div>
+      <div class="wa-options">
+        <button class="wa-option" onclick="waContact('I am looking for a Flat or PG in Nagpur. Please help me find the right property.')">🏠 Looking for Flat / PG</button>
+        <button class="wa-option" onclick="waContact('I want to list my property on Flatzy Nagpur. Please guide me through the process.')">🏢 I want to List my Property</button>
+        <button class="wa-option" onclick="waContact('I have a general enquiry about Flatzy Nagpur. Can you please help me?')">❓ General Enquiry</button>
+      </div>
+    </div>
+    <a class="wa-popup-cta" onclick="waContact('Hi Flatzy! I found you on your website. Can you help me?')">
+      <img src="whatsapp21.jpeg" width="18" height="18" style="border-radius:3px;" alt="WhatsApp">
+      WhatsApp Us Now
+    </a>
+  </div>
+  <!-- FAB Button -->
+  <button class="wa-fab" id="waFab" onclick="toggleWaWidget()" title="Chat on WhatsApp">
+    <span class="wa-fab-open">
+      <img src="whatsapp21.jpeg" width="32" height="32" style="border-radius:50%;display:block;" alt="WhatsApp">
+    </span>
+    <span class="wa-fab-close">✕</span>
+  </button>
+</div>
 
 <style>
-.whatsapp-float {
+/* ── WA Widget Container ── */
+#waWidget {
   position: fixed;
   bottom: calc(var(--bottom-nav-h) + 12px);
   right: 16px;
   z-index: 9999;
-  background: #25D366;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(37,211,102,0.5);
-  animation: wa-pulse 2s infinite;
-  text-decoration: none;
-  transition: transform 0.2s;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
 }
-.whatsapp-float:hover { transform: scale(1.1); }
 @media(min-width: 769px) {
-  .whatsapp-float { bottom: 28px; right: 28px; }
+  #waWidget { bottom: 28px; right: 28px; }
 }
+
+/* ── FAB ── */
+.wa-fab {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: #25D366;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.55);
+  animation: wa-pulse 2.5s infinite;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.wa-fab:hover { transform: scale(1.08); }
+.wa-fab-close { display: none; color: white; font-size: 1.3rem; font-weight: 700; }
+.wa-fab.open .wa-fab-open { display: none; }
+.wa-fab.open .wa-fab-close { display: block; }
+.wa-fab.open { animation: none; background: #128C7E; }
 @keyframes wa-pulse {
   0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); }
-  50% { box-shadow: 0 4px 30px rgba(37,211,102,0.85); }
+  50% { box-shadow: 0 4px 32px rgba(37,211,102,0.9); }
 }
+
+/* ── Popup ── */
+.wa-popup {
+  display: none;
+  width: 300px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  animation: popUp 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  transform-origin: bottom right;
+}
+.wa-popup.show { display: block; }
+@keyframes popUp {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@media(max-width: 400px) {
+  .wa-popup { width: calc(100vw - 32px); }
+}
+
+/* Header */
+.wa-popup-header {
+  background: #075E54;
+  padding: 0.9rem 1rem;
+  display: flex; align-items: center; gap: 0.7rem;
+}
+.wa-popup-logo {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #25D366;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.wa-popup-info { flex: 1; }
+.wa-popup-name { color: white; font-weight: 700; font-size: 0.9rem; }
+.wa-popup-status { color: rgba(255,255,255,0.75); font-size: 0.72rem; margin-top: 1px; }
+.wa-popup-close {
+  background: none; border: none; color: rgba(255,255,255,0.7);
+  font-size: 1rem; cursor: pointer; padding: 4px; line-height: 1;
+}
+.wa-popup-close:hover { color: white; }
+
+/* Body */
+.wa-popup-body {
+  background: #ECE5DD;
+  padding: 1rem;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.wa-bubble {
+  background: white;
+  border-radius: 0 10px 10px 10px;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: #1a1a2e;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 0.85rem;
+}
+.wa-options { display: flex; flex-direction: column; gap: 0.45rem; }
+.wa-option {
+  background: white;
+  border: 1.5px solid #25D366;
+  color: #075E54;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+.wa-option:hover { background: #25D366; color: white; }
+
+/* CTA */
+.wa-popup-cta {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  background: #25D366;
+  color: white;
+  padding: 0.85rem;
+  font-size: 0.88rem; font-weight: 700;
+  cursor: pointer;
+  border: none; width: 100%;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+.wa-popup-cta:hover { background: #1da851; }
+</style>
+
+<script>
+function toggleWaWidget() {
+  const popup = document.getElementById('waPopup');
+  const fab   = document.getElementById('waFab');
+  const isOpen = popup.classList.contains('show');
+  popup.classList.toggle('show', !isOpen);
+  fab.classList.toggle('open', !isOpen);
+}
+function waContact(msg) {
+  window.open('https://wa.me/917387798079?text=' + encodeURIComponent(msg), '_blank');
+}
+</script>
 .card-action-btns {
   display: flex;
   gap: 0.5rem;
