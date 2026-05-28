@@ -728,6 +728,7 @@ footer::after {
   .nav-links { display: none; }
   .nav-btn { display: none; }
   #navGuest .nav-btn:last-child { display: inline-flex; }
+  .sidebar-toggle { display: flex; }
   body.has-bottom-nav { padding-bottom: var(--bottom-nav-h); }
   .toast { bottom: calc(var(--bottom-nav-h) + 0.8rem); }
   section { padding: 2rem 4%; }
@@ -793,7 +794,7 @@ footer::after {
    SIDEBAR — Phone + Desktop  (appended)
    ============================================================ */
 .sidebar-toggle {
-  display: flex;
+  display: none;
   align-items: center;
   background: none;
   border: none;
@@ -809,13 +810,19 @@ footer::after {
 .sidebar-toggle:hover { background: var(--primary-light); }
 
 .sidebar-overlay {
-  display: none;
+  display: block;
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.45);
   z-index: 1099;
   backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
 }
-.sidebar-overlay.show { display: block; }
+.sidebar-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
 
 .sidebar {
   position: fixed;
@@ -824,12 +831,19 @@ footer::after {
   background: white;
   z-index: 1100;
   transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1),
+              visibility 0s linear 0.3s;
   box-shadow: 4px 0 32px rgba(0,0,0,0.15);
   display: flex; flex-direction: column;
   overflow-y: auto;
 }
-.sidebar.open { transform: translateX(0); }
+.sidebar.open {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1),
+              visibility 0s linear 0s;
+}
 
 .sidebar-header {
   display: flex; align-items: center;
@@ -897,4 +911,8 @@ footer::after {
 /* Hide desktop nav-links on mobile; use sidebar instead */
 @media (max-width: 768px) {
   .nav-links { display: none !important; }
+  .sidebar-toggle { display: flex !important; }
+  /* Keep only the Sign Up button visible on mobile */
+  #navGuest .nav-btn.outline { display: none !important; }
+  #navGuest .nav-btn:not(.outline) { display: inline-flex !important; }
 }
