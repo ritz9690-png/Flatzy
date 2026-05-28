@@ -52,14 +52,26 @@ body { background: var(--dark2); }
 .form-section:last-child { border-bottom: none; margin-bottom: 0; }
 .form-section-title { font-family: 'Syne',sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
 
-/* AMENITY CHECKBOXES */
-.amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-.amenity-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.7rem; background: var(--dark2); border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 0.82rem; color: var(--muted); transition: all 0.15s; }
-.amenity-item:hover { border-color: var(--primary); color: var(--primary); }
-.amenity-item.checked { background: var(--primary-light); border-color: var(--primary); color: var(--primary); font-weight: 700; }
-.amenity-item input { display: none; }
-.am-check { display: none; width: 16px; height: 16px; background: var(--primary); color: white; border-radius: 4px; font-size: 0.65rem; align-items: center; justify-content: center; flex-shrink: 0; }
-.amenity-item.checked .am-check { display: flex; }
+.amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.amenity-label {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--dark2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--muted);
+  transition: all 0.15s;
+  user-select: none;
+}
+.amenity-label:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
+.amenity-label input[type="checkbox"] {
+  width: 18px; height: 18px;
+  accent-color: #1a6fe8;
+  cursor: pointer;
+  flex-shrink: 0;
+}
 
 /* PHOTO UPLOAD */
 .photo-drop { border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--dark2); }
@@ -204,14 +216,14 @@ body { background: var(--dark2); }
       <div class="form-section">
         <div class="form-section-title">Amenities</div>
         <div class="amenity-grid" id="amenityGrid">
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🅿️ Parking</div>
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>💧 24hr Water</div>
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>⚡ Power Backup</div>
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>📶 WiFi Ready</div>
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>❄️ AC Installed</div>
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🛗 Lift</div>
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🔒 CCTV</div>
-          <div class="amenity-item" onclick="toggleAmenity(this)"><span class="am-check">✓</span>🧹 Housekeeping</div>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="🅿️ Parking"> 🅿️ Parking</label>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="💧 24hr Water"> 💧 24hr Water</label>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="⚡ Power Backup"> ⚡ Power Backup</label>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="📶 WiFi Ready"> 📶 WiFi Ready</label>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="❄️ AC Installed"> ❄️ AC Installed</label>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="🛗 Lift"> 🛗 Lift</label>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="🔒 CCTV"> 🔒 CCTV</label>
+          <label class="amenity-label"><input type="checkbox" name="amenity" value="🧹 Housekeeping"> 🧹 Housekeeping</label>
         </div>
       </div>
 
@@ -419,7 +431,7 @@ window.submitProperty = async function() {
   const btn = document.querySelector('#tab-add .btn-full.primary');
   if(btn) { btn.textContent = '⏳ Posting...'; btn.disabled = true; }
 
-  const checkedAmenities = Array.from(document.querySelectorAll('#amenityGrid .amenity-item.checked')).map(el=>el.textContent.replace('✓','').trim());
+  const checkedAmenities = Array.from(document.querySelectorAll('#amenityGrid input[type="checkbox"]:checked')).map(el=>el.value);
 
   const prop = {
     title, rent: Number(rent),
@@ -449,7 +461,7 @@ window.submitProperty = async function() {
     showToast('Property posted successfully! 🎉');
     // Reset form
     ['pTitle','pRent','pDeposit','pAddress','pDesc'].forEach(id=>document.getElementById(id).value='');
-    document.querySelectorAll('.amenity-item.checked').forEach(el=>el.classList.remove('checked'));
+    document.querySelectorAll('#amenityGrid input[type="checkbox"]').forEach(el=>el.checked=false);
     document.getElementById('photoThumbs').innerHTML='';
     uploadedPhotoUrls = [];
     setTimeout(async ()=>{

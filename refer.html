@@ -572,6 +572,7 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
 <!-- ── FIREBASE + LOGIC ──────────────────────────────────────────── -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, doc, getDoc, setDoc, addDoc,
   getDocs, query, where, orderBy, serverTimestamp
@@ -608,13 +609,6 @@ async function loadHeroStat() {
 // ── Init: check if user is logged in / registered ─────────────────
 async function init() {
   loadHeroStat();
-
-  // Auto-fill name from Google login
-  const user = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
-  if(user.name) {
-    const nameInput = document.getElementById('regName');
-    if(nameInput && !nameInput.value) nameInput.value = user.name;
-  }
 
   // Check if already registered via localStorage
   const phone = localStorage.getItem('flatzy_refer_phone');
@@ -732,46 +726,6 @@ async function loadHistorySimple(phone) {
   }
 }
 
-// ── Load history ──────────────────────────────────────────────────
-async function loadHistory(phone) {
-  try {
-    const q = query(
-      collection(db, 'referrals'),
-      where('referrerPhone', '==', phone),
-      orderBy('createdAt', 'desc')
-    );
-    const snap = await getDocs(q);
-    const list = document.getElementById('historyList');
-
-    if(snap.empty) return; // keep empty state
-
-    list.innerHTML = snap.docs.map(d => {
-      const r = d.data();
-      const initials = r.refereeName ? r.refereeName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) : '??';
-      const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : 'N/A';
-      const statusClass = r.status === 'paid' ? 'paid' : 'pending';
-      const statusText  = r.status === 'paid' ? '✓ Paid' : '⏳ Pending';
-      const amt = r.amount ? '₹' + r.amount.toLocaleString('en-IN') : '₹750';
-      return `
-        <div class="history-row">
-          <div class="history-left">
-            <div class="history-avatar">${initials}</div>
-            <div>
-              <div class="history-name">${r.refereeName || 'Anonymous'}</div>
-              <div class="history-date">📅 ${date}</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:0.7rem;">
-            <span class="history-status ${statusClass}">${statusText}</span>
-            <span class="history-amount">${amt}</span>
-          </div>
-        </div>`;
-    }).join('');
-  } catch(e) {
-    console.warn('History load error:', e.message);
-  }
-}
-
 // ── Register referrer ─────────────────────────────────────────────
 window.registerReferrer = async function() {
   const name  = document.getElementById('regName').value.trim();
@@ -843,7 +797,7 @@ window.shareWhatsApp = function() {
   const code = myReferralCode || 'FLATZY••••';
   const link = document.getElementById('shareLink').value || 'https://flatzyhomes.netlify.app';
   const msg = encodeURIComponent(
-    `🏠 *Flatzy Nagpur* — Find flats, PGs & hostels !\n\n` +
+    `🏠 *Flatzy Nagpur* — Find flats, PGs & hostels with ZERO brokerage!\n\n` +
     `Use my referral code *${code}* when you sign up and get priority support.\n\n` +
     `👉 ${link}\n\n` +
     `Nagpur mein ghar dhundh raho? Flatzy try karo! 🔥`
@@ -860,23 +814,7 @@ window.showToast = function(msg, type='') {
   setTimeout(() => t.classList.remove('show'), 3000);
 };
 
-// ── Boot ──────────────────────────────────────────────────────────
-init();
-</script>
-</body>
-</html>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const app = getApps().length ? getApps()[0] : initializeApp({
-  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
-  authDomain: "flatzyhomes.firebaseapp.com",
-  projectId: "flatzyhomes",
-  storageBucket: "flatzyhomes.firebasestorage.app",
-  messagingSenderId: "519957313457",
-  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
-});
+// ── Auth nav ──────────────────────────────────────────────────────
 const auth = getAuth(app);
 onAuthStateChanged(auth, user => {
   document.getElementById('navGuest').style.display = user ? 'none' : 'flex';
@@ -885,11 +823,20 @@ onAuthStateChanged(auth, user => {
     document.getElementById('navName').textContent = user.displayName?.split(' ')[0] || '';
     const p = document.getElementById('navPhoto');
     if (user.photoURL) { p.src = user.photoURL; p.style.display = 'block'; }
+    // Auto-fill name from Google login
+    const nameInput = document.getElementById('regName');
+    if (nameInput && !nameInput.value) nameInput.value = user.displayName || '';
   }
   document.getElementById('navLogoutBtn').onclick = async () => {
     await signOut(auth);
     localStorage.removeItem('flatzy_user');
+    localStorage.removeItem('flatzy_refer_phone');
     window.location.reload();
   };
 });
+
+// ── Boot ──────────────────────────────────────────────────────────
+init();
 </script>
+</body>
+</html>

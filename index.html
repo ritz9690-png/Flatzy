@@ -239,6 +239,56 @@
   </div>
 </nav>
 
+<!-- SOCIAL WELCOME STRIP (above hero) -->
+<div class="social-strip-wrap">
+  <div class="social-strip-track">
+    <span>🏠 Welcome to Flatzy</span>
+    <span class="ssep">✦</span>
+    <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
+    <span class="ssep">✦</span>
+    <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
+    <span class="ssep">✦</span>
+    <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
+    <span class="ssep">✦</span>
+    <span>🏠 Welcome to Flatzy</span>
+    <span class="ssep">✦</span>
+    <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
+    <span class="ssep">✦</span>
+    <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
+    <span class="ssep">✦</span>
+    <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
+    <span class="ssep">✦</span>
+  </div>
+</div>
+
+<style>
+.social-strip-wrap {
+  overflow: hidden;
+  background: linear-gradient(90deg, #0f172a, #1a3a6e, #0f172a);
+  padding: 0.5rem 0;
+  position: relative;
+  z-index: 998;
+}
+.social-strip-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: socialScroll 22s linear infinite;
+  align-items: center;
+}
+.social-strip-track span {
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ssep { color: #60b4ff !important; font-size: 0.7rem !important; }
+@keyframes socialScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+</style>
+
 <!-- HERO -->
 <section class="hero">
 
@@ -376,7 +426,7 @@
   <div class="section-header">
     <div class="section-tag" style="background:rgba(255,255,255,0.1);color:#93c5fd;border-color:rgba(255,255,255,0.2);">Why Flatzy</div>
     <div class="section-title" style="color:white;">Nagpur Ka Sabse Bharosemand Platform</div>
-    <div class="section-sub" style="color:rgba(255,255,255,0.6);">Competitors charge brokerages..</div>
+    <div class="section-sub" style="color:rgba(255,255,255,0.6);">Nagpur's Most Trusted Property Platform.</div>
   </div>
   <div class="why-grid">
     <div class="why-card">
@@ -440,6 +490,50 @@
         <div>
           <div class="testi-name">Vikas Deshmukh</div>
           <div class="testi-loc">📍 Higna, Nagpur</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <div class="testi-text">"Flatzy ne mera time aur paisa dono bachaya! 2BHK Digdoh mein seedha owner se mila, Flatzy pe sab kuch transparent aur trusted hai."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#dc2626;">AK</div>
+        <div>
+          <div class="testi-name">Amit Khedkar</div>
+          <div class="testi-loc">📍 Digdoh, Nagpur</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <div class="testi-text">"I was new to Nagpur and very confused. Flatzy's team helped me via WhatsApp and found a girls PG in Kalamna the same evening!"</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#d97706;">SS</div>
+        <div>
+          <div class="testi-name">Sneha Shende</div>
+          <div class="testi-loc">📍 Kalamna, Nagpur</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <div class="testi-text">"Best platform for Nagpur properties! Listings are genuine and owners are responsive. Found a furnished flat in Wandgori in 3 days."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#0891b2;">MR</div>
+        <div>
+          <div class="testi-name">Mohit Raut</div>
+          <div class="testi-loc">📍 Wandongri, Nagpur</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <div class="testi-text">"Hostel dhundna kitna mushkil tha pehle. Flatzy pe 10 minute mein 3 options mile Butibori mein. Superb service!"</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#7c3aed;">NK</div>
+        <div>
+          <div class="testi-name">Nikhil Kolhe</div>
+          <div class="testi-loc">📍 Butibori, Nagpur</div>
         </div>
       </div>
     </div>
@@ -711,6 +805,21 @@ function toggleWaWidget() {
 function waContact(msg) {
   window.open('https://wa.me/917387798079?text=' + encodeURIComponent(msg), '_blank');
 }
+
+// Auto open after 13 seconds, then auto close after 5 more seconds
+setTimeout(function() {
+  const popup = document.getElementById('waPopup');
+  const fab   = document.getElementById('waFab');
+  if (!popup.classList.contains('show')) {
+    popup.classList.add('show');
+    fab.classList.add('open');
+    // Auto close after 5 seconds
+    setTimeout(function() {
+      popup.classList.remove('show');
+      fab.classList.remove('open');
+    }, 5000);
+  }
+}, 13000);
 </script>
 <style>
 .card-action-btns {
