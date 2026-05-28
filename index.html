@@ -10,21 +10,10 @@
 /* ---- HERO ---- */
 /* topnav base styles from style.css — only overrides here */
 .topnav{
-  flex-direction: column;
-  align-items: stretch;
-  height: auto;
-  padding: 0;
-}
-.topnav-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4%;
-  height: 62px;
-  width: 100%;
+  height: var(--nav-h);
 }
 .hero{
-  margin-top: calc(var(--nav-h) + 34px); /* 62px nav + ~34px social strip */
+  margin-top: var(--nav-h); /* just the nav height */
   min-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -34,7 +23,7 @@
   overflow: hidden;
 }
 @media(max-width:768px) {
-  .hero { min-height: 65vh; padding: 2.5rem 5% 2.5rem; margin-top: calc(var(--nav-h) + 34px); }
+  .hero { min-height: 65vh; padding: 2.5rem 5% 2.5rem; margin-top: var(--nav-h); }
   .hero h1 { font-size: 2.3rem; letter-spacing: -1.5px; }
   .hero p { font-size: 0.95rem; }
   .hero-btns { gap: 0.8rem; }
@@ -219,60 +208,9 @@
 </head>
 <body class="has-bottom-nav">
 
-<!-- SOCIAL STRIP CSS -->
-<style>
-.social-strip-wrap {
-  overflow: hidden;
-  background: linear-gradient(90deg, #0f172a, #1a3a6e, #0f172a);
-  padding: 0.5rem 0;
-  width: 100%;
-}
-.social-strip-track {
-  display: flex;
-  gap: 2rem;
-  width: max-content;
-  animation: socialScrollReverse 22s linear infinite;
-  align-items: center;
-}
-.social-strip-track span {
-  color: #e2e8f0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.ssep { color: #60b4ff !important; font-size: 0.7rem !important; }
-@keyframes socialScrollReverse {
-  0%   { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-</style>
-
 <!-- NAV -->
 <nav class="topnav">
 
-  <!-- SOCIAL WELCOME STRIP (top of nav, reversed direction) -->
-  <div class="social-strip-wrap">
-    <div class="social-strip-track">
-      <span>🏠 Welcome to Flatzy Nagpur</span>
-      <span class="ssep">✦</span>
-      <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
-      <span class="ssep">✦</span>
-      <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
-      <span class="ssep">✦</span>
-      <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
-      <span class="ssep">✦</span>
-      <span>🏠 Welcome to Flatzy Nagpur</span>
-      <span class="ssep">✦</span>
-      <span><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Follow on Instagram</span>
-      <span class="ssep">✦</span>
-      <span><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Chat on WhatsApp</span>
-      <span class="ssep">✦</span>
-      <span><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;vertical-align:middle;margin-right:4px;">Connect on LinkedIn</span>
-      <span class="ssep">✦</span>
-    </div>
-  </div>
-
-  <div class="topnav-row">
   <a href="index.html" class="logo">
   <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
   <span>Flat<span style="color:#0ea5e9;">zy</span></span>
@@ -296,7 +234,6 @@
     <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
     <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
   </div>
-  </div><!-- /.topnav-row -->
 </nav>
 
 <!-- HERO -->
@@ -369,40 +306,6 @@
     <div class="lifestyle-tag">👫 Couple Friendly</div>
   </div>
 </section>
-
-<!-- SOCIAL LINK STRIP (white, below lifestyle tags) -->
-<div class="social-link-strip">
-  <div class="social-link-track">
-    <span class="sls-welcome">🏠 Welcome to Flatzy Nagpur</span>
-    <span class="sls-sep">✦</span>
-    <a href="https://www.instagram.com/flatzyhomes" target="_blank" rel="noopener">
-      <img src="instagram21.jpeg" width="16" height="16" alt="Instagram"> Follow on Instagram
-    </a>
-    <span class="sls-sep">✦</span>
-    <a href="https://wa.me/917387798079" target="_blank" rel="noopener">
-      <img src="whatsapp21.jpeg" width="16" height="16" alt="WhatsApp"> Chat on WhatsApp
-    </a>
-    <span class="sls-sep">✦</span>
-    <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank" rel="noopener">
-      <img src="linkdin21.jpeg" width="16" height="16" alt="LinkedIn"> Connect on LinkedIn
-    </a>
-    <span class="sls-sep">✦</span>
-    <span class="sls-welcome">🏠 Welcome to Flatzy Nagpur</span>
-    <span class="sls-sep">✦</span>
-    <a href="https://www.instagram.com/flatzyhomes" target="_blank" rel="noopener">
-      <img src="instagram21.jpeg" width="16" height="16" alt="Instagram"> Follow on Instagram
-    </a>
-    <span class="sls-sep">✦</span>
-    <a href="https://wa.me/917387798079" target="_blank" rel="noopener">
-      <img src="whatsapp21.jpeg" width="16" height="16" alt="WhatsApp"> Chat on WhatsApp
-    </a>
-    <span class="sls-sep">✦</span>
-    <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank" rel="noopener">
-      <img src="linkdin21.jpeg" width="16" height="16" alt="LinkedIn"> Connect on LinkedIn
-    </a>
-    <span class="sls-sep">✦</span>
-  </div>
-</div>
 
 <!-- TRUST TICKER -->
 <div class="trust-ticker">
