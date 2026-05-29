@@ -235,6 +235,114 @@ Div.social-strip-track {
 .testi-name { font-weight: 700; font-size: 0.9rem; }
 .testi-loc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
 
+/* ---- SIDEBAR ---- */
+/* Overlay */
+.sidebar-overlay {
+  display: block;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1099;
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.sidebar-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Sidebar panel */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 280px; height: 100vh;
+  background: white;
+  z-index: 1100;
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1),
+              visibility 0s linear 0.3s;
+  box-shadow: 4px 0 32px rgba(0,0,0,0.15);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar.open {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1),
+              visibility 0s linear 0s;
+}
+
+/* Sidebar header */
+.sidebar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 1.2rem 1rem;
+  background: linear-gradient(135deg,#1a3a6e,#0ea5e9);
+  flex-shrink: 0;
+}
+.sidebar-logo {
+  font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px;
+}
+.sidebar-logo span { color: #93c5fd; }
+.sidebar-close {
+  background: rgba(255,255,255,0.15); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+  font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.sidebar-close:hover { background: rgba(255,255,255,0.3); }
+
+/* Sidebar nav links */
+.sidebar-nav {
+  display: flex; flex-direction: column;
+  padding: 0.8rem 0.8rem 0;
+  flex: 1;
+}
+.sb-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.75rem 1rem; border-radius: 10px;
+  text-decoration: none; color: #1e293b;
+  font-size: 0.95rem; font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.sb-link:hover, .sb-link.active {
+  background: #eff6ff; color: #1a6fe8;
+}
+.sb-divider {
+  height: 1px; background: #e2e8f0;
+  margin: 0.5rem 0;
+}
+
+/* Sidebar social icons */
+.sidebar-social {
+  display: flex; gap: 0.8rem; padding: 1rem 1.2rem 1.5rem;
+  border-top: 1px solid #e2e8f0; margin-top: auto;
+}
+.sidebar-social a {
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 10px;
+  background: #f1f5f9; transition: background 0.2s;
+}
+.sidebar-social a:hover { background: #dbeafe; }
+
+/* Sidebar toggle button — visible on ALL screen sizes */
+.sidebar-toggle {
+  display: flex !important;
+  align-items: center; justify-content: center;
+  background: none; border: none;
+  font-size: 1.4rem; cursor: pointer;
+  color: var(--text); padding: 0.3rem 0.5rem;
+  border-radius: 8px; transition: background 0.15s;
+}
+.sidebar-toggle:hover { background: #eff6ff; }
+
+/* Show sidebar toggle on ALL screen sizes */
+.sidebar-toggle { display: flex !important; }
+@media (min-width: 769px) {
+  /* keep toggle visible on desktop too */
+}
+
 /* APP BANNER */
 .app-banner {
   display: flex; align-items: center; gap: 3rem;
@@ -319,7 +427,6 @@ Div.social-strip-track {
   <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
   <span>Flat<span style="color:#0ea5e9;">zy</span></span>
 </a>
-  <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu">☰</button>
   <div class="nav-links">
     <a href="index.html" class="active">Home</a>
     <a href="rent.html">Browse</a>
@@ -330,11 +437,13 @@ Div.social-strip-track {
   </div>
   <!-- Nav: shown when logged out -->
   <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu" title="Menu">☰</button>
     <a href="login.html" class="nav-btn outline">Login</a>
     <a href="login.html" class="nav-btn">Sign Up Free</a>
   </div>
   <!-- Nav: shown when logged in -->
   <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
+    <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu" title="Menu">☰</button>
     <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
     <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
     <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
@@ -351,7 +460,7 @@ Div.social-strip-track {
 
   <div class="hero-tag"><span class="dot"></span> Nagpur's #1 Property Platform</div>
   <h1>Find Your<br><em>Perfect Home</em><br>in Nagpur</h1>
-  <p>Browse verified flats, PGs and hostels in Wandgori, Higna, Digdoh & more. Just honest listings.</p>
+  <p>Browse verified flats, PGs and hostels in Wanadongri, Hingna, Digdoh & more. Just honest listings.</p>
   <div class="hero-btns">
     <a href="rent.html" class="btn-primary">🔍 Browse Properties</a>
     <a href="owner.html" class="btn-outline">📋 List Your Property</a>
@@ -366,8 +475,9 @@ Div.social-strip-track {
       <label>Area</label>
       <select id="srchArea">
         <option value="">All Areas</option>
-        <option>Wandongri</option><option>Higna</option><option>Lokmanya Nagar</option><option>Digdoh</option>
-        <option>Kalamna</option><option>Butibori</option><option>Koradi</option>
+        <option>Wanadongri</option><option>Hingna</option><option>Lokmanya Nagar</option><option>Digdoh</option>
+        <option>Kalamna</option><option>Butibori</option><option>Koradi</option><option>Wadi</option>
+        <option>Kamptee</option><option>Bhandara Road</option><option>Wardha Road</option><option>Mihan</option>
       </select>
     </div>
     <div class="search-field">
@@ -455,12 +565,18 @@ Div.social-strip-track {
     <div class="section-title">Browse by Area</div>
   </div>
   <div class="areas-grid">
-    <div class="area-card" onclick="browseArea('Wandgori')"><div class="area-icon">🏘️</div><div class="area-name">Wandongri</div><div class="area-count" id="cnt-Wandgori">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Higna')"><div class="area-icon">🌆</div><div class="area-name">Higna</div><div class="area-count" id="cnt-Higna">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Wanadongri')"><div class="area-icon">🏘️</div><div class="area-name">Wanadongri</div><div class="area-count" id="cnt-Wanadongri">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Hingna')"><div class="area-icon">🌆</div><div class="area-name">Hingna</div><div class="area-count" id="cnt-Hingna">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Digdoh')"><div class="area-icon">🏙️</div><div class="area-name">Digdoh</div><div class="area-count" id="cnt-Digdoh">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Kalamna')"><div class="area-icon">🏗️</div><div class="area-name">Kalamna</div><div class="area-count" id="cnt-Kalamna">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Butibori')"><div class="area-icon">🌿</div><div class="area-name">Butibori</div><div class="area-count" id="cnt-Butibori">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Besa')"><div class="area-icon">🏢</div><div class="area-name">Koradi</div><div class="area-count" id="cnt-Besa">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Koradi')"><div class="area-icon">🏭</div><div class="area-name">Koradi</div><div class="area-count" id="cnt-Koradi">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Wadi')"><div class="area-icon">🏠</div><div class="area-name">Wadi</div><div class="area-count" id="cnt-Wadi">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Kamptee')"><div class="area-icon">🏡</div><div class="area-name">Kamptee</div><div class="area-count" id="cnt-Kamptee">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Bhandara Road')"><div class="area-icon">🛣️</div><div class="area-name">Bhandara Road</div><div class="area-count" id="cnt-Bhandara Road">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Wardha Road')"><div class="area-icon">🏢</div><div class="area-name">Wardha Road</div><div class="area-count" id="cnt-Wardha Road">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Mihan')"><div class="area-icon">✈️</div><div class="area-name">Mihan</div><div class="area-count" id="cnt-Mihan">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Lokmanya Nagar')"><div class="area-icon">🌇</div><div class="area-name">Lokmanya Nagar</div><div class="area-count" id="cnt-Lokmanya Nagar">0 listings</div></div>
   </div>
 </section>
 
@@ -494,7 +610,7 @@ Div.social-strip-track {
     <div class="why-card">
       <div class="why-icon">📍</div>
       <div class="why-title">Nagpur Specialist</div>
-      <div class="why-desc">We focus only on Nagpur — Wandgori, Higna, Digdoh, MIDC. We know every lane better than anyone.</div>
+      <div class="why-desc">We focus only on Nagpur — Wanadongri, Hingna, Digdoh, MIDC. We know every lane better than anyone.</div>
     </div>
     <div class="why-card">
       <div class="why-icon">⚡</div>
@@ -514,12 +630,12 @@ Div.social-strip-track {
   <div class="testimonials-grid">
     <div class="testi-card">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"Found my flat in Wandgori within 2 days!Flatzy is simply the best in Nagpur."</div>
+      <div class="testi-text">"Found my flat in Wanadongri within 2 days!Flatzy is simply the best in Nagpur."</div>
       <div class="testi-author">
         <div class="testi-avatar">RK</div>
         <div>
           <div class="testi-name">Rahul Kapse</div>
-          <div class="testi-loc">📍 Wandgori, Nagpur</div>
+          <div class="testi-loc">📍 Wanadongri, Nagpur</div>
         </div>
       </div>
     </div>
@@ -541,7 +657,7 @@ Div.social-strip-track {
         <div class="testi-avatar" style="background:#059669;">VD</div>
         <div>
           <div class="testi-name">Vikas Deshmukh</div>
-          <div class="testi-loc">📍 Higna, Nagpur</div>
+          <div class="testi-loc">📍 Hingna, Nagpur</div>
         </div>
       </div>
     </div>
@@ -569,12 +685,12 @@ Div.social-strip-track {
     </div>
     <div class="testi-card">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"Best platform for Nagpur properties! Listings are genuine and owners are responsive. Found a furnished flat in Wandgori in 3 days."</div>
+      <div class="testi-text">"Best platform for Nagpur properties! Listings are genuine and owners are responsive. Found a furnished flat in Wanadongri in 3 days."</div>
       <div class="testi-author">
         <div class="testi-avatar" style="background:#0891b2;">MR</div>
         <div>
           <div class="testi-name">Mohit Raut</div>
-          <div class="testi-loc">📍 Wandongri, Nagpur</div>
+          <div class="testi-loc">📍 Wanadongri, Nagpur</div>
         </div>
       </div>
     </div>
@@ -632,7 +748,7 @@ Div.social-strip-track {
   <div class="footer-grid">
     <div>
       <div class="footer-logo">Flat<span>zy</span></div>
-      <div class="footer-desc">Nagpur's trusted property platform. Find flats, PGs and hostels in Wandgori, Higna, Digdoh and more.</div>
+      <div class="footer-desc">Nagpur's trusted property platform. Find flats, PGs and hostels in Wanadongri, Hingna, Digdoh and more.</div>
       <div style="margin-top:1rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
         <a href="https://wa.me/917387798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;"> WhatsApp</a>
         <a href="https://www.instagram.com/flatzyrentals?igsh=ZjgxYmpkMXZoYWx4" target="_blank" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;"> Instagram</a>
@@ -657,12 +773,16 @@ Div.social-strip-track {
     </div>
     <div class="footer-col">
       <h4>Areas</h4>
-      <a href="rent.html?area=Wandgori">Wandongri</a>
-      <a href="rent.html?area=Higna">Higna</a>
+      <a href="rent.html?area=Wanadongri">Wanadongri</a>
+      <a href="rent.html?area=Hingna">Hingna</a>
       <a href="rent.html?area=Digdoh">Digdoh</a>
       <a href="rent.html?area=Kalamna">Kalamna</a>
       <a href="rent.html?area=Butibori">Butibori</a>
-      <a href="rent.html?area=Besa">Koradi</a>
+      <a href="rent.html?area=Koradi">Koradi</a>
+      <a href="rent.html?area=Wadi">Wadi</a>
+      <a href="rent.html?area=Kamptee">Kamptee</a>
+      <a href="rent.html?area=Wardha Road">Wardha Road</a>
+      <a href="rent.html?area=Mihan">Mihan</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -967,11 +1087,11 @@ window.logoutUser = async function() {
 
 // ── Demo properties (fallback / always shown) ─────────────────────
 const DEMO_PROPS = [
-  {id:'demo1',title:'Spacious 2BHK Flat',area:'Wandongri',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
-  {id:'demo2',title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
+  {id:'demo1',title:'Spacious 2BHK Flat',area:'Wanadongri',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
+  {id:'demo2',title:'Cozy PG for Girls',area:'Hingna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
   {id:'demo3',title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
   {id:'demo4',title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
-  {id:'demo5',title:'3BHK Family Flat',area:'Wandongri',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
+  {id:'demo5',title:'3BHK Family Flat',area:'Wanadongri',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
   {id:'demo6',title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
 ];
 
@@ -1028,7 +1148,7 @@ async function init() {
   grid.innerHTML = ALL_PROPS.slice(0,8).map(renderCard).join('');
 
   // Area counts
-  ['Wandongri','Higna','Lokmanya Nagar','Digdoh','Kalamna','Butibori'].forEach(a => {
+  ['Wanadongri','Hingna','Lokmanya Nagar','Digdoh','Kalamna','Butibori','Koradi','Wadi','Kamptee','Bhandara Road','Wardha Road','Mihan'].forEach(a => {
     const el = document.getElementById('cnt-'+a);
     if(el) el.textContent = ALL_PROPS.filter(p=>p.area===a).length + ' listings';
   });
@@ -1087,6 +1207,17 @@ function closeSidebar(){
   document.getElementById('sidebarOverlay').classList.remove('show');
   document.body.style.overflow='';
 }
+
+// Auto-open sidebar on desktop only: open after 5s, close after 15s
+(function autoSidebarDesktop(){
+  if(window.innerWidth < 769) return; // mobile/tablet — skip
+  setTimeout(function(){
+    openSidebar();
+    setTimeout(function(){
+      closeSidebar();
+    }, 15000); // stay open 15 seconds
+  }, 5000); // wait 5 seconds before opening
+})();
 </script>
 </body>
 </html>
