@@ -91,14 +91,14 @@ Div.social-strip-track {
   width:100%;
   height:100%;
   object-fit: cover;
-  background:#000000;
+  background: transparent;
   object-position: center center;
   z-index:-2;
 }
 @media(min-width:769px){
   .hero-video{
-    object-fit: contain;
-    object-position: 100% center;
+    object-fit: cover;
+    object-position: center center;
   }
 }
 .hero::before {
@@ -443,6 +443,8 @@ Div.social-strip-track {
     <div class="sb-divider"></div>
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+    <div class="sb-divider"></div>
+    <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
@@ -1318,6 +1320,50 @@ window.pauseCardVideo = function(card) {
   video.pause();
   video.currentTime = 0;
 };
+
+// ── Mobile: Autoplay card videos when visible on screen ──────────
+(function initMobileVideoAutoplay() {
+  const isMobile = window.innerWidth < 769;
+  if (!isMobile) return; // Desktop pe hover wala hi kaam karega
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const video = entry.target.querySelector('.card-hover-video');
+      if (!video) return;
+      if (entry.isIntersecting) {
+        video.play().catch(() => {});
+        video.style.opacity = '1';
+        const photo = entry.target.querySelector('.card-img-photo');
+        if (photo) photo.style.opacity = '0';
+      } else {
+        video.pause();
+        video.currentTime = 0;
+        video.style.opacity = '0';
+        const photo = entry.target.querySelector('.card-img-photo');
+        if (photo) photo.style.opacity = '1';
+      }
+    });
+  }, { threshold: 0.6 }); // 60% card visible ho tab play ho
+
+  // Observe karo sab cards ko — ab bhi aur future mein bhi
+  function observeCards() {
+    document.querySelectorAll('.property-card').forEach(card => {
+      if (!card.dataset.observed) {
+        observer.observe(card);
+        card.dataset.observed = '1';
+      }
+    });
+  }
+
+  // Pehle se loaded cards
+  observeCards();
+
+  // JS se dynamically bane cards ke liye (Firestore load hone ke baad)
+  const grid = document.getElementById('featuredGrid');
+  if (grid) {
+    new MutationObserver(observeCards).observe(grid, { childList: true });
+  }
+})();
 
 // ── Fetch from Firestore + init page ─────────────────────────────
 let ALL_PROPS = [...DEMO_PROPS];
