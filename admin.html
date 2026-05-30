@@ -1008,7 +1008,7 @@ window.adminLogout = async function() {
 // ─── Load listings ─────────────────────────────────────────────────────────
 window.loadListings = async function loadListings() {
   try {
-    const q = query(collection(db, 'properties'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'properties'), orderBy('postedAt', 'desc'));
     const snap = await getDocs(q);
     window.allListings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderStats(window.allListings);
@@ -1017,7 +1017,7 @@ window.loadListings = async function loadListings() {
     try {
       const snap2 = await getDocs(collection(db, 'properties'));
       window.allListings = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
-      window.allListings.sort((a,b) => (b.createdAt||'') > (a.createdAt||'') ? 1 : -1);
+      window.allListings.sort((a,b) => (b.postedAt||'') > (a.postedAt||'') ? 1 : -1);
       renderStats(window.allListings);
       renderListings(window.allListings);
     } catch(e2) {
@@ -1035,7 +1035,7 @@ function renderStats(listings) {
   document.getElementById('statOwners').textContent = uniqueOwners;
   const avgRent = listings.length ? Math.round(listings.reduce((a,p) => a + Number(p.rent||0), 0) / listings.length) : 0;
   document.getElementById('statRent').textContent = '₹' + avgRent.toLocaleString('en-IN');
-  const totalPhotos = listings.reduce((a,p) => a + (p.images?.length || 0), 0);
+  const totalPhotos = listings.reduce((a,p) => a + (p.photos?.length || 0), 0);
   document.getElementById('statPhotos').textContent = totalPhotos;
   document.getElementById('listingCount').textContent = `${listings.length} total listing${listings.length !== 1 ? 's' : ''} in database`;
 }
@@ -1048,10 +1048,10 @@ function renderListings(listings) {
     return;
   }
   container.innerHTML = `<div class="listings-grid">${listings.map((p, i) => {
-    const thumb = p.images && p.images.length > 0 ? p.images[0] : null;
-    const photoCount = p.images?.length || 0;
-    const dateStr = p.createdAt
-      ? new Date(p.createdAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})
+    const thumb = p.photos && p.photos.length > 0 ? p.photos[0] : null;
+    const photoCount = p.photos?.length || 0;
+    const dateStr = p.postedAt
+      ? new Date(p.postedAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})
       : 'Unknown date';
     return `<div class="listing-card" style="animation-delay:${i*0.04}s">
       <div class="listing-thumb">
@@ -1079,11 +1079,11 @@ function renderListings(listings) {
         <div class="listing-type-badge">${p.type || 'Property'}</div>
         <div class="listing-date">${dateStr}</div>
         ${photoCount > 0
-          ? `<br><button class="view-photos-btn" onclick='openPhotos(${JSON.stringify(p.images)}, "${(p.title||'').replace(/"/g,'')}")'>📷 ${photoCount} photo${photoCount>1?'s':''}</button>`
+          ? `<br><button class="view-photos-btn" onclick='openPhotos(${JSON.stringify(p.photos)}, "${(p.title||'').replace(/"/g,'')}")'>📷 ${photoCount} photo${photoCount>1?'s':''}</button>`
           : '<div style="font-size:0.72rem;color:var(--muted);margin-top:0.3rem;">No photos</div>'}
         <div class="action-btns">
           <button class="edit-btn" onclick='openEdit(${JSON.stringify(p)})'>✏️ Edit</button>
-          <button class="delete-btn" onclick='askDelete("${p.id}", "${(p.title||"Untitled").replace(/"/g,"")}", ${JSON.stringify(p.images||[])})'>🗑️ Delete</button>
+          <button class="delete-btn" onclick='askDelete("${p.id}", "${(p.title||"Untitled").replace(/"/g,"")}", ${JSON.stringify(p.photos||[])})'>🗑️ Delete</button>
         </div>
       </div>
     </div>`;
