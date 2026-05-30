@@ -5,6 +5,16 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ]
+    ],
+    "rewrites": [
+      { "source": "/list-property", "destination": "/owner.html" },
+      { "source": "/admin", "destination": "/admin.html" },
+      { "source": "/refer-earn", "destination": "/refer.html" },
+      { "source": "/browse", "destination": "/rent.html" },
+      { "source": "/about", "destination": "/about.html" },
+      { "source": "/contact", "destination": "/contact.html" }
+    ],
+    "cleanUrls": true,
+    "trailingSlash": false
   }
 }
