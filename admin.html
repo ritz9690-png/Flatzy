@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.jpeg">
 <title>Admin Panel – Flatzy</title>
-<script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -945,15 +944,17 @@ const firebaseConfig = {
 const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
-// ── Admin email — change this to your admin email ──
-const ADMIN_EMAIL = "ritz9690@gmail.com,flatzyhomes@gmail.com";
-const SECRET_PASS = "Flatzy@homes21"; // <-- yahan apna secret password likho
+
+// ── Admin emails ──
+const ADMIN_EMAILS = ["ritz9690@gmail.com", "flatzyhomes@gmail.com"];
+const ADMIN_EMAIL  = ADMIN_EMAILS[0]; // login_hint ke liye
+const SECRET_PASS = "Flatzy@homes21";
 
 let allListings = [];
 
 // ─── Auth state ────────────────────────────────────────────────────────────
 onAuthStateChanged(auth, user => {
-  if (user && ADMIN_EMAIL.split(',').map(e=>e.trim()).includes(user.email)) {
+  if (user && ADMIN_EMAILS.includes(user.email)) {
     showPanel();
     loadListings();
   } else if (user) {
@@ -994,24 +995,25 @@ window.doGoogleLogin = async function() {
   btn.innerHTML = '⏳ Signing in...';
   err.textContent = '';
   try {
-    const { GoogleAuthProvider, signInWithPopup } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    const { GoogleAuthProvider, signInWithPopup, signInWithRedirect } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ login_hint: ADMIN_EMAIL });
-    const result = await signInWithPopup(auth, provider);
-    if (result.user.email !== ADMIN_EMAIL) {
-      await signOut(auth);
-      err.textContent = 'Yeh admin account nahi hai! ❌';
-      btn.disabled = false;
-      btn.textContent = 'Continue with Google';
+    try {
+      const result = await signInWithPopup(auth, provider);
+      if (!ADMIN_EMAILS.includes(result.user.email)) {
+        await signOut(auth);
+        err.textContent = 'Yeh admin account nahi hai! ❌';
+        btn.disabled = false;
+        btn.textContent = 'Continue with Google';
+      }
+    } catch(popupErr) {
+      if (popupErr.code === 'auth/popup-blocked' || popupErr.code === 'auth/cancelled-popup-request') {
+        // Popup block hua — redirect se try karo
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+      throw popupErr;
     }
-  } catch(e) {
-    let msg = 'Google login failed.';
-    if (e.code === 'auth/popup-closed-by-user') msg = 'Login cancel kar diya.';
-    else if (e.code === 'auth/network-request-failed') msg = 'Network error.';
-    err.textContent = msg;
-    btn.disabled = false;
-    btn.textContent = 'Continue with Google';
-  }
 };
 
 window.adminLogout = async function() {
@@ -1148,7 +1150,9 @@ window.filterListings = function() {
 
 // ─── Delete ──────────────────────────────────────────────────────────────────
 // ── Cloudinary config — apni API key aur secret yahan dalo ──
-// ⚠️ Keys config.js se load ho rahi hain — wahan daalo
+const CLOUD_NAME   = 'dhl8byas2';
+const CLOUD_API_KEY    = '175356899958295';
+const CLOUD_API_SECRET = 'nbrjilF3JyRxJHkMF9ACgsaD0tY';
 
 // Cloudinary se image delete karne ka function
 async function deleteFromCloudinary(images) {
