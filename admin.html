@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.jpeg">
 <title>Admin Panel – Flatzy</title>
+<script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -944,9 +945,8 @@ const firebaseConfig = {
 const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
-
 // ── Admin email — change this to your admin email ──
-const ADMIN_EMAIL = "ritz9690@gmail.com";
+const ADMIN_EMAIL = "ritz9690@gmail.com,flatzyhomes@gmail.com";
 const SECRET_PASS = "Flatzy@homes21"; // <-- yahan apna secret password likho
 
 let allListings = [];
@@ -1148,9 +1148,7 @@ window.filterListings = function() {
 
 // ─── Delete ──────────────────────────────────────────────────────────────────
 // ── Cloudinary config — apni API key aur secret yahan dalo ──
-const CLOUD_NAME   = 'dhl8byas2';
-const CLOUD_API_KEY    = '175356899958295';
-const CLOUD_API_SECRET = 'nbrjilF3JyRxJHkMF9ACgsaD0tY';
+// ⚠️ Keys config.js se load ho rahi hain — wahan daalo
 
 // Cloudinary se image delete karne ka function
 async function deleteFromCloudinary(images) {
