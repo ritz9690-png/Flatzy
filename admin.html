@@ -1006,7 +1006,7 @@ window.adminLogout = async function() {
 };
 
 // ─── Load listings ─────────────────────────────────────────────────────────
-async function loadListings() {
+window.loadListings = async function loadListings() {
   try {
     const q = query(collection(db, 'properties'), orderBy('createdAt', 'desc'));
     const snap = await getDocs(q);
