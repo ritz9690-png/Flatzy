@@ -448,7 +448,7 @@ function renderGrid(list) {
       : `<div class="card-img-placeholder">${p.emoji||'🏠'}</div>`;
     const videoHtml = p.videoUrl
       ? `<video class="card-hover-video" src="${p.videoUrl}" muted loop playsinline preload="none"></video>
-         <div class="video-indicator"><span class="video-indicator-dot"></span> Hover to play</div>`
+         <div class="video-indicator"><span class="video-indicator-dot"></span>play</div>`
       : '';
     return `
     <div class="property-card" onclick="window.location='view.html?id=${p.id}'"
