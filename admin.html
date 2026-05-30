@@ -1105,7 +1105,7 @@ window.filterListings = function() {
 };
 
 // ─── Cloudinary delete ────────────────────────────────────────────────────
-async function deleteFromCloudinary(images) {
+window.deleteFromCloudinary = async function(images) {
   if (!images || images.length === 0) return;
   for (const url of images) {
     try {
