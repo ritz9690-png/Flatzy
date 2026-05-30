@@ -953,7 +953,7 @@ let allListings = [];
 
 // ─── Auth state ────────────────────────────────────────────────────────────
 onAuthStateChanged(auth, user => {
-  if (user && user.email === ADMIN_EMAIL) {
+  if (user && ADMIN_EMAIL.split(',').map(e=>e.trim()).includes(user.email)) {
     showPanel();
     loadListings();
   } else if (user) {
