@@ -81,6 +81,16 @@ body { background: var(--dark2); }
 .photo-thumb { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 2px solid var(--border); }
 .photo-thumb-placeholder { width: 72px; height: 72px; background: var(--primary-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--border); }
 
+/* VIDEO UPLOAD */
+.video-drop { border: 2px dashed #f59e0b; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; background: #fffbeb; margin-top: 1rem; }
+.video-drop:hover { border-color: #d97706; background: #fef3c7; }
+.video-drop-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.video-preview-wrap { margin-top: 1rem; position: relative; display: inline-block; }
+.video-preview-wrap video { width: 100%; max-width: 320px; border-radius: 10px; border: 2px solid #f59e0b; display: block; }
+.video-remove-btn { position: absolute; top: 6px; right: 6px; background: #DC2626; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.video-uploading { color: var(--muted); font-size: 0.85rem; padding: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.video-success { color: #065F46; background: #D1FAE5; border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem; display: inline-block; }
+
 /* LISTINGS TABLE */
 .listings-list { display: flex; flex-direction: column; gap: 1rem; }
 .listing-row { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 1.2rem; display: flex; gap: 1rem; align-items: center; box-shadow: var(--shadow-sm); transition: border-color 0.2s; }
@@ -189,7 +199,113 @@ body { background: var(--dark2); }
         </div>
         <div class="form-row">
           <div class="form-group"><label>Area / Locality</label>
-            <select id="pArea"><option>Wandongri</option><option>Higna</option><option>Lokmanya Nagar</option><option>Digdoh</option><option>Kalamna</option><option>Butibori</option><option>Koradi</option><option>Other</option></select>
+            <select id="pArea">
+              <optgroup label="Central Nagpur">
+                <option>Cotton Market</option>
+                <option>Gandhibagh</option>
+                <option>Ganeshpeth</option>
+                <option>Itwari</option>
+                <option>Lakadganj</option>
+                <option>Mahal</option>
+                <option>Maskasath</option>
+                <option>Mominpura</option>
+                <option>Pachpaoli</option>
+                <option>Sitabuldi</option>
+              </optgroup>
+              <optgroup label="West Nagpur">
+                <option>Ambazari</option>
+                <option>Bajaj Nagar</option>
+                <option>Civil Lines</option>
+                <option>Dabha</option>
+                <option>Dharampeth</option>
+                <option>Friends Colony</option>
+                <option>Giripeth</option>
+                <option>Gokulpeth</option>
+                <option>Hingna Road</option>
+                <option>Law College Square</option>
+                <option>Laxmi Nagar</option>
+                <option>Ramdaspeth</option>
+                <option>Ravi Nagar</option>
+                <option>Seminary Hills</option>
+                <option>Shankar Nagar</option>
+                <option>Wadi</option>
+              </optgroup>
+              <optgroup label="South-West Nagpur">
+                <option>Airport Area</option>
+                <option>Chatrapati Nagar</option>
+                <option>Chinchbhuvan</option>
+                <option>Hingna</option>
+                <option>Jaitala</option>
+                <option>Jamtha</option>
+                <option>Khamla</option>
+                <option>Khapri</option>
+                <option>Manish Nagar</option>
+                <option>MIHAN</option>
+                <option>Narendra Nagar</option>
+                <option>New Manish Nagar</option>
+                <option>Pratap Nagar</option>
+                <option>Rajiv Nagar</option>
+                <option>Somalwada</option>
+                <option>Sonegaon</option>
+                <option>Trimurti Nagar</option>
+                <option>Ujwal Nagar</option>
+                <option>Wanadongri</option>
+                <option>Wardha Road</option>
+                <option>YCCE Area</option>
+              </optgroup>
+              <optgroup label="South &amp; South-East Nagpur">
+                <option>Ayodhya Nagar</option>
+                <option>Beltarodi</option>
+                <option>Besa</option>
+                <option>Bhandewadi</option>
+                <option>Bidgaon</option>
+                <option>Dighori</option>
+                <option>Gotal Pajri</option>
+                <option>Hudkeshwar</option>
+                <option>Hudkeshwar Road</option>
+                <option>Isasani</option>
+                <option>Kharbi</option>
+                <option>Manewada</option>
+                <option>Narsala</option>
+                <option>Omkar Nagar</option>
+                <option>Panjari</option>
+                <option>Pardi</option>
+                <option>Pipla</option>
+                <option>Rameshwari</option>
+                <option>Wathoda</option>
+              </optgroup>
+              <optgroup label="East Nagpur">
+                <option>Bharatwada</option>
+                <option>Chandan Nagar</option>
+                <option>Hasanbagh</option>
+                <option>Kalamna</option>
+                <option>Kapsi</option>
+                <option>Nandanvan</option>
+                <option>Old Bagadganj</option>
+                <option>Wardhaman Nagar</option>
+              </optgroup>
+              <optgroup label="North Nagpur">
+                <option>Ashok Nagar</option>
+                <option>Bezanbagh</option>
+                <option>Gaddi Godam</option>
+                <option>Godhani</option>
+                <option>Gorewada</option>
+                <option>Indora</option>
+                <option>Jaripatka</option>
+                <option>Kadbi Chowk</option>
+                <option>Kamptee Road</option>
+                <option>Kapil Nagar</option>
+                <option>Koradi Road</option>
+                <option>Mankapur</option>
+                <option>Sugat Nagar</option>
+                <option>Yashodhara Nagar</option>
+                <option>Zingabai Takli</option>
+              </optgroup>
+              <optgroup label="Premium Areas">
+                <option>Byramji Town</option>
+                <option>Sadar</option>
+              </optgroup>
+            </select>
           </div>
           <div class="form-group"><label>Floor</label>
             <select id="pFloor"><option>Ground</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th+</option></select>
@@ -233,10 +349,22 @@ body { background: var(--dark2); }
         <div class="photo-drop" onclick="document.getElementById('photoInput').click()">
           <div class="photo-drop-icon">📷</div>
           <div style="font-weight:700;font-size:0.9rem;">Click to add photos</div>
-          <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">JPG, PNG up to 5MB each</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">JPG, PNG up to 10MB each</div>
           <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="previewPhotos(this)">
         </div>
         <div class="photo-thumbs" id="photoThumbs"></div>
+
+        <!-- VIDEO UPLOAD -->
+        <div style="margin-top:1.2rem;">
+          <div style="font-size:0.8rem;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.6rem;">🎬 Property Tour Video <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;">(optional — helps renters decide faster!)</span></div>
+          <div class="video-drop" onclick="document.getElementById('videoInput').click()">
+            <div class="video-drop-icon">🎥</div>
+            <div style="font-weight:700;font-size:0.9rem;">Click to add a video tour</div>
+            <div style="font-size:0.75rem;color:#92400e;margin-top:0.3rem;">MP4, MOV up to 100MB · Max 1 video</div>
+            <input type="file" id="videoInput" accept="video/mp4,video/mov,video/quicktime,video/*" style="display:none" onchange="uploadVideo(this)">
+          </div>
+          <div id="videoStatus"></div>
+        </div>
       </div>
 
       <div class="form-section" style="border-bottom:none;">
@@ -452,6 +580,7 @@ window.submitProperty = async function() {
     emoji: ['🏠','🏡','🏢','🏘️','🏨'][Math.floor(Math.random()*5)],
     photos: uploadedPhotoUrls,
     mainPhoto: uploadedPhotoUrls[0] || null,
+    videoUrl: uploadedVideoUrl || null,
     views: 0, inquiries: 0,
     postedAt: new Date().toISOString()
   };
@@ -463,7 +592,9 @@ window.submitProperty = async function() {
     ['pTitle','pRent','pDeposit','pAddress','pDesc'].forEach(id=>document.getElementById(id).value='');
     document.querySelectorAll('#amenityGrid input[type="checkbox"]').forEach(el=>el.checked=false);
     document.getElementById('photoThumbs').innerHTML='';
+    document.getElementById('videoStatus').innerHTML='';
     uploadedPhotoUrls = [];
+    uploadedVideoUrl = null;
     setTimeout(async ()=>{
       switchOTab('listings');
       await renderListings();
@@ -480,12 +611,71 @@ window.submitProperty = async function() {
 const CLOUD_NAME = 'dhl8byas2';
 const UPLOAD_PRESET = 'flatzy_upload';
 let uploadedPhotoUrls = [];
+let uploadedVideoUrl = null;
+
+// ── Video Upload to Cloudinary ────────────────────────────────────
+window.uploadVideo = async function(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // 50MB limit check
+  if (file.size > 100 * 1024 * 1024) {
+    showToast('Video too large! Max 100MB', true);
+    return;
+  }
+
+  const status = document.getElementById('videoStatus');
+  status.innerHTML = '<div class="video-uploading">⏳ Uploading video... please wait</div>';
+  uploadedVideoUrl = null;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', UPLOAD_PRESET);
+  formData.append('resource_type', 'video');
+
+  try {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (data.secure_url) {
+      uploadedVideoUrl = data.secure_url;
+      status.innerHTML = `
+        <div class="video-success">✅ Video uploaded!</div>
+        <div class="video-preview-wrap">
+          <video src="${data.secure_url}" controls muted playsinline></video>
+          <button class="video-remove-btn" onclick="removeVideo()" title="Remove video">✕</button>
+        </div>`;
+      showToast('🎥 Video uploaded!');
+    } else {
+      throw new Error(data.error?.message || 'Upload failed');
+    }
+  } catch(e) {
+    status.innerHTML = '<div style="color:#DC2626;font-size:0.85rem;">❌ Video upload failed. Try again.</div>';
+    showToast('Video upload failed', true);
+  }
+};
+
+window.removeVideo = function() {
+  uploadedVideoUrl = null;
+  document.getElementById('videoStatus').innerHTML = '';
+  document.getElementById('videoInput').value = '';
+  showToast('Video removed');
+};
 
 // ── Photo Upload to Cloudinary ────────────────────────────────────
 window.previewPhotos = async function(input) {
   const thumbs = document.getElementById('photoThumbs');
   const files = Array.from(input.files).slice(0, 6);
   if (!files.length) return;
+
+  // 10MB per photo check
+  const oversized = files.filter(f => f.size > 10 * 1024 * 1024);
+  if (oversized.length) {
+    showToast(`❌ ${oversized.length} photo(s) exceed 10MB limit`, true);
+    return;
+  }
 
   thumbs.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:0.5rem;">⏳ Uploading photos...</div>';
   uploadedPhotoUrls = [];

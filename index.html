@@ -165,6 +165,36 @@ Div.social-strip-track {
 /* PROPERTIES GRID */
 .properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
 
+/* HOVER VIDEO */
+.card-img { position: relative; overflow: hidden; }
+.card-img-photo { transition: opacity 0.3s; width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
+.card-hover-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+.card-img:hover .card-hover-video { opacity: 1; }
+.card-img:hover .card-img-photo { opacity: 0; }
+.video-indicator {
+  position: absolute; bottom: 44px; left: 8px;
+  background: rgba(0,0,0,0.65); color: white;
+  font-size: 0.68rem; font-weight: 700;
+  padding: 3px 8px; border-radius: 20px;
+  display: flex; align-items: center; gap: 4px;
+  z-index: 3; pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+.video-indicator-dot {
+  width: 6px; height: 6px;
+  background: #ff4444; border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
 /* LIFESTYLE TAGS */
 .lifestyle-tag {
   background: #f0f9ff; border: 1.5px solid #bae6fd; color: #0369a1;
@@ -475,9 +505,118 @@ Div.social-strip-track {
       <label>Area</label>
       <select id="srchArea">
         <option value="">All Areas</option>
-        <option>Wanadongri</option><option>Hingna</option><option>Lokmanya Nagar</option><option>Digdoh</option>
-        <option>Kalamna</option><option>Butibori</option><option>Koradi</option><option>Wadi</option>
-        <option>Kamptee</option><option>Bhandara Road</option><option>Wardha Road</option><option>Mihan</option>
+        <optgroup label="⭐ Popular Areas">
+          <option>Dharampeth</option>
+          <option>Civil Lines</option>
+          <option>Bajaj Nagar</option>
+          <option>Trimurti Nagar</option>
+          <option>Pratap Nagar</option>
+          <option>Wanadongri</option>
+          <option>YCCE Area</option>
+          <option>Hingna</option>
+          <option>MIHAN</option>
+          <option>Wardha Road</option>
+          <option>Kalamna</option>
+          <option>Sitabuldi</option>
+        </optgroup>
+        <optgroup label="Central Nagpur">
+          <option>Cotton Market</option>
+          <option>Gandhibagh</option>
+          <option>Ganeshpeth</option>
+          <option>Itwari</option>
+          <option>Lakadganj</option>
+          <option>Mahal</option>
+          <option>Maskasath</option>
+          <option>Mominpura</option>
+          <option>Pachpaoli</option>
+        </optgroup>
+        <optgroup label="West Nagpur">
+          <option>Ambazari</option>
+          <option>Civil Lines</option>
+          <option>Dabha</option>
+          <option>Friends Colony</option>
+          <option>Giripeth</option>
+          <option>Gokulpeth</option>
+          <option>Hingna Road</option>
+          <option>Law College Square</option>
+          <option>Laxmi Nagar</option>
+          <option>Ramdaspeth</option>
+          <option>Ravi Nagar</option>
+          <option>Seminary Hills</option>
+          <option>Shankar Nagar</option>
+          <option>Wadi</option>
+        </optgroup>
+        <optgroup label="South-West Nagpur">
+          <option>Airport Area</option>
+          <option>Chatrapati Nagar</option>
+          <option>Chinchbhuvan</option>
+          <option>Hingna</option>
+          <option>Jaitala</option>
+          <option>Jamtha</option>
+          <option>Khamla</option>
+          <option>Khapri</option>
+          <option>Manish Nagar</option>
+          <option>MIHAN</option>
+          <option>Narendra Nagar</option>
+          <option>New Manish Nagar</option>
+          <option>Rajiv Nagar</option>
+          <option>Somalwada</option>
+          <option>Sonegaon</option>
+          <option>Ujwal Nagar</option>
+          <option>Wardha Road</option>
+          <option>YCCE Area</option>
+        </optgroup>
+        <optgroup label="South &amp; South-East Nagpur">
+          <option>Ayodhya Nagar</option>
+          <option>Beltarodi</option>
+          <option>Besa</option>
+          <option>Bhandewadi</option>
+          <option>Bidgaon</option>
+          <option>Dighori</option>
+          <option>Gotal Pajri</option>
+          <option>Hudkeshwar</option>
+          <option>Hudkeshwar Road</option>
+          <option>Isasani</option>
+          <option>Kharbi</option>
+          <option>Manewada</option>
+          <option>Narsala</option>
+          <option>Omkar Nagar</option>
+          <option>Panjari</option>
+          <option>Pardi</option>
+          <option>Pipla</option>
+          <option>Rameshwari</option>
+          <option>Wathoda</option>
+        </optgroup>
+        <optgroup label="East Nagpur">
+          <option>Bharatwada</option>
+          <option>Chandan Nagar</option>
+          <option>Hasanbagh</option>
+          <option>Kapsi</option>
+          <option>Nandanvan</option>
+          <option>Old Bagadganj</option>
+          <option>Wardhaman Nagar</option>
+        </optgroup>
+        <optgroup label="North Nagpur">
+          <option>Ashok Nagar</option>
+          <option>Bezanbagh</option>
+          <option>Gaddi Godam</option>
+          <option>Godhani</option>
+          <option>Gorewada</option>
+          <option>Indora</option>
+          <option>Jaripatka</option>
+          <option>Kadbi Chowk</option>
+          <option>Kamptee Road</option>
+          <option>Kapil Nagar</option>
+          <option>Koradi Road</option>
+          <option>Mankapur</option>
+          <option>Sugat Nagar</option>
+          <option>Yashodhara Nagar</option>
+          <option>Zingabai Takli</option>
+        </optgroup>
+        <optgroup label="Premium Areas">
+          <option>Byramji Town</option>
+          <option>Sadar</option>
+        </optgroup>
       </select>
     </div>
     <div class="search-field">
@@ -565,18 +704,54 @@ Div.social-strip-track {
     <div class="section-title">Browse by Area</div>
   </div>
   <div class="areas-grid">
-    <div class="area-card" onclick="browseArea('Wanadongri')"><div class="area-icon">🏘️</div><div class="area-name">Wanadongri</div><div class="area-count" id="cnt-Wanadongri">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Dharampeth')"><div class="area-icon">🏛️</div><div class="area-name">Dharampeth</div><div class="area-count" id="cnt-Dharampeth">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Civil Lines')"><div class="area-icon">🌿</div><div class="area-name">Civil Lines</div><div class="area-count" id="cnt-Civil Lines">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Bajaj Nagar')"><div class="area-icon">🏙️</div><div class="area-name">Bajaj Nagar</div><div class="area-count" id="cnt-Bajaj Nagar">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Trimurti Nagar')"><div class="area-icon">🎓</div><div class="area-name">Trimurti Nagar</div><div class="area-count" id="cnt-Trimurti Nagar">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Pratap Nagar')"><div class="area-icon">🏘️</div><div class="area-name">Pratap Nagar</div><div class="area-count" id="cnt-Pratap Nagar">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Wanadongri')"><div class="area-icon">🏗️</div><div class="area-name">Wanadongri</div><div class="area-count" id="cnt-Wanadongri">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('YCCE Area')"><div class="area-icon">🎓</div><div class="area-name">YCCE Area</div><div class="area-count" id="cnt-YCCE Area">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Hingna')"><div class="area-icon">🌆</div><div class="area-name">Hingna</div><div class="area-count" id="cnt-Hingna">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Digdoh')"><div class="area-icon">🏙️</div><div class="area-name">Digdoh</div><div class="area-count" id="cnt-Digdoh">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Kalamna')"><div class="area-icon">🏗️</div><div class="area-name">Kalamna</div><div class="area-count" id="cnt-Kalamna">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Butibori')"><div class="area-icon">🌿</div><div class="area-name">Butibori</div><div class="area-count" id="cnt-Butibori">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Koradi')"><div class="area-icon">🏭</div><div class="area-name">Koradi</div><div class="area-count" id="cnt-Koradi">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Wadi')"><div class="area-icon">🏠</div><div class="area-name">Wadi</div><div class="area-count" id="cnt-Wadi">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Kamptee')"><div class="area-icon">🏡</div><div class="area-name">Kamptee</div><div class="area-count" id="cnt-Kamptee">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Bhandara Road')"><div class="area-icon">🛣️</div><div class="area-name">Bhandara Road</div><div class="area-count" id="cnt-Bhandara Road">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('MIHAN')"><div class="area-icon">✈️</div><div class="area-name">MIHAN</div><div class="area-count" id="cnt-MIHAN">0 listings</div></div>
     <div class="area-card" onclick="browseArea('Wardha Road')"><div class="area-icon">🏢</div><div class="area-name">Wardha Road</div><div class="area-count" id="cnt-Wardha Road">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Mihan')"><div class="area-icon">✈️</div><div class="area-name">Mihan</div><div class="area-count" id="cnt-Mihan">0 listings</div></div>
-    <div class="area-card" onclick="browseArea('Lokmanya Nagar')"><div class="area-icon">🌇</div><div class="area-name">Lokmanya Nagar</div><div class="area-count" id="cnt-Lokmanya Nagar">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Kalamna')"><div class="area-icon">🏭</div><div class="area-name">Kalamna</div><div class="area-count" id="cnt-Kalamna">0 listings</div></div>
+    <div class="area-card" onclick="browseArea('Sitabuldi')"><div class="area-icon">🛍️</div><div class="area-name">Sitabuldi</div><div class="area-count" id="cnt-Sitabuldi">0 listings</div></div>
+  </div>
+
+  <!-- More Areas -->
+  <div style="margin-top:1.5rem;padding:0 5%;">
+    <div style="font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.8rem;">More Areas in Nagpur</div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+      <span onclick="browseArea('Ambazari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ambazari</span>
+      <span onclick="browseArea('Laxmi Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Laxmi Nagar</span>
+      <span onclick="browseArea('Shankar Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Shankar Nagar</span>
+      <span onclick="browseArea('Ramdaspeth')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ramdaspeth</span>
+      <span onclick="browseArea('Ravi Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ravi Nagar</span>
+      <span onclick="browseArea('Seminary Hills')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Seminary Hills</span>
+      <span onclick="browseArea('Wadi')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Wadi</span>
+      <span onclick="browseArea('Jaitala')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Jaitala</span>
+      <span onclick="browseArea('Rajiv Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Rajiv Nagar</span>
+      <span onclick="browseArea('Khamla')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Khamla</span>
+      <span onclick="browseArea('Sonegaon')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Sonegaon</span>
+      <span onclick="browseArea('Besa')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Besa</span>
+      <span onclick="browseArea('Manewada')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Manewada</span>
+      <span onclick="browseArea('Rameshwari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Rameshwari</span>
+      <span onclick="browseArea('Hudkeshwar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Hudkeshwar</span>
+      <span onclick="browseArea('Nandanvan')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Nandanvan</span>
+      <span onclick="browseArea('Wardhaman Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Wardhaman Nagar</span>
+      <span onclick="browseArea('Jaripatka')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Jaripatka</span>
+      <span onclick="browseArea('Kamptee Road')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Kamptee Road</span>
+      <span onclick="browseArea('Indora')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Indora</span>
+      <span onclick="browseArea('Sadar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Sadar</span>
+      <span onclick="browseArea('Byramji Town')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Byramji Town</span>
+      <span onclick="browseArea('Mahal')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Mahal</span>
+      <span onclick="browseArea('Itwari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Itwari</span>
+      <span onclick="browseArea('Manish Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Manish Nagar</span>
+      <span onclick="browseArea('Khapri')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Khapri</span>
+      <span onclick="browseArea('Pipla')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Pipla</span>
+      <span onclick="browseArea('Kapsi')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Kapsi</span>
+      <span onclick="window.location='rent.html'" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--primary);background:var(--primary-light);font-size:0.8rem;font-weight:700;color:var(--primary);cursor:pointer;">+ All Areas →</span>
+    </div>
   </div>
 </section>
 
@@ -1088,22 +1263,28 @@ window.logoutUser = async function() {
 
 // ── Demo properties (fallback / always shown) ─────────────────────
 const DEMO_PROPS = [
-  {id:'demo1',title:'Spacious 2BHK Flat',area:'Wanadongri',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
-  {id:'demo2',title:'Cozy PG for Girls',area:'Hingna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
-  {id:'demo3',title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
-  {id:'demo4',title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
-  {id:'demo5',title:'3BHK Family Flat',area:'Wanadongri',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
-  {id:'demo6',title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
+  {id:'demo1',title:'Spacious 2BHK Flat',area:'Trimurti Nagar',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
+  {id:'demo2',title:'Cozy PG for Girls',area:'Bajaj Nagar',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
+  {id:'demo3',title:'Modern 1BHK Studio',area:'Dharampeth',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
+  {id:'demo4',title:'Budget Hostel Room',area:'Wanadongri',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
+  {id:'demo5',title:'3BHK Family Flat',area:'Pratap Nagar',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
+  {id:'demo6',title:'1BHK Near YCCE',area:'YCCE Area',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
 ];
 
 // ── Render property card ──────────────────────────────────────────
 function renderCard(p) {
   const idStr = typeof p.id === 'string' ? p.id : String(p.id);
   const imgHtml = p.mainPhoto
-    ? `<img src="${p.mainPhoto}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`
+    ? `<img class="card-img-photo" src="${p.mainPhoto}" alt="${p.title}">`
     : `<div class="card-img-placeholder">${p.emoji||'🏠'}</div>`;
-  return `<div class="property-card" onclick="window.location='rent.html?id=${idStr}'">
-    <div class="card-img">${imgHtml}
+  const videoHtml = p.videoUrl
+    ? `<video class="card-hover-video" src="${p.videoUrl}" muted loop playsinline preload="none"></video>
+       <div class="video-indicator"><span class="video-indicator-dot"></span> Hover to play</div>`
+    : '';
+  return `<div class="property-card" onclick="window.location='rent.html?id=${idStr}'"
+    onmouseenter="playCardVideo(this)"
+    onmouseleave="pauseCardVideo(this)">
+    <div class="card-img">${imgHtml}${videoHtml}
       <span class="card-badge">${p.furnish||'N/A'}</span>
       <span class="card-type">${p.type||'Flat'}</span>
     </div>
@@ -1124,6 +1305,19 @@ function renderCard(p) {
     </div>
   </div>`;
 }
+
+// ── Hover Video Play/Pause ────────────────────────────────────────
+window.playCardVideo = function(card) {
+  const video = card.querySelector('.card-hover-video');
+  if (!video) return;
+  video.play().catch(() => {});
+};
+window.pauseCardVideo = function(card) {
+  const video = card.querySelector('.card-hover-video');
+  if (!video) return;
+  video.pause();
+  video.currentTime = 0;
+};
 
 // ── Fetch from Firestore + init page ─────────────────────────────
 let ALL_PROPS = [...DEMO_PROPS];
@@ -1149,7 +1343,7 @@ async function init() {
   grid.innerHTML = ALL_PROPS.slice(0,8).map(renderCard).join('');
 
   // Area counts
-  ['Wanadongri','Hingna','Lokmanya Nagar','Digdoh','Kalamna','Butibori','Koradi','Wadi','Kamptee','Bhandara Road','Wardha Road','Mihan'].forEach(a => {
+  ['Dharampeth','Civil Lines','Bajaj Nagar','Trimurti Nagar','Pratap Nagar','Wanadongri','YCCE Area','Hingna','MIHAN','Wardha Road','Kalamna','Sitabuldi'].forEach(a => {
     const el = document.getElementById('cnt-'+a);
     if(el) el.textContent = ALL_PROPS.filter(p=>p.area===a).length + ' listings';
   });

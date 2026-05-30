@@ -227,6 +227,38 @@
   .fl-thumb.active { border-color: #1A6FE8; opacity: 1; transform: scale(1.08); }
   .fl-thumb:hover  { opacity: 0.88; }
 
+  /* ── VIDEO THUMB ── */
+  .fl-thumb-video {
+    width: 58px; height: 44px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2.5px solid transparent;
+    transition: all 0.18s;
+    opacity: 0.6;
+    background: rgba(255,100,0,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    position: relative;
+  }
+  .fl-thumb-video:hover { opacity: 1; border-color: #ff6600; }
+  .fl-thumb-video.active { border-color: #ff6600; opacity: 1; transform: scale(1.08); }
+  .fl-thumb-video span { font-size: 0.55rem; position: absolute; bottom: 3px; color: rgba(255,255,255,0.85); font-weight:700; letter-spacing:0.3px; }
+
+  /* ── VIDEO PLAYER in lightbox ── */
+  #flVideo {
+    max-width: min(88vw, 1100px);
+    max-height: 82vh;
+    width: auto; height: auto;
+    border-radius: 8px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+    display: none;
+    outline: none;
+    background: #000;
+  }
+  #flVideo.active { display: block; }
+  #flImg.hidden   { display: none; }
+
   /* ══════════════════════════════════════════════════
      MOBILE — tap se dikhta hai (touch-show-ui class)
   ══════════════════════════════════════════════════ */
@@ -300,6 +332,7 @@
       <div id="flSpinner"></div>
       <div id="flImgWrap">
         <img id="flImg" src="" alt="photo">
+        <video id="flVideo" controls playsinline></video>
       </div>
       <div class="fl-arrow" id="flPrev">&#8249;</div>
       <div class="fl-arrow" id="flNext">&#8250;</div>
@@ -312,7 +345,7 @@
   /* ═══════════════════════════════════════════════════════════
      STATE
   ═══════════════════════════════════════════════════════════ */
-  let photos = [], current = 0, isOpen = false;
+  let photos = [], current = 0, isOpen = false, videoUrl = null, showingVideo = false;
   let scale = 1, panX = 0, panY = 0;
   let isDragging = false, dragStartX = 0, dragStartY = 0;
   let lastPanX = 0, lastPanY = 0;
@@ -335,18 +368,19 @@
   /* ═══════════════════════════════════════════════════════════
      OPEN / CLOSE
   ═══════════════════════════════════════════════════════════ */
-  window.flOpen = function (list, idx, title) {
-    photos  = Array.isArray(list) ? list : [list];
-    current = idx || 0;
-    isOpen  = true;
+  window.flOpen = function (list, idx, title, vidUrl) {
+    photos   = Array.isArray(list) ? list : [list];
+    current  = idx || 0;
+    videoUrl = vidUrl || null;
+    isOpen   = true;
+    showingVideo = false;
     document.body.style.overflow = 'hidden';
-    // Ensure lightbox is on top of all modals
     document.body.appendChild(lb);
     lb.classList.add('active');
     resetZoom();
     renderThumbs();
     loadPhoto(current);
-    showUI(); // always show arrows on open
+    showUI();
   };
 
   window.flClose = function () {
@@ -355,6 +389,12 @@
     isOpen = false;
     img.src = '';
     clearTimeout(uiTimer);
+    // stop video if playing
+    const vid = document.getElementById('flVideo');
+    vid.pause(); vid.src = '';
+    vid.classList.remove('active');
+    img.classList.remove('hidden');
+    showingVideo = false;
   };
 
   document.getElementById('flClose').onclick = flClose;
@@ -622,22 +662,59 @@
      THUMBNAILS
   ═══════════════════════════════════════════════════════════ */
   function renderThumbs() {
-    thumbEl.innerHTML = photos.map((p, i) =>
+    const photoThumbs = photos.map((p, i) =>
       `<div class="fl-thumb${i === current ? ' active' : ''}" onclick="window.flGoTo(${i})">
          <img src="${p}" alt="thumb ${i+1}" loading="lazy">
        </div>`
     ).join('');
+    const videoThumb = videoUrl
+      ? `<div class="fl-thumb-video" id="flVideoThumb" onclick="window.flOpenVideo()">▶️<span>VIDEO</span></div>`
+      : '';
+    thumbEl.innerHTML = photoThumbs + videoThumb;
   }
 
   function updateThumbs(idx) {
     document.querySelectorAll('.fl-thumb').forEach((t, i) =>
       t.classList.toggle('active', i === idx));
+    const vt = document.getElementById('flVideoThumb');
+    if (vt) vt.classList.remove('active');
     const a = document.querySelector('.fl-thumb.active');
     if (a) a.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }
 
   window.flGoTo = function (idx) {
+    // switch back from video to photo if needed
+    const vid = document.getElementById('flVideo');
+    if (showingVideo) {
+      vid.pause(); vid.src = '';
+      vid.classList.remove('active');
+      img.classList.remove('hidden');
+      showingVideo = false;
+      document.getElementById('flClose').style.zIndex = '';
+    }
     current = idx; resetZoom(); loadPhoto(idx);
+  };
+
+  window.flOpenVideo = function () {
+    if (!videoUrl) return;
+    showingVideo = true;
+    // hide photo, show video
+    img.classList.add('hidden');
+    resetZoom();
+    const vid = document.getElementById('flVideo');
+    vid.src = videoUrl;
+    vid.classList.add('active');
+    vid.play().catch(()=>{});
+    // update thumb highlight
+    document.querySelectorAll('.fl-thumb').forEach(t => t.classList.remove('active'));
+    const vt = document.getElementById('flVideoThumb');
+    if (vt) { vt.classList.add('active'); vt.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+    // update counter
+    counter.textContent = '🎬 Video Tour';
+    // hide prev/next arrows
+    document.getElementById('flPrev').classList.add('hidden');
+    document.getElementById('flNext').classList.add('hidden');
+    showUI();
   };
 
 })();

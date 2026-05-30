@@ -40,6 +40,30 @@ body { background: var(--dark2); }
 .search-inp:focus { border-color: var(--primary); }
 .props-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
 
+/* HOVER VIDEO */
+.card-img { position: relative; overflow: hidden; }
+.card-img-photo { transition: opacity 0.3s; width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
+.card-hover-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  border-radius: inherit; z-index: 1;
+}
+.card-img:hover .card-hover-video { opacity: 1; }
+.card-img:hover .card-img-photo { opacity: 0; }
+.video-indicator {
+  position: absolute; bottom: 44px; left: 8px;
+  background: rgba(0,0,0,0.65); color: white;
+  font-size: 0.68rem; font-weight: 700;
+  padding: 3px 8px; border-radius: 20px;
+  display: flex; align-items: center; gap: 4px;
+  z-index: 3; pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+.video-indicator-dot { width:6px; height:6px; background:#ff4444; border-radius:50%; animation:pulse 1.5s infinite; }
+
 .mobile-filter-btn { display: none; background: white; border: 1.5px solid var(--border); border-radius: 10px; padding: 0.55rem 1rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; align-items: center; gap: 0.4rem; color: var(--text); }
 .mobile-filter-btn.has-filters { border-color: var(--primary); color: var(--primary); }
 
@@ -125,12 +149,97 @@ body { background: var(--dark2); }
         <div class="filter-label">Area</div>
         <div class="filter-chips" id="fArea">
           <span class="fchip active" data-val="" onclick="toggleFChip(this,'fArea')">All</span>
-          <span class="fchip" data-val="Wandongri" onclick="toggleFChip(this,'fArea')">Wandongri</span>
-          <span class="fchip" data-val="Higna" onclick="toggleFChip(this,'fArea')">Higna</span>
-          <span class="fchip" data-val="Lokmanya Nagar" onclick="toggleFChip(this,'fArea')">Lokmanya Nagar</span>
-          <span class="fchip" data-val="Digdoh" onclick="toggleFChip(this,'fArea')">Digdoh</span>
+          <span class="fchip" data-val="Ambazari" onclick="toggleFChip(this,'fArea')">Ambazari</span>
+          <span class="fchip" data-val="Airport Area" onclick="toggleFChip(this,'fArea')">Airport Area</span>
+          <span class="fchip" data-val="Ashok Nagar" onclick="toggleFChip(this,'fArea')">Ashok Nagar</span>
+          <span class="fchip" data-val="Ayodhya Nagar" onclick="toggleFChip(this,'fArea')">Ayodhya Nagar</span>
+          <span class="fchip" data-val="Bajaj Nagar" onclick="toggleFChip(this,'fArea')">Bajaj Nagar</span>
+          <span class="fchip" data-val="Beltarodi" onclick="toggleFChip(this,'fArea')">Beltarodi</span>
+          <span class="fchip" data-val="Besa" onclick="toggleFChip(this,'fArea')">Besa</span>
+          <span class="fchip" data-val="Bezanbagh" onclick="toggleFChip(this,'fArea')">Bezanbagh</span>
+          <span class="fchip" data-val="Bhandewadi" onclick="toggleFChip(this,'fArea')">Bhandewadi</span>
+          <span class="fchip" data-val="Bharatwada" onclick="toggleFChip(this,'fArea')">Bharatwada</span>
+          <span class="fchip" data-val="Bidgaon" onclick="toggleFChip(this,'fArea')">Bidgaon</span>
+          <span class="fchip" data-val="Byramji Town" onclick="toggleFChip(this,'fArea')">Byramji Town</span>
+          <span class="fchip" data-val="Chandan Nagar" onclick="toggleFChip(this,'fArea')">Chandan Nagar</span>
+          <span class="fchip" data-val="Chatrapati Nagar" onclick="toggleFChip(this,'fArea')">Chatrapati Nagar</span>
+          <span class="fchip" data-val="Chinchbhuvan" onclick="toggleFChip(this,'fArea')">Chinchbhuvan</span>
+          <span class="fchip" data-val="Civil Lines" onclick="toggleFChip(this,'fArea')">Civil Lines</span>
+          <span class="fchip" data-val="Cotton Market" onclick="toggleFChip(this,'fArea')">Cotton Market</span>
+          <span class="fchip" data-val="Dabha" onclick="toggleFChip(this,'fArea')">Dabha</span>
+          <span class="fchip" data-val="Dharampeth" onclick="toggleFChip(this,'fArea')">Dharampeth</span>
+          <span class="fchip" data-val="Dighori" onclick="toggleFChip(this,'fArea')">Dighori</span>
+          <span class="fchip" data-val="Friends Colony" onclick="toggleFChip(this,'fArea')">Friends Colony</span>
+          <span class="fchip" data-val="Gaddi Godam" onclick="toggleFChip(this,'fArea')">Gaddi Godam</span>
+          <span class="fchip" data-val="Gandhibagh" onclick="toggleFChip(this,'fArea')">Gandhibagh</span>
+          <span class="fchip" data-val="Ganeshpeth" onclick="toggleFChip(this,'fArea')">Ganeshpeth</span>
+          <span class="fchip" data-val="Giripeth" onclick="toggleFChip(this,'fArea')">Giripeth</span>
+          <span class="fchip" data-val="Godhani" onclick="toggleFChip(this,'fArea')">Godhani</span>
+          <span class="fchip" data-val="Gokulpeth" onclick="toggleFChip(this,'fArea')">Gokulpeth</span>
+          <span class="fchip" data-val="Gorewada" onclick="toggleFChip(this,'fArea')">Gorewada</span>
+          <span class="fchip" data-val="Gotal Pajri" onclick="toggleFChip(this,'fArea')">Gotal Pajri</span>
+          <span class="fchip" data-val="Hasanbagh" onclick="toggleFChip(this,'fArea')">Hasanbagh</span>
+          <span class="fchip" data-val="Hingna" onclick="toggleFChip(this,'fArea')">Hingna</span>
+          <span class="fchip" data-val="Hingna Road" onclick="toggleFChip(this,'fArea')">Hingna Road</span>
+          <span class="fchip" data-val="Hudkeshwar" onclick="toggleFChip(this,'fArea')">Hudkeshwar</span>
+          <span class="fchip" data-val="Hudkeshwar Road" onclick="toggleFChip(this,'fArea')">Hudkeshwar Road</span>
+          <span class="fchip" data-val="Indora" onclick="toggleFChip(this,'fArea')">Indora</span>
+          <span class="fchip" data-val="Isasani" onclick="toggleFChip(this,'fArea')">Isasani</span>
+          <span class="fchip" data-val="Itwari" onclick="toggleFChip(this,'fArea')">Itwari</span>
+          <span class="fchip" data-val="Jaitala" onclick="toggleFChip(this,'fArea')">Jaitala</span>
+          <span class="fchip" data-val="Jamtha" onclick="toggleFChip(this,'fArea')">Jamtha</span>
+          <span class="fchip" data-val="Jaripatka" onclick="toggleFChip(this,'fArea')">Jaripatka</span>
+          <span class="fchip" data-val="Kadbi Chowk" onclick="toggleFChip(this,'fArea')">Kadbi Chowk</span>
           <span class="fchip" data-val="Kalamna" onclick="toggleFChip(this,'fArea')">Kalamna</span>
-          <span class="fchip" data-val="Butibori" onclick="toggleFChip(this,'fArea')">Butibori</span>
+          <span class="fchip" data-val="Kamptee Road" onclick="toggleFChip(this,'fArea')">Kamptee Road</span>
+          <span class="fchip" data-val="Kapil Nagar" onclick="toggleFChip(this,'fArea')">Kapil Nagar</span>
+          <span class="fchip" data-val="Kapsi" onclick="toggleFChip(this,'fArea')">Kapsi</span>
+          <span class="fchip" data-val="Khamla" onclick="toggleFChip(this,'fArea')">Khamla</span>
+          <span class="fchip" data-val="Kharbi" onclick="toggleFChip(this,'fArea')">Kharbi</span>
+          <span class="fchip" data-val="Khapri" onclick="toggleFChip(this,'fArea')">Khapri</span>
+          <span class="fchip" data-val="Koradi Road" onclick="toggleFChip(this,'fArea')">Koradi Road</span>
+          <span class="fchip" data-val="Lakadganj" onclick="toggleFChip(this,'fArea')">Lakadganj</span>
+          <span class="fchip" data-val="Law College Square" onclick="toggleFChip(this,'fArea')">Law College Square</span>
+          <span class="fchip" data-val="Laxmi Nagar" onclick="toggleFChip(this,'fArea')">Laxmi Nagar</span>
+          <span class="fchip" data-val="Mahal" onclick="toggleFChip(this,'fArea')">Mahal</span>
+          <span class="fchip" data-val="Manewada" onclick="toggleFChip(this,'fArea')">Manewada</span>
+          <span class="fchip" data-val="Manish Nagar" onclick="toggleFChip(this,'fArea')">Manish Nagar</span>
+          <span class="fchip" data-val="Mankapur" onclick="toggleFChip(this,'fArea')">Mankapur</span>
+          <span class="fchip" data-val="Maskasath" onclick="toggleFChip(this,'fArea')">Maskasath</span>
+          <span class="fchip" data-val="MIHAN" onclick="toggleFChip(this,'fArea')">MIHAN</span>
+          <span class="fchip" data-val="Mominpura" onclick="toggleFChip(this,'fArea')">Mominpura</span>
+          <span class="fchip" data-val="Nandanvan" onclick="toggleFChip(this,'fArea')">Nandanvan</span>
+          <span class="fchip" data-val="Narendra Nagar" onclick="toggleFChip(this,'fArea')">Narendra Nagar</span>
+          <span class="fchip" data-val="Narsala" onclick="toggleFChip(this,'fArea')">Narsala</span>
+          <span class="fchip" data-val="New Manish Nagar" onclick="toggleFChip(this,'fArea')">New Manish Nagar</span>
+          <span class="fchip" data-val="Old Bagadganj" onclick="toggleFChip(this,'fArea')">Old Bagadganj</span>
+          <span class="fchip" data-val="Omkar Nagar" onclick="toggleFChip(this,'fArea')">Omkar Nagar</span>
+          <span class="fchip" data-val="Pachpaoli" onclick="toggleFChip(this,'fArea')">Pachpaoli</span>
+          <span class="fchip" data-val="Panjari" onclick="toggleFChip(this,'fArea')">Panjari</span>
+          <span class="fchip" data-val="Pardi" onclick="toggleFChip(this,'fArea')">Pardi</span>
+          <span class="fchip" data-val="Pipla" onclick="toggleFChip(this,'fArea')">Pipla</span>
+          <span class="fchip" data-val="Pratap Nagar" onclick="toggleFChip(this,'fArea')">Pratap Nagar</span>
+          <span class="fchip" data-val="Rajiv Nagar" onclick="toggleFChip(this,'fArea')">Rajiv Nagar</span>
+          <span class="fchip" data-val="Ramdaspeth" onclick="toggleFChip(this,'fArea')">Ramdaspeth</span>
+          <span class="fchip" data-val="Rameshwari" onclick="toggleFChip(this,'fArea')">Rameshwari</span>
+          <span class="fchip" data-val="Ravi Nagar" onclick="toggleFChip(this,'fArea')">Ravi Nagar</span>
+          <span class="fchip" data-val="Sadar" onclick="toggleFChip(this,'fArea')">Sadar</span>
+          <span class="fchip" data-val="Seminary Hills" onclick="toggleFChip(this,'fArea')">Seminary Hills</span>
+          <span class="fchip" data-val="Shankar Nagar" onclick="toggleFChip(this,'fArea')">Shankar Nagar</span>
+          <span class="fchip" data-val="Sitabuldi" onclick="toggleFChip(this,'fArea')">Sitabuldi</span>
+          <span class="fchip" data-val="Somalwada" onclick="toggleFChip(this,'fArea')">Somalwada</span>
+          <span class="fchip" data-val="Sonegaon" onclick="toggleFChip(this,'fArea')">Sonegaon</span>
+          <span class="fchip" data-val="Sugat Nagar" onclick="toggleFChip(this,'fArea')">Sugat Nagar</span>
+          <span class="fchip" data-val="Trimurti Nagar" onclick="toggleFChip(this,'fArea')">Trimurti Nagar</span>
+          <span class="fchip" data-val="Ujwal Nagar" onclick="toggleFChip(this,'fArea')">Ujwal Nagar</span>
+          <span class="fchip" data-val="Wadi" onclick="toggleFChip(this,'fArea')">Wadi</span>
+          <span class="fchip" data-val="Wanadongri" onclick="toggleFChip(this,'fArea')">Wanadongri</span>
+          <span class="fchip" data-val="Wardhaman Nagar" onclick="toggleFChip(this,'fArea')">Wardhaman Nagar</span>
+          <span class="fchip" data-val="Wardha Road" onclick="toggleFChip(this,'fArea')">Wardha Road</span>
+          <span class="fchip" data-val="Wathoda" onclick="toggleFChip(this,'fArea')">Wathoda</span>
+          <span class="fchip" data-val="YCCE Area" onclick="toggleFChip(this,'fArea')">YCCE Area</span>
+          <span class="fchip" data-val="Yashodhara Nagar" onclick="toggleFChip(this,'fArea')">Yashodhara Nagar</span>
+          <span class="fchip" data-val="Zingabai Takli" onclick="toggleFChip(this,'fArea')">Zingabai Takli</span>
         </div>
       </div>
       <div class="filter-section">
@@ -335,11 +444,17 @@ function renderGrid(list) {
   empty.style.display = 'none';
   grid.innerHTML = list.map(p => {
     const imgHtml = p.mainPhoto
-      ? `<img src="${p.mainPhoto}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`
+      ? `<img class="card-img-photo" src="${p.mainPhoto}" alt="${p.title}">`
       : `<div class="card-img-placeholder">${p.emoji||'🏠'}</div>`;
+    const videoHtml = p.videoUrl
+      ? `<video class="card-hover-video" src="${p.videoUrl}" muted loop playsinline preload="none"></video>
+         <div class="video-indicator"><span class="video-indicator-dot"></span> Hover to play</div>`
+      : '';
     return `
-    <div class="property-card" onclick="window.location='view.html?id=${p.id}'">
-      <div class="card-img">${imgHtml}
+    <div class="property-card" onclick="window.location='view.html?id=${p.id}'"
+      onmouseenter="playCardVideo(this)"
+      onmouseleave="pauseCardVideo(this)">
+      <div class="card-img">${imgHtml}${videoHtml}
         <span class="card-badge">${p.furnish}</span><span class="card-type">${p.type}</span>
       </div>
       <div class="card-body">
@@ -368,8 +483,8 @@ window.showDetail = function(p) {
       ${p.photos && p.photos.length
         ? `<div style="display:flex;gap:6px;overflow-x:auto;border-radius:14px 14px 0 0;cursor:pointer;-webkit-overflow-scrolling:touch;">
             ${p.photos.map((url,i) => `<img src="${url}" alt="photo ${i+1}"
-              onclick="event.stopPropagation();event.preventDefault();flOpen(${JSON.stringify(p.photos)},${i},'${p.title.replace(/'/g,"\\'")}');"
-              ontouchend="event.stopPropagation();event.preventDefault();flOpen(${JSON.stringify(p.photos)},${i},'${p.title.replace(/'/g,"\\'")}');"
+              onclick="event.stopPropagation();event.preventDefault();flOpen(${JSON.stringify(p.photos)},${i},'${p.title.replace(/'/g,"\\'")}',${JSON.stringify(p.videoUrl||null)});"
+              ontouchend="event.stopPropagation();event.preventDefault();flOpen(${JSON.stringify(p.photos)},${i},'${p.title.replace(/'/g,"\\'")}',${JSON.stringify(p.videoUrl||null)});"
               style="height:200px;min-width:${i===0?'100%':'120px'};max-width:${i===0?'100%':'120px'};object-fit:cover;border-radius:${i===0?'14px 14px 0 0':'8px'};flex-shrink:0;cursor:zoom-in;touch-action:manipulation;">`).join('')}
            </div>`
         : p.emoji||'🏠'
@@ -440,6 +555,18 @@ window.revealContact = function(id, phone, name) {
 };
 
 window.closeModal = function() { document.getElementById('detailModal').classList.remove('active'); };
+
+window.playCardVideo = function(card) {
+  const video = card.querySelector('.card-hover-video');
+  if (!video) return;
+  video.play().catch(() => {});
+};
+window.pauseCardVideo = function(card) {
+  const video = card.querySelector('.card-hover-video');
+  if (!video) return;
+  video.pause();
+  video.currentTime = 0;
+};
 window.openMobileFilter = function() { document.getElementById('filterDrawer').classList.add('active'); };
 
 document.getElementById('filterDrawer').addEventListener('click', function(e) {
