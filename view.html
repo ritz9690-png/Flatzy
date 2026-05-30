@@ -128,6 +128,49 @@ body { background: var(--dark2); }
 .g-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
 .g-thumb.active { border-color: var(--primary); opacity: 1; transform: scale(1.06); }
 .g-thumb:hover { opacity: 0.85; }
+/* Video thumb */
+.g-thumb-video {
+  min-width: 58px; width: 58px; height: 44px;
+  border-radius: 7px; overflow: hidden; cursor: pointer;
+  border: 2.5px solid transparent; opacity: 0.6;
+  transition: all 0.18s; flex-shrink: 0;
+  background: #0f172a;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2px; color: white;
+  font-size: 1.1rem;
+}
+.g-thumb-video span { font-size: 0.42rem; font-weight: 700; letter-spacing: 0.5px; color: rgba(255,255,255,0.8); }
+.g-thumb-video.active { border-color: #f97316; opacity: 1; transform: scale(1.06); }
+.g-thumb-video:hover { opacity: 0.9; }
+/* Video slide in gallery */
+.gallery-slide-video {
+  min-width: 100%; height: 300px;
+  position: relative; flex-shrink: 0;
+  background: #0f172a;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.gallery-slide-video video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.video-play-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.35);
+  transition: background 0.2s;
+}
+.video-play-overlay:hover { background: rgba(0,0,0,0.2); }
+.video-play-btn {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; transition: transform 0.2s;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.video-play-btn:hover { transform: scale(1.12); }
+@media(max-width: 768px) {
+  .gallery-slide-video { height: 240px; }
+}
 
 /* ══════════════════════════════════════
    CONTENT AREA
@@ -464,7 +507,9 @@ body { background: var(--dark2); }
 <div class="back-bar">
   <button class="back-btn" onclick="history.back()" aria-label="Go back">&#8592;</button>
   <div class="back-bar-title" id="backBarTitle">Property Details</div>
-  <button class="share-btn" onclick="shareProperty()" aria-label="Share">&#x1F4E4;</button>
+  <button class="share-btn" onclick="shareProperty()" aria-label="Share">
+    <img src="sendlogo.png" alt="Share" class="share-icon">
+  </button>
 </div>
 
 <!-- MAIN -->
@@ -578,6 +623,7 @@ function renderProperty(p) {
   const photos = p.photos && p.photos.length ? p.photos : [];
   window._currentPhotos = photos;
   window._currentIdx    = 0;
+  window._videoUrl      = p.videoUrl || null;
 
   // WhatsApp URL
   const waMsg = `Hi Flatzy Team 👋\nI'm interested in this property:\n\n🏠 *${p.title}*\n📍 ${p.area}, Nagpur${p.address ? ' — ' + p.address : ''}\n🛏 ${p.bhk} | 💰 ₹${Number(p.rent).toLocaleString('en-IN')}/month\n\nPlease verify this rental and connect me with the owner through Flatzy.\n\nThank you! 🙏`;
@@ -585,28 +631,51 @@ function renderProperty(p) {
 
   // Gallery
   let galleryHtml = '';
-  if (photos.length) {
-    const dots = photos.length > 1
-      ? `<div class="gallery-dots">${photos.map((_,i) => `<div class="gallery-dot${i===0?' active':''}"></div>`).join('')}</div>` : '';
-    const counter = photos.length > 1 ? `<div class="gallery-counter" id="gCounter">1 / ${photos.length}</div>` : '';
-    const thumbs  = photos.length > 1
-      ? `<div class="gallery-thumbs" id="gThumbs">
-          ${photos.map((url,i) => `<div class="g-thumb${i===0?' active':''}" onclick="galleryGoTo(${i})"><img src="${url}" alt="${i+1}" loading="lazy"></div>`).join('')}
-         </div>` : '';
-    const arrows  = photos.length > 1
-      ? `<button class="gallery-arrow prev${photos.length<=1?' hidden':''}" onclick="galleryGo(-1)">&#8249;</button>
-         <button class="gallery-arrow next${photos.length<=1?' hidden':''}" onclick="galleryGo(1)">&#8250;</button>` : '';
+  const hasVideo = !!p.videoUrl;
+  const totalSlides = photos.length + (hasVideo ? 1 : 0);
+
+  if (photos.length || hasVideo) {
+    const dots = totalSlides > 1
+      ? `<div class="gallery-dots">${Array.from({length: totalSlides}, (_,i) => `<div class="gallery-dot${i===0?' active':''}"></div>`).join('')}</div>` : '';
+    const counter = totalSlides > 1 ? `<div class="gallery-counter" id="gCounter">1 / ${totalSlides}</div>` : '';
+
+    // Photo slides
+    const photoSlides = photos.map((url,i) => `
+      <div class="gallery-slide">
+        <img src="${url}" alt="photo ${i+1}" loading="${i===0?'eager':'lazy'}" onclick="openLightbox(${i})">
+      </div>`).join('');
+
+    // Video slide
+    const videoSlide = hasVideo ? `
+      <div class="gallery-slide-video" id="gVideoSlide" onclick="openVideoLightbox()">
+        <video src="${p.videoUrl}" muted playsinline preload="metadata" style="pointer-events:none;"></video>
+        <div class="video-play-overlay">
+          <div class="video-play-btn">▶️</div>
+        </div>
+      </div>` : '';
+
+    // Thumbs
+    const photoThumbs = photos.length > 1 || (photos.length >= 1 && hasVideo)
+      ? photos.map((url,i) => `<div class="g-thumb${i===0?' active':''}" onclick="galleryGoTo(${i})"><img src="${url}" alt="${i+1}" loading="lazy"></div>`).join('')
+      : '';
+    const videoThumb = hasVideo
+      ? `<div class="g-thumb-video" id="gVideoThumb" onclick="galleryGoTo(${photos.length})">▶️<span>VIDEO</span></div>`
+      : '';
+    const thumbsBar = totalSlides > 1
+      ? `<div class="gallery-thumbs" id="gThumbs">${photoThumbs}${videoThumb}</div>` : '';
+
+    const arrows = totalSlides > 1
+      ? `<button class="gallery-arrow prev" onclick="galleryGo(-1)">&#8249;</button>
+         <button class="gallery-arrow next" onclick="galleryGo(1)">&#8250;</button>` : '';
+
     galleryHtml = `
       <div class="gallery-wrap" id="gWrap">
         <div class="gallery-track" id="gTrack">
-          ${photos.map((url,i) => `
-            <div class="gallery-slide">
-              <img src="${url}" alt="photo ${i+1}" loading="${i===0?'eager':'lazy'}" onclick="openLightbox(${i})">
-            </div>`).join('')}
+          ${photoSlides}${videoSlide}
         </div>
         ${arrows}${counter}${dots}
       </div>
-      ${thumbs}`;
+      ${thumbsBar}`;
   } else {
     galleryHtml = `<div class="gallery-wrap"><div class="gallery-placeholder-slide">${p.emoji||'🏠'}</div></div>`;
   }
@@ -710,8 +779,10 @@ function initGallerySwipe() {
   const wrap  = document.getElementById('gWrap');
   const track = document.getElementById('gTrack');
   if (!wrap || !track) return;
-  const photos = window._currentPhotos;
-  if (!photos || photos.length <= 1) return;
+  const photos = window._currentPhotos || [];
+  const hasVideo = !!window._videoUrl;
+  const total = photos.length + (hasVideo ? 1 : 0);
+  if (total <= 1) return;
 
   let startX = 0, startY = 0, isDragging = false, moved = false;
 
@@ -751,8 +822,10 @@ function setGalleryTransform(idx) {
 // ── Gallery Nav ───────────────────────────────────
 window.galleryGo = function(dir) {
   const photos = window._currentPhotos;
-  if (!photos || photos.length <= 1) return;
-  window._currentIdx = (window._currentIdx + dir + photos.length) % photos.length;
+  const hasVideo = !!window._videoUrl;
+  const total = (photos ? photos.length : 0) + (hasVideo ? 1 : 0);
+  if (total <= 1) return;
+  window._currentIdx = (window._currentIdx + dir + total) % total;
   updateGallery(window._currentIdx);
 };
 
@@ -763,14 +836,21 @@ window.galleryGoTo = function(idx) {
 
 function updateGallery(idx) {
   setGalleryTransform(idx);
+  const photos = window._currentPhotos || [];
+  const hasVideo = !!window._videoUrl;
+  const total = photos.length + (hasVideo ? 1 : 0);
   // counter
   const counter = document.getElementById('gCounter');
-  if (counter) counter.textContent = `${idx+1} / ${window._currentPhotos.length}`;
+  if (counter) counter.textContent = `${idx+1} / ${total}`;
   // dots
   document.querySelectorAll('.gallery-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
-  // thumbs
+  // photo thumbs
   document.querySelectorAll('.g-thumb').forEach((t,i) => t.classList.toggle('active', i===idx));
-  const at = document.querySelector('.g-thumb.active');
+  // video thumb
+  const vt = document.getElementById('gVideoThumb');
+  if (vt) vt.classList.toggle('active', idx === photos.length);
+  // scroll active thumb into view
+  const at = document.querySelector('.g-thumb.active') || (vt?.classList.contains('active') ? vt : null);
   if (at) at.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
 }
 
@@ -781,7 +861,22 @@ window.openLightbox = function(idx) {
   if (!photos || !photos.length) return;
   const tryOpen = () => {
     if (typeof window.flOpen === 'function') {
-      window.flOpen(photos, window._currentIdx, document.title);
+      window.flOpen(photos, window._currentIdx, document.title, window._videoUrl);
+    } else setTimeout(tryOpen, 100);
+  };
+  tryOpen();
+};
+
+window.openVideoLightbox = function() {
+  const photos = window._currentPhotos || [];
+  const tryOpen = () => {
+    if (typeof window.flOpen === 'function') {
+      // Open lightbox at last index (video tab)
+      window.flOpen(photos, 0, document.title, window._videoUrl);
+      // Auto-switch to video after short delay
+      setTimeout(() => {
+        if (typeof window.flOpenVideo === 'function') window.flOpenVideo();
+      }, 200);
     } else setTimeout(tryOpen, 100);
   };
   tryOpen();
