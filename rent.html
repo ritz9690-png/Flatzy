@@ -359,14 +359,7 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-const DEMO = [
-  {id:'demo1',title:'Spacious 2BHK Flat',area:'Wandongri',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
-  {id:'demo2',title:'Cozy PG for Girls',area:'Higna',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
-  {id:'demo3',title:'Modern 1BHK Studio',area:'Digdoh',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
-  {id:'demo4',title:'Budget Hostel Room',area:'Kalamna',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
-  {id:'demo5',title:'3BHK Family Flat',area:'Wandongri',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
-  {id:'demo6',title:'1BHK Near MIDC',area:'Butibori',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
-];
+// No demo props — only real Firestore listings
 
 let allProps = [];
 let filters = { area:'', type:'', bhk:'', furnish:'' };
@@ -400,9 +393,9 @@ async function loadProps() {
     const fsProps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     // Sort by postedAt (same field used in admin.html) — latest first
     fsProps.sort((a,b) => (b.postedAt||'') > (a.postedAt||'') ? -1 : 1);
-    allProps = [...fsProps, ...DEMO];
+    allProps = [...fsProps];
   } catch(e) {
-    allProps = [...DEMO];
+    allProps = [];
   }
   const params = new URLSearchParams(location.search);
   if (params.get('area')) { filters.area = params.get('area'); setAreaFilter(params.get('area')); }

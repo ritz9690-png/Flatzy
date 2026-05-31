@@ -166,14 +166,7 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const DEMO = [
-  {id:'demo1',title:'Spacious 2BHK Flat',area:'Trimurti Nagar',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
-  {id:'demo2',title:'Cozy PG for Girls',area:'Bajaj Nagar',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
-  {id:'demo3',title:'Modern 1BHK Studio',area:'Dharampeth',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
-  {id:'demo4',title:'Budget Hostel Room',area:'Wanadongri',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
-  {id:'demo5',title:'3BHK Family Flat',area:'Pratap Nagar',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
-  {id:'demo6',title:'1BHK Near YCCE',area:'YCCE Area',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
-];
+// No demo props — only real Firestore listings
 
 // ── Visitor Ping ─────────────────────────────────────────────────
 (async () => {
@@ -230,11 +223,11 @@ async function loadProps() {
   try {
     const snap = await getDocs(collection(db, 'properties'));
     const firestoreProps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    // Latest listings pehle (postedAt se sort), DEMO baad mein
+    // Latest listings pehle (postedAt se sort)
     firestoreProps.sort((a,b) => (b.postedAt||'') > (a.postedAt||'') ? 1 : -1);
-    allProps = [...firestoreProps, ...DEMO];
+    allProps = [...firestoreProps];
   } catch(e) {
-    allProps = [...DEMO];
+    allProps = [];
   }
   document.getElementById('propCountBadge').textContent = allProps.length;
   const areas = [...new Set(allProps.map(p => p.area))];

@@ -1263,15 +1263,7 @@ window.logoutUser = async function() {
   window.location.reload();
 };
 
-// ── Demo properties (fallback / always shown) ─────────────────────
-const DEMO_PROPS = [
-  {id:'demo1',title:'Spacious 2BHK Flat',area:'Trimurti Nagar',bhk:'2 BHK',type:'Flat',furnish:'Semi-Furnished',rent:9500,emoji:'🏠',ownerName:'Rajesh Sharma',ownerPhone:'9800000001'},
-  {id:'demo2',title:'Cozy PG for Girls',area:'Bajaj Nagar',bhk:'PG',type:'PG',furnish:'Furnished',rent:5500,emoji:'🏡',ownerName:'Priya Deshpande',ownerPhone:'9800000002'},
-  {id:'demo3',title:'Modern 1BHK Studio',area:'Dharampeth',bhk:'1 BHK',type:'Flat',furnish:'Furnished',rent:7000,emoji:'🏢',ownerName:'Amit Patel',ownerPhone:'9800000003'},
-  {id:'demo4',title:'Budget Hostel Room',area:'Wanadongri',bhk:'Hostel',type:'Hostel',furnish:'Furnished',rent:3500,emoji:'🏨',ownerName:'Sunita Raut',ownerPhone:'9800000004'},
-  {id:'demo5',title:'3BHK Family Flat',area:'Pratap Nagar',bhk:'3 BHK',type:'Flat',furnish:'Unfurnished',rent:14000,emoji:'🏘️',ownerName:'Vikas Deshmukh',ownerPhone:'9800000005'},
-  {id:'demo6',title:'1BHK Near YCCE',area:'YCCE Area',bhk:'1 BHK',type:'Flat',furnish:'Semi-Furnished',rent:6200,emoji:'🏠',ownerName:'Kavita Joshi',ownerPhone:'9800000006'},
-];
+// ── No demo properties — only real Firestore listings ─────────────
 
 // ── Render property card ──────────────────────────────────────────
 function renderCard(p) {
@@ -1366,7 +1358,7 @@ window.pauseCardVideo = function(card) {
 })();
 
 // ── Fetch from Firestore + init page ─────────────────────────────
-let ALL_PROPS = [...DEMO_PROPS];
+let ALL_PROPS = [];
 
 async function init() {
   const grid = document.getElementById('featuredGrid');
@@ -1374,19 +1366,22 @@ async function init() {
 
   try {
     const snapshot = await getDocs(collection(db, 'properties'));
-    const firestoreProps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    ALL_PROPS = [...firestoreProps, ...DEMO_PROPS];
+    ALL_PROPS = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch(e) {
-    console.warn('Firestore fetch failed, showing demo only:', e.message);
-    // Still show demo props — no crash
+    console.warn('Firestore fetch failed:', e.message);
+    ALL_PROPS = [];
   }
 
   // Update stats counter
   const statEl = document.getElementById('statProps');
   if(statEl) statEl.textContent = ALL_PROPS.length + '+';
 
-  // Featured grid — latest 8
-  grid.innerHTML = ALL_PROPS.slice(0,8).map(renderCard).join('');
+  // Featured grid — latest 8, or empty state
+  if (ALL_PROPS.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-size:0.95rem;">🏠 No listings yet. Be the first to <a href=\'owner.html\' style=\'color:var(--primary);font-weight:700;\'>list your property!</a></div>';
+  } else {
+    grid.innerHTML = ALL_PROPS.slice(0,8).map(renderCard).join('');
+  }
 
   // Area counts
   ['Dharampeth','Civil Lines','Bajaj Nagar','Trimurti Nagar','Pratap Nagar','Wanadongri','YCCE Area','Hingna','MIHAN','Wardha Road','Kalamna','Sitabuldi'].forEach(a => {
