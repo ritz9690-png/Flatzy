@@ -454,7 +454,7 @@ Div.social-strip-track {
 <section class="hero">
 
   <!-- VIDEO BACKGROUND -->
-  <video class="hero-video" autoplay muted loop playsinline>
+   <video class="hero-video" autoplay muted loop playsinline>
     <source src="home.mp4" type="video/mp4">
   </video>
 
@@ -487,7 +487,27 @@ Div.social-strip-track {
         <option>1 BHK</option><option>2 BHK</option><option>3 BHK</option>
         <option>PG</option><option>Hostel</option><option>Studio</option>
       </select>
+    </div><div class="property-card" onclick="window.location='rent.html?id=demo1'" onmouseenter="playCardVideo(this)" onmouseleave="pauseCardVideo(this)">
+    <div class="card-img"><div class="card-img-placeholder">🏠</div>
+      <span class="card-badge">Semi-Furnished</span>
+      <span class="card-type">Flat</span>
     </div>
+    <div class="card-body">
+      <div class="card-title">Spacious 2BHK Flat</div>
+      <div class="card-location">📍 Trimurti Nagar, Nagpur</div>
+      <div class="card-details">
+        <span class="card-detail">🛏 2 BHK</span>
+        <span class="card-detail">🏗 Semi-Furnished</span>
+      </div>
+      <div class="card-footer">
+        <div class="card-price">₹9,500 <span>/month</span></div>
+      </div>
+      <div class="card-action-btns">
+        <button class="schedule-btn" onclick="event.stopPropagation();scheduleVisit('demo1')">📅 Schedule Visit</button>
+        <button class="enquire-btn" onclick="event.stopPropagation();enquireNow('demo1')">💬 Enquire Now</button>
+      </div>
+    </div>
+  </div>
     <div class="search-field">
       <label>Budget</label>
       <select id="srchBudget">
