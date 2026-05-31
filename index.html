@@ -1216,7 +1216,7 @@ setTimeout(function() {
 // ── Firebase Imports ──────────────────────────────────────────────
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -1230,6 +1230,13 @@ const firebaseConfig = {
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// ── Visitor Ping ──────────────────────────────────────────────────
+(async () => {
+  try {
+    await setDoc(doc(db, 'siteStats', 'visitors'), { count: increment(1) }, { merge: true });
+  } catch(e) { console.warn('Visitor ping failed:', e.message); }
+})();
 
 // ── Nav Auth State ────────────────────────────────────────────────
 onAuthStateChanged(auth, user => {

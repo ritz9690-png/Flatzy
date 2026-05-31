@@ -1256,10 +1256,17 @@ async function loadVisitorCount() {
   try {
     const ref = doc(db, 'siteStats', 'visitors');
     const snap = await getDoc(ref);
-    const count = snap.exists() ? (snap.data().count || 0) : 0;
-    document.getElementById('statVisitors').textContent = count.toLocaleString('en-IN');
+    if (!snap.exists()) {
+      // Document nahi hai — create karo with 0
+      await setDoc(ref, { count: 0 }, { merge: true });
+      document.getElementById('statVisitors').textContent = '0';
+    } else {
+      const count = snap.data().count || 0;
+      document.getElementById('statVisitors').textContent = count.toLocaleString('en-IN');
+    }
   } catch(e) {
-    document.getElementById('statVisitors').textContent = 'N/A';
+    console.warn('Visitor count fetch failed:', e.message);
+    document.getElementById('statVisitors').textContent = '0';
   }
 }
 
