@@ -828,6 +828,10 @@
         <div class="stat-num" id="statPhotos">0</div>
         <div class="stat-lbl">Total Photos</div>
       </div>
+      <div class="stat-card" style="border-color:#a5f3fc;">
+        <div class="stat-num" id="statVisitors" style="color:#0891b2;">—</div>
+        <div class="stat-lbl" style="color:#0891b2;">Website Visitors</div>
+      </div>
     </div>
 
     <!-- Toolbar -->
@@ -915,13 +919,24 @@
   </div>
 </div>
 
+<!-- Video Modal -->
+<div class="photo-modal" id="videoModal" onclick="if(event.target===this)closeVideoModal()">
+  <div class="photo-modal-inner" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title" id="videoModalTitle">Property Video</div>
+      <button class="modal-close" onclick="closeVideoModal()">✕</button>
+    </div>
+    <video id="videoPlayer" controls style="width:100%;border-radius:12px;margin-top:0.8rem;max-height:420px;background:#000;" playsinline></video>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="config.js"></script>
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -1013,6 +1028,7 @@ window.loadListings = async function loadListings() {
     window.allListings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderStats(window.allListings);
     renderListings(window.allListings);
+    loadVisitorCount();
   } catch(e) {
     try {
       const snap2 = await getDocs(collection(db, 'properties'));
@@ -1020,6 +1036,7 @@ window.loadListings = async function loadListings() {
       window.allListings.sort((a,b) => (b.postedAt||'') > (a.postedAt||'') ? 1 : -1);
       renderStats(window.allListings);
       renderListings(window.allListings);
+      loadVisitorCount();
     } catch(e2) {
       document.getElementById('listingsContainer').innerHTML =
         `<div class="empty-state"><div class="icon">⚠️</div><h3>Error loading listings</h3><p>${e2.message}</p></div>`;
@@ -1072,6 +1089,9 @@ function renderListings(listings) {
             ? `<a class="owner-phone" href="tel:${p.ownerPhone}">📞 ${p.ownerPhone}</a>
                <a class="owner-phone" href="https://wa.me/91${p.ownerPhone}" target="_blank">💬 WhatsApp</a>`
             : '<span style="color:var(--muted);font-size:0.75rem;">No phone</span>'}
+          ${p.ownerEmail || p.userEmail
+            ? `<a class="owner-phone" href="mailto:${p.ownerEmail||p.userEmail}" style="color:#6366f1;">✉️ ${p.ownerEmail||p.userEmail}</a>`
+            : '<span style="color:var(--muted);font-size:0.72rem;">No email</span>'}
         </div>
       </div>
       <div class="listing-right">
@@ -1081,6 +1101,9 @@ function renderListings(listings) {
         ${photoCount > 0
           ? `<br><button class="view-photos-btn" onclick='openPhotos(${JSON.stringify(p.photos)}, "${(p.title||'').replace(/"/g,'')}")'>📷 ${photoCount} photo${photoCount>1?'s':''}</button>`
           : '<div style="font-size:0.72rem;color:var(--muted);margin-top:0.3rem;">No photos</div>'}
+        ${p.videoUrl
+          ? `<br><button class="view-photos-btn" style="background:#fef3c7;color:#92400e;border-color:#fde68a;margin-top:0.3rem;" onclick='openVideo("${p.videoUrl}", "${(p.title||'').replace(/"/g,'')}")'>🎥 View Video</button>`
+          : '<div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">No video</div>'}
         <div class="action-btns">
           <button class="edit-btn" onclick='openEdit(${JSON.stringify(p)})'>✏️ Edit</button>
           <button class="delete-btn" onclick='askDelete("${p.id}", "${(p.title||"Untitled").replace(/"/g,"")}", ${JSON.stringify(p.photos||[])})'>🗑️ Delete</button>
@@ -1227,6 +1250,34 @@ window.openPhotos = function(images, title) {
 
 window.closeModal = function() { document.getElementById('photoModal').classList.remove('open'); };
 window.closePhotoModal = function(e) { if (e.target === document.getElementById('photoModal')) closeModal(); };
+
+// ─── Visitor Counter ─────────────────────────────────────────────────────────
+async function loadVisitorCount() {
+  try {
+    const ref = doc(db, 'siteStats', 'visitors');
+    const snap = await getDoc(ref);
+    const count = snap.exists() ? (snap.data().count || 0) : 0;
+    document.getElementById('statVisitors').textContent = count.toLocaleString('en-IN');
+  } catch(e) {
+    document.getElementById('statVisitors').textContent = 'N/A';
+  }
+}
+
+// ─── Video Modal ──────────────────────────────────────────────────────────────
+window.openVideo = function(url, title) {
+  document.getElementById('videoModalTitle').textContent = title || 'Property Video';
+  const player = document.getElementById('videoPlayer');
+  player.src = url;
+  player.load();
+  document.getElementById('videoModal').classList.add('open');
+};
+
+window.closeVideoModal = function() {
+  const player = document.getElementById('videoPlayer');
+  player.pause();
+  player.src = '';
+  document.getElementById('videoModal').classList.remove('open');
+};
 
 // ─── UI helpers ──────────────────────────────────────────────────────────────
 function showLogin() {

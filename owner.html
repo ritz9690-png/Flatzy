@@ -199,113 +199,16 @@ body { background: var(--dark2); }
         </div>
         <div class="form-row">
           <div class="form-group"><label>Area / Locality</label>
-            <select id="pArea">
-              <optgroup label="Central Nagpur">
-                <option>Cotton Market</option>
-                <option>Gandhibagh</option>
-                <option>Ganeshpeth</option>
-                <option>Itwari</option>
-                <option>Lakadganj</option>
-                <option>Mahal</option>
-                <option>Maskasath</option>
-                <option>Mominpura</option>
-                <option>Pachpaoli</option>
-                <option>Sitabuldi</option>
-              </optgroup>
-              <optgroup label="West Nagpur">
-                <option>Ambazari</option>
-                <option>Bajaj Nagar</option>
-                <option>Civil Lines</option>
-                <option>Dabha</option>
-                <option>Dharampeth</option>
-                <option>Friends Colony</option>
-                <option>Giripeth</option>
-                <option>Gokulpeth</option>
-                <option>Hingna Road</option>
-                <option>Law College Square</option>
-                <option>Laxmi Nagar</option>
-                <option>Ramdaspeth</option>
-                <option>Ravi Nagar</option>
-                <option>Seminary Hills</option>
-                <option>Shankar Nagar</option>
-                <option>Wadi</option>
-              </optgroup>
-              <optgroup label="South-West Nagpur">
-                <option>Airport Area</option>
-                <option>Chatrapati Nagar</option>
-                <option>Chinchbhuvan</option>
-                <option>Hingna</option>
-                <option>Jaitala</option>
-                <option>Jamtha</option>
-                <option>Khamla</option>
-                <option>Khapri</option>
-                <option>Manish Nagar</option>
-                <option>MIHAN</option>
-                <option>Narendra Nagar</option>
-                <option>New Manish Nagar</option>
-                <option>Pratap Nagar</option>
-                <option>Rajiv Nagar</option>
-                <option>Somalwada</option>
-                <option>Sonegaon</option>
-                <option>Trimurti Nagar</option>
-                <option>Ujwal Nagar</option>
-                <option>Wanadongri</option>
-                <option>Wardha Road</option>
-                <option>YCCE Area</option>
-              </optgroup>
-              <optgroup label="South &amp; South-East Nagpur">
-                <option>Ayodhya Nagar</option>
-                <option>Beltarodi</option>
-                <option>Besa</option>
-                <option>Bhandewadi</option>
-                <option>Bidgaon</option>
-                <option>Dighori</option>
-                <option>Gotal Pajri</option>
-                <option>Hudkeshwar</option>
-                <option>Hudkeshwar Road</option>
-                <option>Isasani</option>
-                <option>Kharbi</option>
-                <option>Manewada</option>
-                <option>Narsala</option>
-                <option>Omkar Nagar</option>
-                <option>Panjari</option>
-                <option>Pardi</option>
-                <option>Pipla</option>
-                <option>Rameshwari</option>
-                <option>Wathoda</option>
-              </optgroup>
-              <optgroup label="East Nagpur">
-                <option>Bharatwada</option>
-                <option>Chandan Nagar</option>
-                <option>Hasanbagh</option>
-                <option>Kalamna</option>
-                <option>Kapsi</option>
-                <option>Nandanvan</option>
-                <option>Old Bagadganj</option>
-                <option>Wardhaman Nagar</option>
-              </optgroup>
-              <optgroup label="North Nagpur">
-                <option>Ashok Nagar</option>
-                <option>Bezanbagh</option>
-                <option>Gaddi Godam</option>
-                <option>Godhani</option>
-                <option>Gorewada</option>
-                <option>Indora</option>
-                <option>Jaripatka</option>
-                <option>Kadbi Chowk</option>
-                <option>Kamptee Road</option>
-                <option>Kapil Nagar</option>
-                <option>Koradi Road</option>
-                <option>Mankapur</option>
-                <option>Sugat Nagar</option>
-                <option>Yashodhara Nagar</option>
-                <option>Zingabai Takli</option>
-              </optgroup>
-              <optgroup label="Premium Areas">
-                <option>Byramji Town</option>
-                <option>Sadar</option>
-              </optgroup>
-            </select>
+            <!-- Searchable Area Dropdown -->
+            <div class="area-search-wrap" style="position:relative;">
+              <input type="text" id="areaSearch" placeholder="🔍 Search area…" autocomplete="off"
+                style="width:100%;padding:0.55rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:inherit;outline:none;box-sizing:border-box;"
+                oninput="filterAreaList(this.value)" onfocus="showAreaList()" onblur="hideAreaListDelayed()">
+              <input type="hidden" id="pArea" value="Cotton Market">
+              <div id="areaDropdown" style="display:none;position:absolute;z-index:999;background:white;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);max-height:260px;overflow-y:auto;width:100%;left:0;top:calc(100% + 4px);">
+                <!-- populated by JS -->
+              </div>
+            </div>
           </div>
           <div class="form-group"><label>Floor</label>
             <select id="pFloor"><option>Ground</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th+</option></select>
@@ -754,6 +657,73 @@ function showToast(msg, err=false) {
 
 // ── Boot ──────────────────────────────────────────────────────────
 // Boot handled by onAuthStateChanged above
+
+// ── Searchable Area Dropdown ──────────────────────────────────────
+const AREA_LIST = [
+  { group: 'Central Nagpur', areas: ['Cotton Market','Gandhibagh','Ganeshpeth','Itwari','Lakadganj','Mahal','Maskasath','Mominpura','Pachpaoli','Sitabuldi'] },
+  { group: 'West Nagpur', areas: ['Ambazari','Bajaj Nagar','Civil Lines','Dabha','Dharampeth','Friends Colony','Giripeth','Gokulpeth','Hingna Road','Law College Square','Laxmi Nagar','Mhalgi Nagar','Ramdaspeth','Ravi Nagar','Seminary Hills','Shankar Nagar','Wadi'] },
+  { group: 'South-West Nagpur', areas: ['Airport Area','Beltarodi','Besa','Chatrapati Nagar','Chinchbhavan','Chinchbhuvan','Digdoh','Hingna','Jaitala','Jamtha','Khamla','Khapri','Manish Nagar','MIHAN','Narendra Nagar','New Manish Nagar','Pipla','Pratap Nagar','Rajiv Nagar','Somalwada','Sonegaon','Trimurti Nagar','Ujwal Nagar','Wanadongri','Wardha Road','YCCE Area'] },
+  { group: 'South & South-East Nagpur', areas: ['Ayodhya Nagar','Bhandewadi','Bidgaon','Chinchbhavan','Dighori','Friends Colony','Gotal Pajri','Hudkeshwar','Hudkeshwar Road','Isasani','Kharbi','Manewada','Narsala','Omkar Nagar','Panjari','Pardi','Rameshwari','Wathoda','Zingabai Takli'] },
+  { group: 'East Nagpur', areas: ['Bharatwada','Chandan Nagar','Hasanbagh','Kalamna','Kapsi','Nandanvan','Old Bagadganj','Wardhaman Nagar'] },
+  { group: 'North Nagpur', areas: ['Ashok Nagar','Bezanbagh','Gaddi Godam','Godhani','Gorewada','Indora','Jaripatka','Kadbi Chowk','Kamptee Road','Kapil Nagar','Koradi Road','Mankapur','Sugat Nagar','Ujwal Nagar','Yashodhara Nagar'] },
+  { group: 'Premium Areas', areas: ['Byramji Town','Sadar'] }
+];
+
+function buildAreaDropdown(filter='') {
+  const dd = document.getElementById('areaDropdown');
+  if (!dd) return;
+  const q = filter.toLowerCase().trim();
+  let html = '';
+  let anyResult = false;
+  AREA_LIST.forEach(({ group, areas }) => {
+    const matched = q ? areas.filter(a => a.toLowerCase().includes(q)) : areas;
+    if (!matched.length) return;
+    anyResult = true;
+    html += `<div style="padding:0.4rem 0.8rem;font-size:0.72rem;font-weight:700;color:#1a6fe8;text-transform:uppercase;letter-spacing:0.8px;background:#f0f6ff;border-bottom:1px solid #e5eaf2;">${group}</div>`;
+    matched.forEach(a => {
+      html += `<div class="area-opt" data-val="${a}" style="padding:0.55rem 1rem;cursor:pointer;font-size:0.88rem;color:#1e293b;transition:background 0.12s;" onmousedown="selectArea('${a}')" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">${a}</div>`;
+    });
+  });
+  if (!anyResult) html = '<div style="padding:0.8rem 1rem;color:#94a3b8;font-size:0.85rem;">No area found</div>';
+  dd.innerHTML = html;
+}
+
+window.filterAreaList = function(val) {
+  buildAreaDropdown(val);
+  document.getElementById('areaDropdown').style.display = 'block';
+};
+
+window.showAreaList = function() {
+  buildAreaDropdown(document.getElementById('areaSearch').value);
+  document.getElementById('areaDropdown').style.display = 'block';
+};
+
+window.hideAreaListDelayed = function() {
+  setTimeout(() => {
+    const dd = document.getElementById('areaDropdown');
+    if (dd) dd.style.display = 'none';
+  }, 200);
+};
+
+window.selectArea = function(val) {
+  document.getElementById('areaSearch').value = val;
+  document.getElementById('pArea').value = val;
+  document.getElementById('areaDropdown').style.display = 'none';
+};
+
+// Init on tab switch – set default display value
+const _origSwitchOTab = window.switchOTab;
+window.switchOTab = function(tab) {
+  _origSwitchOTab(tab);
+  if (tab === 'add') {
+    const s = document.getElementById('areaSearch');
+    if (s && !s.value) s.value = document.getElementById('pArea').value || 'Cotton Market';
+  }
+};
+document.addEventListener('DOMContentLoaded', () => {
+  const s = document.getElementById('areaSearch');
+  if (s) s.value = 'Cotton Market';
+});
 </script>
 
 <!-- BOTTOM NAV (Mobile) -->

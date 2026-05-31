@@ -147,7 +147,20 @@ body { background: var(--dark2); }
       <div class="filter-title">Filters <span class="filter-clear" onclick="clearFilters()">Clear All</span></div>
       <div class="filter-section">
         <div class="filter-label">Area</div>
-        <div class="filter-chips" id="fArea">
+        <!-- Searchable Area Dropdown -->
+        <div style="position:relative;margin-bottom:0.6rem;">
+          <input type="text" id="areaSearchInput" placeholder="🔍 Search area…" autocomplete="off"
+            oninput="onAreaSearch(this.value)" onfocus="showAreaDrop()" onblur="hideAreaDropDelayed()"
+            style="width:100%;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.82rem;font-family:inherit;outline:none;box-sizing:border-box;cursor:pointer;">
+          <div id="areaSearchDrop" style="display:none;position:absolute;z-index:999;background:white;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.14);max-height:220px;overflow-y:auto;width:100%;left:0;top:calc(100% + 3px);"></div>
+        </div>
+        <div id="areaSelectedBadge" style="display:none;margin-bottom:0.4rem;">
+          <span id="areaSelectedLabel" style="background:var(--primary);color:white;padding:0.25rem 0.7rem;border-radius:20px;font-size:0.78rem;font-weight:700;display:inline-flex;align-items:center;gap:0.4rem;">
+            <span id="areaSelectedText"></span>
+            <span onclick="clearAreaFilter()" style="cursor:pointer;font-size:1rem;line-height:1;">×</span>
+          </span>
+        </div>
+        <div class="filter-chips" id="fArea" style="display:none;">
           <span class="fchip active" data-val="" onclick="toggleFChip(this,'fArea')">All</span>
           <span class="fchip" data-val="Ambazari" onclick="toggleFChip(this,'fArea')">Ambazari</span>
           <span class="fchip" data-val="Airport Area" onclick="toggleFChip(this,'fArea')">Airport Area</span>
@@ -293,7 +306,7 @@ body { background: var(--dark2); }
       <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
         <div class="listings-count"><strong id="listingsCount">Loading…</strong></div>
         <select class="sort-sel" id="sortSel" onchange="applyFilters()">
-          <option value="">Sort: Latest</option>
+          <option value="">Sort: Latest First</option>
           <option value="price-asc">Price: Low to High</option>
           <option value="price-desc">Price: High to Low</option>
         </select>
@@ -380,13 +393,15 @@ onAuthStateChanged(auth, async user => {
 async function loadProps() {
   try {
     const snap = await getDocs(collection(db, 'properties'));
-    allProps = [...DEMO, ...snap.docs.map(d => ({ id: d.id, ...d.data() }))];
+    const fsProps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Sort by postedAt (same field used in admin.html) — latest first
+    fsProps.sort((a,b) => (b.postedAt||'') > (a.postedAt||'') ? -1 : 1);
+    allProps = [...fsProps, ...DEMO];
   } catch(e) {
     allProps = [...DEMO];
   }
-  // URL param preselect
   const params = new URLSearchParams(location.search);
-  if (params.get('area')) { filters.area = params.get('area'); toggleFChipVal('fArea', params.get('area')); }
+  if (params.get('area')) { filters.area = params.get('area'); setAreaFilter(params.get('area')); }
   if (params.get('type')) { filters.type = params.get('type'); toggleFChipVal('fType', params.get('type')); }
   applyFilters();
 }
@@ -419,7 +434,11 @@ window.applyFilters = function() {
   if (q) list = list.filter(p => p.title.toLowerCase().includes(q) || p.area.toLowerCase().includes(q) || String(p.rent).includes(q));
   const sort = document.getElementById('sortSel')?.value;
   if (sort === 'price-asc')  list.sort((a,b) => a.rent - b.rent);
-  if (sort === 'price-desc') list.sort((a,b) => b.rent - a.rent);
+  else if (sort === 'price-desc') list.sort((a,b) => b.rent - a.rent);
+  else {
+    // Default: latest first using postedAt (same as admin.html)
+    list.sort((a,b) => (b.postedAt||'') > (a.postedAt||'') ? -1 : 1);
+  }
   renderGrid(list);
 };
 
@@ -432,6 +451,11 @@ window.clearFilters = function() {
   const min=document.getElementById('fMinPrice'), max=document.getElementById('fMaxPrice');
   if(min) min.value=''; if(max) max.value='';
   if(document.getElementById('searchInp')) document.getElementById('searchInp').value='';
+  // Reset area search badge
+  const badge = document.getElementById('areaSelectedBadge');
+  if (badge) badge.style.display = 'none';
+  const inp = document.getElementById('areaSearchInput');
+  if (inp) inp.value = '';
   applyFilters();
 };
 
@@ -448,7 +472,7 @@ function renderGrid(list) {
       : `<div class="card-img-placeholder">${p.emoji||'🏠'}</div>`;
     const videoHtml = p.videoUrl
       ? `<video class="card-hover-video" src="${p.videoUrl}" muted loop playsinline preload="none"></video>
-         <div class="video-indicator"><span class="video-indicator-dot"></span>play</div>`
+         <div class="video-indicator"><span class="video-indicator-dot"></span> Hover to play</div>`
       : '';
     return `
     <div class="property-card" onclick="window.location='view.html?id=${p.id}'"
@@ -578,6 +602,69 @@ function showToast(msg, err=false) {
   t.textContent = msg; t.className = 'toast' + (err?' error':'');
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3000);
 }
+
+// ── Area Search Bar ───────────────────────────────────────────────
+const ALL_AREAS = [
+  'Airport Area','Ambazari','Ashok Nagar','Ayodhya Nagar','Bajaj Nagar',
+  'Beltarodi','Besa','Bezanbagh','Bhandewadi','Bharatwada','Bidgaon','Butibori',
+  'Byramji Town','Chandan Nagar','Chatrapati Nagar','Chinchbhavan','Chinchbhuvan',
+  'Civil Lines','Cotton Market','Dabha','Dharampeth','Digdoh','Dighori',
+  'Friends Colony','Gaddi Godam','Gandhibagh','Ganeshpeth','Giripeth','Godhani',
+  'Gokulpeth','Gorewada','Gotal Pajri','Hasanbagh','Hingna','Hingna Road',
+  'Hudkeshwar','Hudkeshwar Road','Indora','Isasani','Itwari','Jaitala','Jamtha',
+  'Jaripatka','Kadbi Chowk','Kalamna','Kamptee Road','Kapil Nagar','Kapsi',
+  'Khamla','Kharbi','Khapri','Koradi Road','Lakadganj','Law College Square',
+  'Laxmi Nagar','Mahal','Manewada','Manish Nagar','Mankapur','Maskasath',
+  'Mhalgi Nagar','MIHAN','Mominpura','Nandanvan','Narendra Nagar','Narsala',
+  'New Manish Nagar','Old Bagadganj','Omkar Nagar','Pachpaoli','Panjari','Pardi',
+  'Pipla','Pratap Nagar','Rajiv Nagar','Ramdaspeth','Rameshwari','Ravi Nagar',
+  'Sadar','Seminary Hills','Shankar Nagar','Sitabuldi','Somalwada','Sonegaon',
+  'Sugat Nagar','Trimurti Nagar','Ujwal Nagar','Wadi','Wanadongri',
+  'Wardhaman Nagar','Wardha Road','Wathoda','YCCE Area','Yashodhara Nagar',
+  'Zingabai Takli'
+];
+
+function buildAreaDrop(q) {
+  const dd = document.getElementById('areaSearchDrop');
+  if (!dd) return;
+  const filtered = q ? ALL_AREAS.filter(a => a.toLowerCase().includes(q.toLowerCase())) : ALL_AREAS;
+  if (!filtered.length) {
+    dd.innerHTML = '<div style="padding:0.7rem 1rem;color:#94a3b8;font-size:0.82rem;">No area found</div>';
+  } else {
+    dd.innerHTML = filtered.map(a =>
+      `<div style="padding:0.5rem 1rem;cursor:pointer;font-size:0.85rem;color:#1e293b;transition:background 0.1s;"
+        onmousedown="selectArea('${a}')"
+        onmouseover="this.style.background='#eff6ff'"
+        onmouseout="this.style.background=''">${a}</div>`
+    ).join('');
+  }
+}
+
+window.onAreaSearch = function(val) {
+  buildAreaDrop(val);
+  document.getElementById('areaSearchDrop').style.display = 'block';
+};
+window.showAreaDrop = function() {
+  buildAreaDrop(document.getElementById('areaSearchInput')?.value || '');
+  document.getElementById('areaSearchDrop').style.display = 'block';
+};
+window.hideAreaDropDelayed = function() {
+  setTimeout(() => { const dd = document.getElementById('areaSearchDrop'); if (dd) dd.style.display = 'none'; }, 200);
+};
+window.selectArea = function(val) { setAreaFilter(val); };
+
+function setAreaFilter(val) {
+  filters.area = val;
+  const inp = document.getElementById('areaSearchInput');
+  const badge = document.getElementById('areaSelectedBadge');
+  const txt = document.getElementById('areaSelectedText');
+  if (inp) inp.value = '';
+  if (badge && txt) { if (val) { txt.textContent = val; badge.style.display = 'block'; } else { badge.style.display = 'none'; } }
+  const g = document.getElementById('fArea');
+  if (g) g.querySelectorAll('.fchip').forEach(c => c.classList.toggle('active', c.dataset.val === val));
+  applyFilters();
+}
+window.clearAreaFilter = function() { setAreaFilter(''); };
 </script>
 
 <!-- BOTTOM NAV (Mobile) -->
