@@ -230,7 +230,9 @@ async function loadProps() {
   try {
     const snap = await getDocs(collection(db, 'properties'));
     const firestoreProps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    allProps = [...DEMO, ...firestoreProps];
+    // Latest listings pehle (postedAt se sort), DEMO baad mein
+    firestoreProps.sort((a,b) => (b.postedAt||'') > (a.postedAt||'') ? 1 : -1);
+    allProps = [...firestoreProps, ...DEMO];
   } catch(e) {
     allProps = [...DEMO];
   }

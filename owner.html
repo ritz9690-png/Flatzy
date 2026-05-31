@@ -661,12 +661,11 @@ function showToast(msg, err=false) {
 // ── Searchable Area Dropdown ──────────────────────────────────────
 const AREA_LIST = [
   { group: 'Central Nagpur', areas: ['Cotton Market','Gandhibagh','Ganeshpeth','Itwari','Lakadganj','Mahal','Maskasath','Mominpura','Pachpaoli','Sitabuldi'] },
-  { group: 'West Nagpur', areas: ['Ambazari','Bajaj Nagar','Civil Lines','Dabha','Dharampeth','Friends Colony','Giripeth','Gokulpeth','Hingna Road','Law College Square','Laxmi Nagar','Mhalgi Nagar','Ramdaspeth','Ravi Nagar','Seminary Hills','Shankar Nagar','Wadi'] },
-  { group: 'South-West Nagpur', areas: ['Airport Area','Beltarodi','Besa','Chatrapati Nagar','Chinchbhavan','Chinchbhuvan','Digdoh','Hingna','Jaitala','Jamtha','Khamla','Khapri','Manish Nagar','MIHAN','Narendra Nagar','New Manish Nagar','Pipla','Pratap Nagar','Rajiv Nagar','Somalwada','Sonegaon','Trimurti Nagar','Ujwal Nagar','Wanadongri','Wardha Road','YCCE Area'] },
-  { group: 'South & South-East Nagpur', areas: ['Ayodhya Nagar','Bhandewadi','Bidgaon','Chinchbhavan','Dighori','Friends Colony','Gotal Pajri','Hudkeshwar','Hudkeshwar Road','Isasani','Kharbi','Manewada','Narsala','Omkar Nagar','Panjari','Pardi','Rameshwari','Wathoda','Zingabai Takli'] },
+  { group: 'West Nagpur', areas: ['Ambazari','Bajaj Nagar','Byramji Town','Civil Lines','Dabha','Dharampeth','Friends Colony','Giripeth','Gokulpeth','Hingna Road','Law College Square','Laxmi Nagar','Mhalgi Nagar','Ramdaspeth','Ravi Nagar','Sadar','Seminary Hills','Shankar Nagar','Wadi'] },
+  { group: 'South-West Nagpur', areas: ['Airport Area','Beltarodi','Besa','Chatrapati Nagar','Chinchbhuvan','Digdoh','Hingna','Jaitala','Jamtha','Khamla','Khapri','Manish Nagar','MIHAN','Narendra Nagar','New Manish Nagar','Pipla','Pratap Nagar','Rajiv Nagar','Somalwada','Sonegaon','Trimurti Nagar','Ujwal Nagar','Wanadongri','Wardha Road','YCCE Area'] },
+  { group: 'South & South-East Nagpur', areas: ['Ayodhya Nagar','Bhandewadi','Bidgaon','Dighori','Gotal Pajri','Hudkeshwar','Hudkeshwar Road','Isasani','Kharbi','Manewada','Narsala','Omkar Nagar','Panjari','Pardi','Rameshwari','Wathoda'] },
   { group: 'East Nagpur', areas: ['Bharatwada','Chandan Nagar','Hasanbagh','Kalamna','Kapsi','Nandanvan','Old Bagadganj','Wardhaman Nagar'] },
-  { group: 'North Nagpur', areas: ['Ashok Nagar','Bezanbagh','Gaddi Godam','Godhani','Gorewada','Indora','Jaripatka','Kadbi Chowk','Kamptee Road','Kapil Nagar','Koradi Road','Mankapur','Sugat Nagar','Ujwal Nagar','Yashodhara Nagar'] },
-  { group: 'Premium Areas', areas: ['Byramji Town','Sadar'] }
+  { group: 'North Nagpur', areas: ['Ashok Nagar','Bezanbagh','Gaddi Godam','Godhani','Gorewada','Indora','Jaripatka','Kadbi Chowk','Kamptee Road','Kapil Nagar','Koradi Road','Mankapur','Sugat Nagar','Yashodhara Nagar','Zingabai Takli'] }
 ];
 
 function buildAreaDropdown(filter='') {

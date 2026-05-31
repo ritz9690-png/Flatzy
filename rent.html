@@ -173,14 +173,17 @@ body { background: var(--dark2); }
           <span class="fchip" data-val="Bhandewadi" onclick="toggleFChip(this,'fArea')">Bhandewadi</span>
           <span class="fchip" data-val="Bharatwada" onclick="toggleFChip(this,'fArea')">Bharatwada</span>
           <span class="fchip" data-val="Bidgaon" onclick="toggleFChip(this,'fArea')">Bidgaon</span>
+          <span class="fchip" data-val="Butibori" onclick="toggleFChip(this,'fArea')">Butibori</span>
           <span class="fchip" data-val="Byramji Town" onclick="toggleFChip(this,'fArea')">Byramji Town</span>
           <span class="fchip" data-val="Chandan Nagar" onclick="toggleFChip(this,'fArea')">Chandan Nagar</span>
           <span class="fchip" data-val="Chatrapati Nagar" onclick="toggleFChip(this,'fArea')">Chatrapati Nagar</span>
+          <span class="fchip" data-val="Chinchbhavan" onclick="toggleFChip(this,'fArea')">Chinchbhavan</span>
           <span class="fchip" data-val="Chinchbhuvan" onclick="toggleFChip(this,'fArea')">Chinchbhuvan</span>
           <span class="fchip" data-val="Civil Lines" onclick="toggleFChip(this,'fArea')">Civil Lines</span>
           <span class="fchip" data-val="Cotton Market" onclick="toggleFChip(this,'fArea')">Cotton Market</span>
           <span class="fchip" data-val="Dabha" onclick="toggleFChip(this,'fArea')">Dabha</span>
           <span class="fchip" data-val="Dharampeth" onclick="toggleFChip(this,'fArea')">Dharampeth</span>
+          <span class="fchip" data-val="Digdoh" onclick="toggleFChip(this,'fArea')">Digdoh</span>
           <span class="fchip" data-val="Dighori" onclick="toggleFChip(this,'fArea')">Dighori</span>
           <span class="fchip" data-val="Friends Colony" onclick="toggleFChip(this,'fArea')">Friends Colony</span>
           <span class="fchip" data-val="Gaddi Godam" onclick="toggleFChip(this,'fArea')">Gaddi Godam</span>
@@ -219,6 +222,7 @@ body { background: var(--dark2); }
           <span class="fchip" data-val="Manish Nagar" onclick="toggleFChip(this,'fArea')">Manish Nagar</span>
           <span class="fchip" data-val="Mankapur" onclick="toggleFChip(this,'fArea')">Mankapur</span>
           <span class="fchip" data-val="Maskasath" onclick="toggleFChip(this,'fArea')">Maskasath</span>
+          <span class="fchip" data-val="Mhalgi Nagar" onclick="toggleFChip(this,'fArea')">Mhalgi Nagar</span>
           <span class="fchip" data-val="MIHAN" onclick="toggleFChip(this,'fArea')">MIHAN</span>
           <span class="fchip" data-val="Mominpura" onclick="toggleFChip(this,'fArea')">Mominpura</span>
           <span class="fchip" data-val="Nandanvan" onclick="toggleFChip(this,'fArea')">Nandanvan</span>
@@ -623,6 +627,9 @@ const ALL_AREAS = [
   'Wardhaman Nagar','Wardha Road','Wathoda','YCCE Area','Yashodhara Nagar',
   'Zingabai Takli'
 ];
+
+// Ensure fchips also cover all areas (used as fallback filter reference)
+const ALL_AREAS_SET = new Set(ALL_AREAS);
 
 function buildAreaDrop(q) {
   const dd = document.getElementById('areaSearchDrop');

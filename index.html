@@ -10,27 +10,24 @@
 /* ---- SOCIAL STRIP ---- */
 .social-strip-wrap {
   position: fixed;
-  top: 63px;
+  top: 0;
   width: 100%;
-  z-index: 1001;
+  z-index: 1002;
   overflow: hidden;
   background: linear-gradient(90deg, #0f172a, #1a3a6e, #0f172a);
   padding: 0.45rem 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
 }
 
-Div.social-strip-track {
-    gap: 3rem;
-    width: max-content;
-    animation: ticker 25s linear infinite;
-    margin-top: 5px;
-}
-
-.social-strip-track{
-    position: static !important;
-    display: flex;
+.social-strip-track {
+  position: static !important;
+  display: flex;
   gap: 2.5rem;
   width: max-content;
   align-items: center;
+  animation: socialScroll 25s linear infinite;
 }
 
 .social-strip-track span, .social-strip-track a {
@@ -53,18 +50,8 @@ Div.social-strip-track {
 /* ---- HERO ---- */
 /* topnav base styles from style.css — only overrides here */
 .topnav{
- top: 36px;/* push nav below social strip */
+  top: 36px; /* push nav below social strip */
   height: var(--nav-h);
-}
-.hero{
-  margin-top: calc(var(--nav-h) + 36px); /* nav + social strip */
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 4rem 5% 3rem;
-  position: relative;
-  overflow: hidden;
 }
 .hero{
   margin-top: calc(var(--nav-h) + 36px); /* nav + social strip */
