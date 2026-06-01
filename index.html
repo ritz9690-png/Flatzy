@@ -166,7 +166,7 @@ Div.social-strip-track {
 .properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
 
 /* HOVER VIDEO */
-.card-img { position: relative; overflow: hidden; }
+.card-img { position: relative; overflow: hidden; height: 200px; background: #1a1a2e; }
 .card-img-photo { transition: opacity 0.3s; width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
 .card-hover-video {
   position: absolute; inset: 0;
@@ -343,6 +343,13 @@ Div.social-strip-track {
   height: 1px; background: #e2e8f0;
   margin: 0.5rem 0;
 }
+.sb-wish-badge {
+  margin-left: auto; background: #e11d48; color: white;
+  font-size: 0.65rem; font-weight: 800;
+  border-radius: 50%; width: 18px; height: 18px;
+  display: none; align-items: center; justify-content: center;
+}
+.sb-wish-badge.show { display: flex; }
 
 /* Sidebar social icons */
 .sidebar-social {
@@ -433,6 +440,7 @@ Div.social-strip-track {
   <nav class="sidebar-nav">
     <a href="index.html" class="sb-link active">🏠 Home</a>
     <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="wishlist.html" class="sb-link" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
     <a href="owner.html" class="sb-link">📋 List Property</a>
     <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
     <a href="about.html" class="sb-link">ℹ️ About Us</a>
@@ -1444,6 +1452,10 @@ function openSidebar(){
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebarOverlay').classList.add('show');
   document.body.style.overflow='hidden';
+  // Update wishlist badge
+  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+  const badge = document.getElementById('sbWishBadge');
+  if (badge) { badge.textContent = wl.length; badge.style.display = wl.length ? 'flex' : 'none'; }
 }
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');

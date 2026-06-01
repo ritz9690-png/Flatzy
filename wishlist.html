@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Properties – Flatzy Nagpur</title>
+  <link rel="icon" type="image/png" href="favicon.jpeg">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { background: var(--dark2); }
+
+    .wl-header {
+      background: linear-gradient(120deg, #e11d48 0%, #be185d 100%);
+      padding: 5.5rem 5% 2rem; color: white;
+    }
+    .wl-header h1 { font-family: 'Syne',sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.3rem; }
+    .wl-header p { opacity: 0.85; font-size: 0.9rem; }
+
+    .wl-count {
+      background: rgba(255,255,255,0.2); display: inline-block;
+      padding: 4px 14px; border-radius: 20px; font-size: 0.82rem;
+      font-weight: 700; margin-top: 0.5rem;
+    }
+
+    .wl-section { padding: 1.5rem 5%; }
+
+    .wl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .wl-card {
+      background: white; border: 1.5px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: var(--shadow-sm); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .wl-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); border-color: #e11d48; }
+
+    .wl-card-img {
+      position: relative; height: 190px;
+      background: #1a1a2e; overflow: hidden;
+    }
+    .wl-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .wl-card-img .placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
+
+    .wl-card-img .wl-remove {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(225,29,72,0.9); color: white;
+      border: none; border-radius: 50%; width: 32px; height: 32px;
+      font-size: 1rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px); transition: transform 0.15s;
+    }
+    .wl-card-img .wl-remove:hover { transform: scale(1.1); }
+
+    .wl-card-badge {
+      position: absolute; bottom: 8px; left: 8px;
+      background: rgba(0,0,0,0.65); color: white;
+      font-size: 0.7rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .wl-card-type {
+      position: absolute; top: 8px; left: 8px;
+      background: white; color: var(--text);
+      font-size: 0.7rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    .wl-card-body { padding: 1rem; }
+    .wl-card-title {
+      font-family: 'Syne',sans-serif; font-size: 0.95rem;
+      font-weight: 700; margin-bottom: 0.3rem;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .wl-card-loc { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .wl-card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
+    .wl-card-tag {
+      font-size: 0.7rem; background: #f0f9ff; color: #0891b2;
+      border-radius: 6px; padding: 3px 8px; font-weight: 600;
+    }
+    .wl-card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .wl-card-price { font-family: 'Syne',sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+    .wl-card-price span { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+    .wl-details-btn {
+      background: var(--primary); color: white; border: none;
+      padding: 0.45rem 1rem; border-radius: 8px;
+      font-weight: 700; font-size: 0.82rem; cursor: pointer;
+      font-family: 'Syne',sans-serif;
+    }
+
+    /* Empty state */
+    .wl-empty {
+      text-align: center; padding: 4rem 2rem;
+      background: white; border-radius: 16px;
+      border: 1.5px solid var(--border);
+    }
+    .wl-empty .icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    .wl-empty h3 { font-family: 'Syne',sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .wl-empty p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .wl-empty a {
+      background: var(--primary); color: white;
+      padding: 0.7rem 1.8rem; border-radius: 10px;
+      text-decoration: none; font-weight: 700;
+      font-family: 'Syne',sans-serif; font-size: 0.9rem;
+    }
+
+    .wl-clear-btn {
+      background: none; border: 1.5px solid #e11d48;
+      color: #e11d48; padding: 0.45rem 1.2rem;
+      border-radius: 8px; font-weight: 700; font-size: 0.82rem;
+      cursor: pointer; font-family: 'Syne',sans-serif;
+      margin-bottom: 1.2rem; transition: all 0.2s;
+    }
+    .wl-clear-btn:hover { background: #e11d48; color: white; }
+
+    /* Sidebar same styles */
+    .sidebar-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.25s; }
+    .sidebar-overlay.show { opacity:1;pointer-events:all; }
+    .sidebar { position:fixed;top:0;left:0;height:100%;width:280px;background:white;z-index:1000;transform:translateX(-100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.12); }
+    .sidebar.open { transform:translateX(0); }
+    .sidebar-header { display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1rem 1rem;border-bottom:1px solid #e2e8f0; }
+    .sidebar-logo { font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#1a6fe8; }
+    .sidebar-logo span { color:#93c5fd; }
+    .sidebar-close { background:none;border:none;font-size:1.2rem;cursor:pointer;color:#64748b;padding:0.3rem;border-radius:6px; }
+    .sidebar-nav { display:flex;flex-direction:column;padding:0.8rem 0.8rem 0;flex:1; }
+    .sb-link { display:flex;align-items:center;gap:0.7rem;padding:0.75rem 1rem;border-radius:10px;text-decoration:none;color:#1e293b;font-size:0.95rem;font-weight:500;transition:background 0.15s,color 0.15s; }
+    .sb-link:hover, .sb-link.active { background:#eff6ff;color:#1a6fe8; }
+    .sb-divider { height:1px;background:#e2e8f0;margin:0.5rem 0; }
+    .sb-wish-badge { margin-left:auto;background:#e11d48;color:white;font-size:0.65rem;font-weight:800;border-radius:50%;width:18px;height:18px;display:none;align-items:center;justify-content:center; }
+    .sb-wish-badge.show { display:flex; }
+    .sidebar-social { display:flex;gap:0.8rem;padding:1rem 1.2rem 1.5rem;border-top:1px solid #e2e8f0;margin-top:auto; }
+    .sidebar-social a { display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f1f5f9;transition:background 0.2s; }
+    .sidebar-toggle { display:flex!important;align-items:center;justify-content:center;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);padding:0.3rem 0.5rem;border-radius:8px; }
+
+    /* Toast */
+    .toast { position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:white;padding:0.7rem 1.4rem;border-radius:12px;font-size:0.88rem;font-weight:600;opacity:0;transition:all 0.3s;z-index:9999;white-space:nowrap; }
+    .toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+    .toast.error { background:#e11d48; }
+  </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- Sidebar -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Flat<span>zy</span></div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="wishlist.html" class="sb-link active" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="owner.html" class="sb-link">📋 List Property</a>
+    <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
+    <a href="about.html" class="sb-link">ℹ️ About Us</a>
+    <div class="sb-divider"></div>
+    <a href="faq.html" class="sb-link">❓ FAQ</a>
+    <a href="services.html" class="sb-link">⭐ Our Services</a>
+    <a href="whats-new.html" class="sb-link">🆕 What's New</a>
+    <div class="sb-divider"></div>
+    <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
+    <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+    <div class="sb-divider"></div>
+    <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
+  </nav>
+  <div class="sidebar-social">
+    <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="#" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+  </div>
+</aside>
+
+<!-- Topnav -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+    <a href="owner.html">List Property</a>
+  </div>
+  <div style="display:flex;gap:0.5rem;align-items:center;">
+    <button class="sidebar-toggle" onclick="openSidebar()">☰</button>
+  </div>
+</nav>
+
+<!-- Header -->
+<div class="wl-header">
+  <h1>❤️ Saved Properties</h1>
+  <p>Your shortlisted flats in Nagpur</p>
+  <div class="wl-count" id="wlCount">0 saved</div>
+</div>
+
+<!-- Content -->
+<div class="wl-section">
+  <div id="wlClearWrap" style="display:none;">
+    <button class="wl-clear-btn" onclick="clearAll()">🗑️ Clear All Saved</button>
+  </div>
+  <div id="wlGrid" class="wl-grid"></div>
+  <div id="wlEmpty" class="wl-empty" style="display:none;">
+    <div class="icon">🏠</div>
+    <h3>No saved properties yet</h3>
+    <p>Browse properties and tap ❤️ Save to shortlist them here</p>
+    <a href="rent.html">Browse Properties</a>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+};
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let allProps = [];
+let wishlist = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+
+// Load Firestore data
+try {
+  const snap = await getDocs(collection(db, 'properties'));
+  allProps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+} catch(e) {
+  console.warn('Firestore failed:', e.message);
+}
+
+function render() {
+  wishlist = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+  const saved = allProps.filter(p => wishlist.includes(p.id));
+
+  // Update count
+  document.getElementById('wlCount').textContent = saved.length + ' saved';
+
+  // Update sidebar badge
+  const badge = document.getElementById('sbWishBadge');
+  if (badge) { badge.textContent = saved.length; badge.style.display = saved.length ? 'flex' : 'none'; }
+
+  const grid = document.getElementById('wlGrid');
+  const empty = document.getElementById('wlEmpty');
+  const clearWrap = document.getElementById('wlClearWrap');
+
+  if (!saved.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    clearWrap.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  clearWrap.style.display = 'block';
+
+  grid.innerHTML = saved.map(p => {
+    const imgHtml = p.mainPhoto
+      ? `<img src="${p.mainPhoto}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'">`
+      : `<div class="placeholder">${p.emoji || '🏠'}</div>`;
+    return `
+    <div class="wl-card" onclick="window.location='rent.html?id=${p.id}'">
+      <div class="wl-card-img">
+        ${imgHtml}
+        <span class="wl-card-type">${p.type || 'Flat'}</span>
+        <span class="wl-card-badge">${p.furnish || ''}</span>
+        <button class="wl-remove" onclick="event.stopPropagation();removeWish('${p.id}')" title="Remove">✕</button>
+      </div>
+      <div class="wl-card-body">
+        <div class="wl-card-title">${p.title}</div>
+        <div class="wl-card-loc">📍 ${p.area}, Nagpur</div>
+        <div class="wl-card-tags">
+          ${p.bhk ? `<span class="wl-card-tag">🛏 ${p.bhk}</span>` : ''}
+          ${p.furnish ? `<span class="wl-card-tag">${p.furnish}</span>` : ''}
+          ${p.type ? `<span class="wl-card-tag">${p.type}</span>` : ''}
+        </div>
+        <div class="wl-card-footer">
+          <div class="wl-card-price">₹${Number(p.rent).toLocaleString('en-IN')} <span>/mo</span></div>
+          <button class="wl-details-btn" onclick="event.stopPropagation();window.location='rent.html?id=${p.id}'">Details</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.removeWish = function(id) {
+  wishlist = wishlist.filter(x => x !== id);
+  localStorage.setItem('flatzy_wishlist', JSON.stringify(wishlist));
+  showToast('Removed from saved');
+  render();
+};
+
+window.clearAll = function() {
+  if (!confirm('Clear all saved properties?')) return;
+  localStorage.setItem('flatzy_wishlist', '[]');
+  wishlist = [];
+  showToast('All saved properties cleared');
+  render();
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+window.openSidebar = openSidebar;
+window.closeSidebar = closeSidebar;
+
+render();
+</script>
+</body>
+</html>
