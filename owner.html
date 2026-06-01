@@ -421,7 +421,7 @@ import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, getDocs, addDoc, deleteDoc,
-  doc, query, where
+  doc, query, where, updateDoc, increment
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -479,6 +479,9 @@ function switchOTab(tab) {
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
     document.getElementById('otab-'+t).classList.toggle('active', t===tab);
   });
+  if (tab === 'stats') {
+    trackAllViews();
+  }
 }
 
 async function renderListings() {
@@ -505,20 +508,33 @@ async function renderListings() {
     const thumbHtml = (p.mainPhoto)
       ? `<img src="${p.mainPhoto}" alt="" style="width:54px;height:54px;object-fit:cover;border-radius:8px;flex-shrink:0;">`
       : `<div class="listing-emoji">${p.emoji||'🏠'}</div>`;
+    const phone = p.ownerPhone || '';
+    const callBtn = phone ? `
+        <div style="margin-top:0.5rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <a href="tel:${phone}" onclick="trackInquiry('${p.id}')"
+            style="display:inline-flex;align-items:center;gap:0.3rem;background:#eff6ff;color:#1a6fe8;border:1px solid #bfdbfe;border-radius:7px;padding:0.3rem 0.7rem;font-size:0.78rem;font-weight:700;text-decoration:none;">
+            \u{1F4DE} Call
+          </a>
+          <a href="https://wa.me/91${phone}" target="_blank" onclick="trackInquiry('${p.id}')"
+            style="display:inline-flex;align-items:center;gap:0.3rem;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:7px;padding:0.3rem 0.7rem;font-size:0.78rem;font-weight:700;text-decoration:none;">
+            \u{1F4AC} WhatsApp
+          </a>
+        </div>` : '';
     return `
     <div class="listing-row">
       ${thumbHtml}
       <div class="listing-info">
         <div class="listing-title">${p.title}</div>
         <div class="listing-meta">
-          <span>📍 ${p.area}</span>
-          <span>🛏 ${p.bhk}</span>
-          <span>🏗 ${p.furnish}</span>
-          <span class="status-badge active">✓ Active</span>
+          <span>\u{1F4CD} ${p.area}</span>
+          <span>\u{1F6CF} ${p.bhk}</span>
+          <span>\u{1F3D7} ${p.furnish}</span>
+          <span class="status-badge active">\u2713 Active</span>
         </div>
-        <div style="margin-top:0.4rem;font-size:0.78rem;color:var(--muted);">👁 ${p.views||0} views · 📞 ${p.inquiries||0} inquiries</div>
+        <div style="margin-top:0.4rem;font-size:0.78rem;color:var(--muted);">\u{1F441} ${p.views||0} views \u00B7 \u{1F4DE} ${p.inquiries||0} inquiries</div>
+        ${callBtn}
       </div>
-      <div class="listing-price">₹${Number(p.rent).toLocaleString('en-IN')}</div>
+      <div class="listing-price">\u20B9${Number(p.rent).toLocaleString('en-IN')}</div>
       <div class="listing-actions">
         <button class="act-btn edit" onclick="editPropFn('${p.id}')">Edit</button>
         <button class="act-btn del" onclick="deletePropFn('${p.id}')">Del</button>
@@ -547,6 +563,32 @@ function renderAnalytics() {
       <div style="text-align:right;"><div style="font-size:0.85rem;color:var(--muted);">👁 ${p.views||0} views</div><div style="font-size:0.85rem;color:var(--primary);font-weight:700;">📞 ${p.inquiries||0} inquiries</div></div>
     </div>
   `).join('');
+}
+
+// ── Track Inquiry (Call / WhatsApp click) ────────────────────────
+window.trackInquiry = async function(propId) {
+  try {
+    await updateDoc(doc(db, 'properties', propId), { inquiries: increment(1) });
+    // Update local cache so analytics reflects immediately
+    const p = cachedOwnerProps.find(x => x.id === propId);
+    if (p) p.inquiries = (p.inquiries || 0) + 1;
+    renderAnalytics();
+  } catch(e) { console.warn('Inquiry track failed:', e.message); }
+};
+
+// ── Track Views (called when Analytics tab opens) ─────────────────
+async function trackAllViews() {
+  const props = cachedOwnerProps;
+  if (!props.length) return;
+  try {
+    await Promise.all(props.map(p =>
+      updateDoc(doc(db, 'properties', p.id), { views: increment(1) })
+    ));
+    // Refresh from Firestore so counts are accurate
+    const fresh = await getOwnerProps();
+    cachedOwnerProps = fresh;
+    renderAnalytics();
+  } catch(e) { console.warn('View track failed:', e.message); }
 }
 
 // ── Submit Property → Firestore ───────────────────────────────────
