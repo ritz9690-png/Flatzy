@@ -248,11 +248,109 @@ body { background: var(--dark2); }
 @media(max-width:480px) {
   .team-grid { grid-template-columns: 1fr; }
 }
+
+/* ---- SIDEBAR ---- */
+.sidebar-overlay {
+  display: block; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 1099;
+  backdrop-filter: blur(2px); opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.sidebar-overlay.show { opacity: 1; pointer-events: all; }
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 280px; height: 100vh; background: white; z-index: 1100;
+  transform: translateX(-100%); visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0.3s;
+  box-shadow: 4px 0 32px rgba(0,0,0,0.15);
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+.sidebar.open {
+  transform: translateX(0); visibility: visible;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0s;
+}
+.sidebar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 1.2rem 1rem;
+  background: linear-gradient(135deg,#1a3a6e,#0ea5e9); flex-shrink: 0;
+}
+.sidebar-logo { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px; }
+.sidebar-logo span { color: #93c5fd; }
+.sidebar-close {
+  background: rgba(255,255,255,0.15); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+  font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.sidebar-close:hover { background: rgba(255,255,255,0.3); }
+.sidebar-nav { display: flex; flex-direction: column; padding: 0.8rem 0.8rem 0; flex: 1; }
+.sb-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.75rem 1rem; border-radius: 10px;
+  text-decoration: none; color: #1e293b;
+  font-size: 0.95rem; font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.sb-link:hover, .sb-link.active { background: #eff6ff; color: #1a6fe8; }
+.sb-divider { height: 1px; background: #e2e8f0; margin: 0.5rem 0; }
+.sb-wish-badge {
+  margin-left: auto; background: #e11d48; color: white;
+  font-size: 0.65rem; font-weight: 800;
+  border-radius: 50%; width: 18px; height: 18px;
+  display: none; align-items: center; justify-content: center;
+}
+.sidebar-social {
+  display: flex; gap: 0.8rem; padding: 1rem 1.2rem 1.5rem;
+  border-top: 1px solid #e2e8f0; margin-top: auto;
+}
+.sidebar-social a {
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 10px;
+  background: #f1f5f9; transition: background 0.2s;
+}
+.sidebar-social a:hover { background: #dbeafe; }
+.sidebar-toggle {
+  display: flex !important; align-items: center; justify-content: center;
+  background: none; border: none; font-size: 1.4rem; cursor: pointer;
+  color: var(--text); padding: 0.3rem 0.5rem;
+  border-radius: 8px; transition: background 0.15s;
+}
+.sidebar-toggle:hover { background: #eff6ff; }
 </style>
 </head>
 <body class="has-bottom-nav">
 
 <!-- NAV -->
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Flat<span>zy</span></div>
+    <button class="sidebar-close" onclick="closeSidebar()">&#x2715;</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="wishlist.html" class="sb-link">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="owner.html" class="sb-link">📋 List Property</a>
+    <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
+    <a href="about.html" class="sb-link active">ℹ️ About Us</a>
+    <div class="sb-divider"></div>
+    <a href="faq.html" class="sb-link">❓ FAQ</a>
+    <a href="services.html" class="sb-link">⭐ Our Services</a>
+    <a href="whats-new.html" class="sb-link">🆕 What's New</a>
+    <div class="sb-divider"></div>
+    <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
+    <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+    <div class="sb-divider"></div>
+    <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
+  </nav>
+  <div class="sidebar-social">
+    <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+  </div>
+</aside>
 <nav class="topnav">
   <a href="index.html" class="logo">
     <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
@@ -266,10 +364,12 @@ body { background: var(--dark2); }
     <a href="about.html" class="active" style="color:var(--primary);font-weight:700;">About</a>
   </div>
   <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu" title="Menu">&#9776;</button>
     <a href="login.html" class="nav-btn outline">Login</a>
     <a href="login.html" class="nav-btn">Sign Up Free</a>
   </div>
   <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
+    <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu" title="Menu">&#9776;</button>
     <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
     <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
     <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
@@ -431,5 +531,24 @@ window.logoutUser = async function() {
 };
 </script>
 
+<script>
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+  document.body.style.overflow='hidden';
+  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+  const badge = document.getElementById('sbWishBadge');
+  if (badge) { badge.textContent = wl.length; badge.style.display = wl.length ? 'flex' : 'none'; }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+(function autoSidebarDesktop(){
+  if(window.innerWidth < 769) return;
+  setTimeout(function(){ openSidebar(); setTimeout(function(){ closeSidebar(); }, 15000); }, 5000);
+})();
+</script>
 </body>
 </html>
