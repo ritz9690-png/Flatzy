@@ -245,15 +245,14 @@ onAuthStateChanged(auth, user => {
   if (user) {
     const saved = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
     const role = saved.role || 'tenant';
-    // If onboarding not done yet, go to onboard
     const onboarded = localStorage.getItem('flatzy_onboarded');
     if (role === 'owner') {
       window.location = 'owner.html';
-    } else if (!onboarded) {
-      window.location = 'onboard.html';
-    } else {
+    } else if (onboarded) {
+      // Already onboarded before — go straight home
       window.location = 'index.html';
     }
+    // else: not onboarded yet — stay on login page, let googleLogin handle redirect
   }
 });
 
