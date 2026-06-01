@@ -313,6 +313,21 @@ if (!user.uid) {
 document.getElementById('welcomeText').innerHTML =
   'Welcome, <strong>' + (user.name || 'Friend') + '</strong>! 🎉';
 
+// ✅ Check if already referred — skip onboard directly
+try {
+  const alreadySnap = await getDocs(
+    query(collection(db, 'referrals'), where('refereeUid', '==', user.uid))
+  );
+  if (!alreadySnap.empty) {
+    // Already referred — mark onboarded and go home
+    localStorage.setItem('flatzy_onboarded', '1');
+    localStorage.removeItem('flatzy_pending_ref');
+    window.location = (user.role === 'owner') ? 'owner.html' : 'index.html';
+  }
+} catch(e) {
+  console.warn('Pre-check error:', e.message);
+}
+
 // ── Auto-fill if ref code came from URL or localStorage ────────────
 const savedRef = localStorage.getItem('flatzy_pending_ref') || '';
 if (savedRef) {
@@ -429,8 +444,9 @@ window.applyReferral = async function() {
       totalReferrals: increment(1)
     });
 
-    // Clear pending ref
+    // Clear pending ref, mark onboarded
     localStorage.removeItem('flatzy_pending_ref');
+    localStorage.setItem('flatzy_onboarded', '1');
 
     // Show success
     document.getElementById('mainForm').style.display = 'none';
@@ -449,6 +465,7 @@ window.applyReferral = async function() {
 // ── Skip referral ──────────────────────────────────────────────────
 window.skipReferral = function() {
   localStorage.removeItem('flatzy_pending_ref');
+  localStorage.setItem('flatzy_onboarded', '1');
   goHome();
 };
 
