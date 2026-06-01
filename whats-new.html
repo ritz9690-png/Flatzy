@@ -56,6 +56,7 @@ body { background: var(--dark2); }
   <nav class="sidebar-nav">
     <a href="index.html" class="sb-link">🏠 Home</a>
     <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="wishlist.html" class="sb-link">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
     <a href="owner.html" class="sb-link">📋 List Property</a>
     <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
     <a href="about.html" class="sb-link">ℹ️ About Us</a>
@@ -66,11 +67,13 @@ body { background: var(--dark2); }
     <div class="sb-divider"></div>
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+    <div class="sb-divider"></div>
+    <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
-    <a href="#" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
   </div>
 </aside>
 
@@ -243,16 +246,23 @@ body { background: var(--dark2); }
 </nav>
 
 <script>
-function openSidebar() {
+function openSidebar(){
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebarOverlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
+  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+  const badge = document.getElementById('sbWishBadge');
+  if (badge) { badge.textContent = wl.length; badge.style.display = wl.length ? 'flex' : 'none'; }
 }
-function closeSidebar() {
+function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarOverlay').classList.remove('show');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
 }
+(function autoSidebarDesktop(){
+  if(window.innerWidth < 769) return;
+  setTimeout(function(){ openSidebar(); setTimeout(function(){ closeSidebar(); }, 15000); }, 5000);
+})();
 </script>
 </body>
 </html>
