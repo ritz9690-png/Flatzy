@@ -250,9 +250,13 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// If already logged in, redirect
+// If already logged in, redirect — but ONLY if no ref code in URL
 onAuthStateChanged(auth, user => {
   if (user) {
+    const params = new URLSearchParams(window.location.search);
+    const refInUrl = params.get('ref') || params.get('code') || '';
+    // If ref code in URL, don't auto-redirect — let googleLogin handle it
+    if (refInUrl) return;
     const saved = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
     const role = saved.role || 'tenant';
     window.location = role === 'owner' ? 'owner.html' : 'index.html';
@@ -286,8 +290,11 @@ window.googleLogin = async function() {
     }, { merge: true });
 
     // ── Save referral if code given & not already referred ────────
-    const refCode = (typeof validatedReferCode !== 'undefined' ? validatedReferCode : '') ||
-                    document.getElementById('referCodeInput')?.value?.toUpperCase().trim() || '';
+    // Always read directly from input + URL — don't rely on cross-script variable
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlRef = urlParams.get('ref') || urlParams.get('code') || '';
+    const inputRef = document.getElementById('referCodeInput')?.value?.toUpperCase().trim() || '';
+    const refCode = (urlRef || inputRef).toUpperCase().trim();
 
     if (refCode && refCode.startsWith('FLZ') && refCode.length >= 5) {
       try {
