@@ -700,9 +700,13 @@ const db = getFirestore(app);
 let myReferralCode = null;
 let myPhone = null;
 
-// ── Generate code from phone ──────────────────────────────────────
-function generateCode(phone) {
-  return 'FLZ' + phone.slice(-4).toUpperCase();
+// ── Generate unique code from Gmail ──────────────────────────────
+function generateCode(gmail) {
+  // Take first 3 chars before @ + last 2 chars before @ + 2 random alphanumeric
+  const local = gmail.split('@')[0].replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  const part = local.length >= 4 ? local.slice(0,2) + local.slice(-2) : local.padEnd(4,'X');
+  const rand = Math.random().toString(36).substring(2,4).toUpperCase();
+  return 'FLZ' + part.slice(0,3) + rand;
 }
 
 // ── Load total referrers count (hero stat) ────────────────────────
@@ -942,7 +946,6 @@ window.registerReferrer = async function() {
 
   try {
     // ✅ Check: same Gmail se already register toh nahi hua?
-    const { getDocs: gds, query: q2, collection: col2, where: wh2 } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     const gmailCheck = await getDocs(query(collection(db, 'referrers'), where('gmail', '==', gmail)));
     if (!gmailCheck.empty) {
       const existing = gmailCheck.docs[0].data();
@@ -965,9 +968,11 @@ window.registerReferrer = async function() {
       return;
     }
 
-    const code = generateCode(phone);
+    const code = generateCode(gmail);
+    const loggedUser = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
     const data = {
       name, gmail, phone, area, upi, code,
+      uid: loggedUser.uid || '',
       createdAt: new Date().toISOString(),
       totalReferrals: 0
     };

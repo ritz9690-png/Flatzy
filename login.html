@@ -186,17 +186,40 @@ function selectRole(role) {
   }
 })();
 
-function checkReferCode(val) {
+async function checkReferCode(val) {
   const clean = val.toUpperCase().trim();
   const badge = document.getElementById('referBadge');
-  // Basic format check: starts with FLZ + 4 digits
-  const valid = /^FLZ\d{4}$/.test(clean);
-  if (valid) {
-    validatedReferCode = clean;
-    badge.classList.add('show');
-  } else {
+  // Must start with FLZ and be at least 5 chars
+  if (!clean.startsWith('FLZ') || clean.length < 5) {
     validatedReferCode = '';
     badge.classList.remove('show');
+    return;
+  }
+  // Verify against Firestore — real-time check
+  try {
+    const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const { getFirestore, collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const _app = getApps().length ? getApps()[0] : initializeApp({
+      apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+      authDomain: "flatzyhomes.firebaseapp.com",
+      projectId: "flatzyhomes",
+      storageBucket: "flatzyhomes.firebasestorage.app",
+      messagingSenderId: "519957313457",
+      appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+    });
+    const _db = getFirestore(_app);
+    const snap = await getDocs(query(collection(_db, 'referrers'), where('code', '==', clean)));
+    if (!snap.empty) {
+      validatedReferCode = clean;
+      badge.classList.add('show');
+    } else {
+      validatedReferCode = '';
+      badge.classList.remove('show');
+    }
+  } catch(e) {
+    // Fallback: accept if format looks right
+    validatedReferCode = clean;
+    badge.classList.add('show');
   }
 }
 
@@ -266,7 +289,7 @@ window.googleLogin = async function() {
     const refCode = (typeof validatedReferCode !== 'undefined' ? validatedReferCode : '') ||
                     document.getElementById('referCodeInput')?.value?.toUpperCase().trim() || '';
 
-    if (refCode && /^FLZ\d{4}$/.test(refCode)) {
+    if (refCode && refCode.startsWith('FLZ') && refCode.length >= 5) {
       try {
         // Check if this user has ALREADY been referred before (prevent duplicate)
         const alreadyReferredSnap = await getDocs(
@@ -285,9 +308,9 @@ window.googleLogin = async function() {
             const referrerDoc = refSnap.docs[0];
             const referrer = referrerDoc.data();
 
-            // Prevent self-referral
-            const isSelfReferral = referrer.phone && user.phoneNumber &&
-                                   referrer.phone === user.phoneNumber.replace('+91','');
+            // Prevent self-referral — check by gmail or uid
+            const isSelfReferral = (referrer.gmail && referrer.gmail === user.email) ||
+                                   (referrer.uid && referrer.uid === user.uid);
 
             if (isSelfReferral) {
               showToast('Welcome ' + user.displayName + '! ✅');
