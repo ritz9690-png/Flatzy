@@ -761,7 +761,7 @@ footer::after {
   .enquire-btn:hover   { transform: none; }
 }
 .property-card{
-    background: rgb(2, 2, 2);
+    background: #afd6e4;
     border-radius: 18px;
     overflow: hidden;
     cursor: pointer;
