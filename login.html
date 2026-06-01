@@ -240,16 +240,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// If already logged in, redirect — but ONLY if no ref code in URL
+// If already logged in, redirect
 onAuthStateChanged(auth, user => {
   if (user) {
-    const params = new URLSearchParams(window.location.search);
-    const refInUrl = params.get('ref') || params.get('code') || '';
-    // If ref code in URL, don't auto-redirect — let googleLogin handle it
-    if (refInUrl) return;
     const saved = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
     const role = saved.role || 'tenant';
-    window.location = role === 'owner' ? 'owner.html' : 'index.html';
+    // If onboarding not done yet, go to onboard
+    const onboarded = localStorage.getItem('flatzy_onboarded');
+    if (role === 'owner') {
+      window.location = 'owner.html';
+    } else if (!onboarded) {
+      window.location = 'onboard.html';
+    } else {
+      window.location = 'index.html';
+    }
   }
 });
 
@@ -295,15 +299,12 @@ window.googleLogin = async function() {
     const _urlRef = _urlParams.get('ref') || _urlParams.get('code') || '';
     if (_urlRef) localStorage.setItem('flatzy_pending_ref', _urlRef.toUpperCase().trim());
 
-    // New user → onboarding (referral code page), existing → home
-    const isNewUser = !existing.exists();
+    // Always go to onboard (for referral code step) unless owner
     setTimeout(() => {
       if (role === 'owner') {
         window.location = 'owner.html';
-      } else if (isNewUser) {
-        window.location = 'onboard.html';
       } else {
-        window.location = 'index.html';
+        window.location = 'onboard.html';
       }
     }, 1200);
 
