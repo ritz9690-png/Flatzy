@@ -599,37 +599,48 @@ body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(-
 
   <!-- REGISTER FOR PROGRAM -->
   <div class="r-card register-card" id="registerCard" style="display:block;">
-    <div class="r-card-title">🚀 Join the Refer & Earn Program</div>
+    <div class="r-card-title">&#x1F680; Join the Refer & Earn Program</div>
     <p style="color:rgba(255,255,255,0.65);font-size:0.88rem;margin-bottom:1.2rem;">
-      Enter your details to get your unique referral code and start earning!
+      Apni details fill karo aur apna unique referral code pao. Har successful referral pe &#x20B9;750 direct UPI mein!
     </p>
     <div class="reg-form">
       <div class="reg-row">
         <div class="reg-field">
-          <label>Full Name</label>
-          <input type="text" id="regName" placeholder="Your full name">
+          <label>Full Name <span style="color:#fbbf24;">*</span></label>
+          <input type="text" id="regName" placeholder="Auto-filled from Google" readonly style="opacity:0.7;cursor:not-allowed;">
         </div>
         <div class="reg-field">
-          <label>WhatsApp Number</label>
-          <input type="tel" id="regPhone" placeholder="10-digit number" maxlength="10">
+          <label>Gmail (Google Account) <span style="color:#fbbf24;">*</span></label>
+          <input type="email" id="regGmail" placeholder="Auto-filled from Google" readonly style="opacity:0.7;cursor:not-allowed;">
         </div>
       </div>
       <div class="reg-row">
         <div class="reg-field">
-          <label>City / Area (Nagpur)</label>
+          <label>WhatsApp Number <span style="color:#fbbf24;">*</span></label>
+          <input type="tel" id="regPhone" placeholder="10-digit number" maxlength="10">
+        </div>
+        <div class="reg-field">
+          <label>UPI ID (for payment) <span style="color:#fbbf24;">*</span></label>
+          <input type="text" id="regUpi" placeholder="yourname@upi or phone@bank">
+        </div>
+      </div>
+      <div class="reg-row">
+        <div class="reg-field" style="flex:1;">
+          <label>City / Area (Nagpur) <span style="color:#fbbf24;">*</span></label>
           <select id="regArea">
             <option value="">Select your area</option>
             <option>Wandgori</option><option>Higna</option><option>Digdoh</option>
             <option>Kalamna</option><option>Butibori</option><option>Besa</option>
+            <option>Sitabuldi</option><option>Dharampeth</option><option>Sadar</option>
+            <option>Wardha Road</option><option>Amravati Road</option>
             <option>Other Nagpur Area</option>
           </select>
         </div>
-        <div class="reg-field">
-          <label>UPI ID (for payment)</label>
-          <input type="text" id="regUpi" placeholder="yourname@upi">
-        </div>
       </div>
-      <button class="reg-btn" id="regBtn" onclick="registerReferrer()">🎁 Get My Referral Code</button>
+      <div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:0.8rem 1rem;font-size:0.78rem;color:rgba(255,255,255,0.7);margin-top:0.3rem;">
+        &#x26A0;&#xFE0F; Ek Google account se sirf ek referral code milega. Fake details dene pe account block hoga.
+      </div>
+      <button class="reg-btn" id="regBtn" onclick="registerReferrer()">&#x1F381; Get My Referral Code</button>
     </div>
   </div>
 
@@ -706,11 +717,39 @@ async function loadHeroStat() {
 async function init() {
   loadHeroStat();
 
-  // Auto-fill name from Google login
+  // ✅ Google login check — agar login nahi hai toh login page pe bhejo
   const user = JSON.parse(localStorage.getItem('flatzy_user') || '{}');
+  if (!user.uid) {
+    // Hide stats & register card, show login prompt
+    const statsCard = document.getElementById('statsCard');
+    const registerCard = document.getElementById('registerCard');
+    if (statsCard) statsCard.style.display = 'none';
+    if (registerCard) registerCard.style.display = 'none';
+
+    // Show a login required banner
+    const main = document.querySelector('.refer-main');
+    if (main) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'grid-column:1/-1;background:white;border:1.5px solid #e5e7eb;border-radius:20px;padding:2.5rem;text-align:center;';
+      banner.innerHTML = `
+        <div style="font-size:2.5rem;margin-bottom:1rem;">🔒</div>
+        <div style="font-family:Syne,sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:0.5rem;">Login Required</div>
+        <p style="color:#6b7280;margin-bottom:1.5rem;font-size:0.9rem;">Refer & Earn access karne ke liye pehle login karo.</p>
+        <a href="login.html" style="background:#1a6fe8;color:white;padding:0.8rem 2rem;border-radius:10px;font-family:Syne,sans-serif;font-weight:700;text-decoration:none;font-size:0.95rem;">Login with Google →</a>
+      `;
+      main.prepend(banner);
+    }
+    return;
+  }
+
+  // ✅ Auto-fill name + gmail from Google login (readonly fields)
   if(user.name) {
     const nameInput = document.getElementById('regName');
-    if(nameInput && !nameInput.value) nameInput.value = user.name;
+    if(nameInput) nameInput.value = user.name;
+  }
+  if(user.email) {
+    const gmailInput = document.getElementById('regGmail');
+    if(gmailInput) gmailInput.value = user.email;
   }
 
   // Check if already registered via localStorage
@@ -884,40 +923,66 @@ async function loadHistory(phone) {
 // ── Register referrer ─────────────────────────────────────────────
 window.registerReferrer = async function() {
   const name  = document.getElementById('regName').value.trim();
+  const gmail = document.getElementById('regGmail').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
   const area  = document.getElementById('regArea').value;
   const upi   = document.getElementById('regUpi').value.trim();
 
-  if(!name)  { showToast('Enter your full name ❌', 'error'); return; }
+  if(!name)  { showToast('Name nahi mila. Logout karke dobara login karo ❌', 'error'); return; }
+  if(!gmail) { showToast('Gmail nahi mila. Logout karke dobara login karo ❌', 'error'); return; }
   if(!phone || phone.length !== 10 || !/^\d+$/.test(phone)) {
-    showToast('Enter valid 10-digit WhatsApp number ❌', 'error'); return;
+    showToast('Valid 10-digit WhatsApp number daalo ❌', 'error'); return;
   }
-  if(!area)  { showToast('Select your area ❌', 'error'); return; }
-  if(!upi)   { showToast('Enter your UPI ID for payment ❌', 'error'); return; }
+  if(!area)  { showToast('Apna area select karo ❌', 'error'); return; }
+  if(!upi)   { showToast('UPI ID daalo payment ke liye ❌', 'error'); return; }
 
   const btn = document.getElementById('regBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Creating your code…';
-
-  const code = generateCode(phone);
-  const data = {
-    name, phone, area, upi, code,
-    createdAt: new Date().toISOString(),
-    totalReferrals: 0
-  };
+  btn.innerHTML = '<span class="spinner"></span> Creating your code...';
 
   try {
+    // ✅ Check: same Gmail se already register toh nahi hua?
+    const { getDocs: gds, query: q2, collection: col2, where: wh2 } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const gmailCheck = await getDocs(query(collection(db, 'referrers'), where('gmail', '==', gmail)));
+    if (!gmailCheck.empty) {
+      const existing = gmailCheck.docs[0].data();
+      // Same person re-registering with same gmail — load their existing code
+      localStorage.setItem('flatzy_refer_phone', existing.phone);
+      myPhone = existing.phone;
+      setupUI(existing.code, existing.phone);
+      loadStats(existing.phone);
+      loadHistorySimple(existing.phone);
+      showToast('Tumhara code already exist karta hai: ' + existing.code + ' ✅', 'success');
+      return;
+    }
+
+    // ✅ Check: same phone already registered?
+    const phoneDoc = await getDoc(doc(db, 'referrers', phone));
+    if (phoneDoc.exists()) {
+      showToast('Yeh number already registered hai! ❌', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '&#x1F381; Get My Referral Code';
+      return;
+    }
+
+    const code = generateCode(phone);
+    const data = {
+      name, gmail, phone, area, upi, code,
+      createdAt: new Date().toISOString(),
+      totalReferrals: 0
+    };
+
     await setDoc(doc(db, 'referrers', phone), data, { merge: true });
     localStorage.setItem('flatzy_refer_phone', phone);
     myPhone = phone;
     setupUI(code, phone);
     loadStats(phone);
     loadHistorySimple(phone);
-    showToast('🎉 Referral code created! Start sharing!', 'success');
+    showToast('&#x1F389; Referral code create ho gaya! Share karo!', 'success');
   } catch(e) {
     showToast('Error: ' + e.message, 'error');
     btn.disabled = false;
-    btn.textContent = '🎁 Get My Referral Code';
+    btn.innerHTML = '&#x1F381; Get My Referral Code';
   }
 };
 
