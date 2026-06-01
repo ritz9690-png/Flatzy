@@ -269,7 +269,7 @@ function renderProps(list) {
          <div class="video-indicator"><span class="video-indicator-dot"></span> Hover to play</div>`
       : '';
     return `
-    <div class="property-card" onclick="window.location='rent.html?id=${p.id}'"
+    <div class="property-card" onclick="window.location='view.html?id=${p.id}'"
       onmouseenter="playCardVideo(this)"
       onmouseleave="pauseCardVideo(this)">
       <div class="card-img">${imgHtml}${videoHtml}
@@ -341,7 +341,7 @@ function renderWishlist() {
       ? `<div class="wc-img"><img src="${firstPhoto}" alt="${p.title}" loading="lazy" onerror="this.parentElement.innerHTML='${p.emoji||'🏠'}'"/></div>`
       : `<div class="wc-img">${p.emoji||'🏠'}</div>`;
     return `
-    <div class="wish-card" onclick="window.location='rent.html?id=${p.id}'">
+    <div class="wish-card" onclick="window.location='wishlist.html'">
       ${imgHtml}
       <div class="wc-body">
         <div class="wc-title">${p.title}</div>

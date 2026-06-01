@@ -273,7 +273,7 @@ function render() {
       ? `<img src="${p.mainPhoto}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'">`
       : `<div class="placeholder">${p.emoji || '🏠'}</div>`;
     return `
-    <div class="wl-card" onclick="window.location='rent.html?id=${p.id}'">
+    <div class="wl-card" onclick="window.location='view.html?id=${p.id}'">
       <div class="wl-card-img">
         ${imgHtml}
         <span class="wl-card-type">${p.type || 'Flat'}</span>
@@ -290,7 +290,7 @@ function render() {
         </div>
         <div class="wl-card-footer">
           <div class="wl-card-price">₹${Number(p.rent).toLocaleString('en-IN')} <span>/mo</span></div>
-          <button class="wl-details-btn" onclick="event.stopPropagation();window.location='rent.html?id=${p.id}'">Details</button>
+          <button class="wl-details-btn" onclick="event.stopPropagation();window.location='view.html?id=${p.id}'">Details</button>
         </div>
       </div>
     </div>`;
