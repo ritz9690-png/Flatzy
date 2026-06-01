@@ -211,7 +211,7 @@ function showToast(msg, type='') {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -262,42 +262,60 @@ window.googleLogin = async function() {
       lastLogin: new Date().toISOString()
     }, { merge: true });
 
-    // ── Save referral if code given & new user ────────────────────
+    // ── Save referral if code given & not already referred ────────
     const refCode = (typeof validatedReferCode !== 'undefined' ? validatedReferCode : '') ||
                     document.getElementById('referCodeInput')?.value?.toUpperCase().trim() || '';
 
-    if (refCode && /^FLZ\d{4}$/.test(refCode) && !existing.exists()) {
+    if (refCode && /^FLZ\d{4}$/.test(refCode)) {
       try {
-        // Find referrer by code
-        // using top-level imports
-        const refQ = query(collection(db, 'referrers'), where('code', '==', refCode));
-        const refSnap = await getDocs(refQ);
+        // Check if this user has ALREADY been referred before (prevent duplicate)
+        const alreadyReferredSnap = await getDocs(
+          query(collection(db, 'referrals'), where('refereeUid', '==', user.uid))
+        );
 
-        if (!refSnap.empty) {
-          const referrerDoc = refSnap.docs[0];
-          const referrer = referrerDoc.data();
-
-          // Save referral record
-          await addDoc(collection(db, 'referrals'), {
-            referrerCode:  refCode,
-            referrerPhone: referrer.phone || '',
-            referrerName:  referrer.name  || '',
-            refereeUid:    user.uid,
-            refereeName:   user.displayName || '',
-            refereeEmail:  user.email || '',
-            status:        'pending',
-            amount:        500,
-            createdAt:     new Date().toISOString()
-          });
-
-          // Increment referrer's count
-          await updateDoc(referrerDoc.ref, {
-            totalReferrals: (referrer.totalReferrals || 0) + 1
-          });
-
-          showToast('Welcome! Referral code applied ✅');
+        if (!alreadyReferredSnap.empty) {
+          // Already referred — skip silently
+          showToast('Welcome back ' + user.displayName + '! ✅');
         } else {
-          showToast('Welcome ' + user.displayName + '! ✅');
+          // Find referrer by code
+          const refQ = query(collection(db, 'referrers'), where('code', '==', refCode));
+          const refSnap = await getDocs(refQ);
+
+          if (!refSnap.empty) {
+            const referrerDoc = refSnap.docs[0];
+            const referrer = referrerDoc.data();
+
+            // Prevent self-referral
+            const isSelfReferral = referrer.phone && user.phoneNumber &&
+                                   referrer.phone === user.phoneNumber.replace('+91','');
+
+            if (isSelfReferral) {
+              showToast('Welcome ' + user.displayName + '! ✅');
+            } else {
+              // Save referral record
+              await addDoc(collection(db, 'referrals'), {
+                referrerCode:  refCode,
+                referrerPhone: referrer.phone || '',
+                referrerName:  referrer.name  || '',
+                refereeUid:    user.uid,
+                refereeName:   user.displayName || '',
+                refereeEmail:  user.email || '',
+                status:        'pending',
+                amount:        750,
+                createdAt:     new Date().toISOString()
+              });
+
+              // ✅ Safe atomic increment — no race condition
+              await updateDoc(referrerDoc.ref, {
+                totalReferrals: increment(1)
+              });
+
+              showToast('🎉 Welcome! Referral code applied ✅');
+            }
+          } else {
+            // Invalid code — still let user login
+            showToast('Welcome ' + user.displayName + '! ✅');
+          }
         }
       } catch(refErr) {
         console.warn('Referral save error:', refErr.message);
