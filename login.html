@@ -120,17 +120,7 @@ body { background: linear-gradient(135deg,#EBF2FF 0%,#F8FBFF 60%,#E8F4FD 100%); 
       </div>
     </div>
 
-    <!-- REFER CODE INPUT -->
-    <div class="refer-input-wrap" id="referWrap">
-      <label>🎁 Have a Referral Code? (Optional)</label>
-      <div class="refer-input-row">
-        <input type="text" class="refer-input" id="referCodeInput"
-          placeholder="e.g. FLZ6087" maxlength="10"
-          oninput="checkReferCode(this.value)">
-        <div class="refer-valid-badge" id="referBadge">✓ Valid!</div>
-      </div>
-      <div class="refer-skip">Skip if you don't have one</div>
-    </div>
+    <!-- Referral code collected on next page after login -->
 
     <div class="info-note">
       🔒 Secure login with your Google account. No password needed.
@@ -289,73 +279,10 @@ window.googleLogin = async function() {
       lastLogin: new Date().toISOString()
     }, { merge: true });
 
-    // ── Save referral if code given & not already referred ────────
-    // Always read directly from input + URL — don't rely on cross-script variable
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlRef = urlParams.get('ref') || urlParams.get('code') || '';
-    const inputRef = document.getElementById('referCodeInput')?.value?.toUpperCase().trim() || '';
-    const refCode = (urlRef || inputRef).toUpperCase().trim();
+    // Referral handled on onboard.html after login
+    showToast('Welcome ' + user.displayName + '! ✅');
 
-    if (refCode && refCode.startsWith('FLZ') && refCode.length >= 5) {
-      try {
-        // Check if this user has ALREADY been referred before (prevent duplicate)
-        const alreadyReferredSnap = await getDocs(
-          query(collection(db, 'referrals'), where('refereeUid', '==', user.uid))
-        );
-
-        if (!alreadyReferredSnap.empty) {
-          // Already referred — skip silently
-          showToast('Welcome back ' + user.displayName + '! ✅');
-        } else {
-          // Find referrer by code
-          const refQ = query(collection(db, 'referrers'), where('code', '==', refCode));
-          const refSnap = await getDocs(refQ);
-
-          if (!refSnap.empty) {
-            const referrerDoc = refSnap.docs[0];
-            const referrer = referrerDoc.data();
-
-            // Prevent self-referral — check by gmail or uid
-            const isSelfReferral = (referrer.gmail && referrer.gmail === user.email) ||
-                                   (referrer.uid && referrer.uid === user.uid);
-
-            if (isSelfReferral) {
-              showToast('Welcome ' + user.displayName + '! ✅');
-            } else {
-              // Save referral record
-              await addDoc(collection(db, 'referrals'), {
-                referrerCode:  refCode,
-                referrerPhone: referrer.phone || '',
-                referrerName:  referrer.name  || '',
-                refereeUid:    user.uid,
-                refereeName:   user.displayName || '',
-                refereeEmail:  user.email || '',
-                status:        'pending',
-                amount:        750,
-                createdAt:     new Date().toISOString()
-              });
-
-              // ✅ Safe atomic increment — no race condition
-              await updateDoc(referrerDoc.ref, {
-                totalReferrals: increment(1)
-              });
-
-              showToast('🎉 Welcome! Referral code applied ✅');
-            }
-          } else {
-            // Invalid code — still let user login
-            showToast('Welcome ' + user.displayName + '! ✅');
-          }
-        }
-      } catch(refErr) {
-        console.warn('Referral save error:', refErr.message);
-        showToast('Welcome ' + user.displayName + '! ✅');
-      }
-    } else {
-      showToast('Welcome ' + user.displayName + '! ✅');
-    }
-
-    // Save to localStorage
+    // Save user to localStorage
     localStorage.setItem('flatzy_user', JSON.stringify({
       name: user.displayName,
       email: user.email,
@@ -363,9 +290,21 @@ window.googleLogin = async function() {
       photo: user.photoURL,
       role: role
     }));
+    // Save ref code from URL if present — onboard.html will use it
+    const _urlParams = new URLSearchParams(window.location.search);
+    const _urlRef = _urlParams.get('ref') || _urlParams.get('code') || '';
+    if (_urlRef) localStorage.setItem('flatzy_pending_ref', _urlRef.toUpperCase().trim());
 
+    // New user → onboarding (referral code page), existing → home
+    const isNewUser = !existing.exists();
     setTimeout(() => {
-      window.location = role === 'owner' ? 'owner.html' : 'index.html';
+      if (role === 'owner') {
+        window.location = 'owner.html';
+      } else if (isNewUser) {
+        window.location = 'onboard.html';
+      } else {
+        window.location = 'index.html';
+      }
     }, 1200);
 
   } catch(e) {
