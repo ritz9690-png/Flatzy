@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href="favicon.jpeg">
 <style>
 /* ---- SOCIAL STRIP ---- */
+.card-nearby { font-size: 0.75rem; color: #0369a1; background: #e0f2fe; border-radius: 6px; padding: 0.18rem 0.5rem; margin: 0.2rem 0 0.4rem; display: inline-block; font-weight: 600; }
 .social-strip-wrap {
   position: fixed;
   top: 63px;
@@ -495,7 +496,7 @@ Div.social-strip-track {
 
   <!-- VIDEO BACKGROUND -->
   <video class="hero-video" autoplay muted loop playsinline>
-    <source src="https://res.cloudinary.com/dhl8byas2/video/upload/v1780151502/hhgrk8smw4hgls2mdrbt.mp4" type="video/mp4">
+    <source src="home.mp4" type="video/mp4">
   </video>
 
   <div class="hero-tag"><span class="dot"></span> Nagpur's #1 Property Platform</div>
@@ -1281,6 +1282,40 @@ window.logoutUser = async function() {
 // ── No demo properties — only real Firestore listings ─────────────
 
 // ── Render property card ──────────────────────────────────────────
+// ── Nearby Label Fetch (Overpass — Free) ─────────────────────────
+function haversineM(lat1,lng1,lat2,lng2){
+  const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function fmtDist(m){ return m<1000?`${Math.round(m)}m`:`${(m/1000).toFixed(1)}km`; }
+
+async function fetchNearbyLabels(props) {
+  const withLoc = props.filter(p => p.lat && p.lng);
+  if (!withLoc.length) return;
+  // One Overpass query for all props at once — using bbox union
+  for (const p of withLoc) {
+    try {
+      const q = `[out:json][timeout:6];(
+        node["amenity"~"college|school|hospital|bus_station"](around:1500,${p.lat},${p.lng});
+        node["railway"="station"](around:1500,${p.lat},${p.lng});
+        node["shop"="mall"](around:1500,${p.lat},${p.lng});
+      );out 5;`;
+      const res = await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
+      const data = await res.json();
+      if (!data.elements?.length) continue;
+      // Pick closest named element
+      let best = null, bestDist = Infinity;
+      for (const el of data.elements) {
+        if (!el.tags?.name) continue;
+        const d = haversineM(p.lat, p.lng, el.lat, el.lon);
+        if (d < bestDist) { bestDist = d; best = el; }
+      }
+      if (best) p._nearbyLabel = `${fmtDist(bestDist)} from ${best.tags.name}`;
+    } catch(e) { /* silent fail */ }
+  }
+}
+
 function renderCard(p) {
   const idStr = typeof p.id === 'string' ? p.id : String(p.id);
   const imgHtml = p.mainPhoto
@@ -1290,7 +1325,14 @@ function renderCard(p) {
     ? `<video class="card-hover-video" src="${p.videoUrl}" muted loop playsinline preload="none"></video>
        <div class="video-indicator"><span class="video-indicator-dot"></span> Hover to play</div>`
     : '';
-  return `<div class="property-card" onclick="window.location='rent.html?id=${idStr}'"
+
+  // Nearby landmark — sirf tab dikhega jab lat/lng ho
+  let nearbyHtml = '';
+  if (p.lat && p.lng && p._nearbyLabel) {
+    nearbyHtml = `<div class="card-nearby">📍 ${p._nearbyLabel}</div>`;
+  }
+
+  return `<div class="property-card" onclick="window.location='view.html?id=${idStr}'"
     onmouseenter="playCardVideo(this)"
     onmouseleave="pauseCardVideo(this)">
     <div class="card-img">${imgHtml}${videoHtml}
@@ -1300,6 +1342,7 @@ function renderCard(p) {
     <div class="card-body">
       <div class="card-title">${p.title}</div>
       <div class="card-location">📍 ${p.area}, Nagpur</div>
+      ${nearbyHtml}
       <div class="card-details">
         <span class="card-detail">🛏 ${p.bhk}</span>
         <span class="card-detail">🏗 ${p.furnish}</span>
@@ -1395,7 +1438,10 @@ async function init() {
   if (ALL_PROPS.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-size:0.95rem;">🏠 No listings yet. Be the first to <a href=\'owner.html\' style=\'color:var(--primary);font-weight:700;\'>list your property!</a></div>';
   } else {
-    grid.innerHTML = ALL_PROPS.slice(0,8).map(renderCard).join('');
+    // Fetch nearby for props that have lat/lng
+    const featured = ALL_PROPS.slice(0, 8);
+    await fetchNearbyLabels(featured);
+    grid.innerHTML = featured.map(renderCard).join('');
   }
 
   // Area counts
