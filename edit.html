@@ -195,11 +195,13 @@ body { background: var(--dark2); padding-bottom: 80px; }
       <div class="form-row">
         <div class="form-group">
           <label>Area / Locality</label>
-          <select id="eArea">
-            <option>Wandongri</option><option>Higna</option><option>Lokmanya Nagar</option>
-            <option>Digdoh</option><option>Kalamna</option><option>Butibori</option>
-            <option>Koradi</option><option>Other</option>
-          </select>
+          <div class="area-search-wrap" style="position:relative;">
+            <input type="text" id="eAreaSearch" placeholder="🔍 Search area…" autocomplete="off"
+              style="width:100%;padding:0.55rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:inherit;outline:none;box-sizing:border-box;"
+              oninput="filterAreaList(this.value)" onfocus="showAreaList()" onblur="hideAreaListDelayed()">
+            <input type="hidden" id="eArea">
+            <div id="eAreaDropdown" style="display:none;position:absolute;z-index:999;background:white;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);max-height:220px;overflow-y:auto;width:100%;left:0;top:calc(100% + 4px);"></div>
+          </div>
         </div>
         <div class="form-group">
           <label>Floor</label>
@@ -212,6 +214,23 @@ body { background: var(--dark2); padding-bottom: 80px; }
       <div class="form-group">
         <label>Full Address</label>
         <input type="text" id="eAddress" placeholder="House/flat no, street, landmark">
+      </div>
+
+      <!-- LOCATION PICKER -->
+      <div class="form-group">
+        <label>📍 Property Location <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(update if needed)</span></label>
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.6rem;flex-wrap:wrap;">
+          <button type="button" onclick="useCurrentLocation()" style="flex:1;min-width:130px;padding:0.5rem 0.8rem;background:#eff6ff;border:1.5px solid #1a6fe8;color:#1a6fe8;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">📡 Use Current Location</button>
+          <button type="button" onclick="searchManualLocation()" style="flex:1;min-width:130px;padding:0.5rem 0.8rem;background:#eff6ff;border:1.5px solid #1a6fe8;color:#1a6fe8;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">🔍 Search Location</button>
+        </div>
+        <input type="text" id="eManualLocationInput" placeholder="Type area/address… e.g. YCCE Nagpur"
+          style="width:100%;padding:0.5rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.88rem;font-family:inherit;box-sizing:border-box;display:none;margin-bottom:0.5rem;" />
+        <div id="eLocStatus" style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;"></div>
+        <div id="eLocMapWrap" style="display:none;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);height:220px;margin-bottom:0.6rem;"></div>
+        <div id="eLocLockWrap" style="display:none;">
+          <button type="button" onclick="lockLocation()" style="width:100%;padding:0.55rem;background:#059669;color:white;border:none;border-radius:8px;font-weight:800;font-size:0.88rem;cursor:pointer;font-family:inherit;">🔒 Lock This Location</button>
+        </div>
+        <div id="eLocLockedInfo" style="display:none;background:#d1fae5;border:1.5px solid #059669;border-radius:8px;padding:0.6rem 0.8rem;font-size:0.82rem;color:#065f46;font-weight:600;"></div>
       </div>
     </div>
 
@@ -396,10 +415,24 @@ function prefillForm(p) {
   setVal('eAvailable',  p.available  || '');
   setSelectVal('eType',    p.type);
   setSelectVal('eBhk',     p.bhk);
-  setSelectVal('eArea',    p.area);
   setSelectVal('eFloor',   p.floor);
   setSelectVal('eFurnish', p.furnish);
   setSelectVal('eTenants', p.tenants);
+
+  // Area — searchable dropdown
+  if (p.area) {
+    document.getElementById('eAreaSearch').value = p.area;
+    document.getElementById('eArea').value = p.area;
+  }
+
+  // Existing lat/lng — show as already locked
+  if (p.lat && p.lng) {
+    window._lockedLat = p.lat;
+    window._lockedLng = p.lng;
+    const info = document.getElementById('eLocLockedInfo');
+    info.style.display = 'block';
+    info.innerHTML = `✅ Location already saved (${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}) — update if needed.`;
+  }
 
   // Pre-select amenities
   if (p.amenities && p.amenities.length) {
@@ -504,7 +537,7 @@ window.saveChanges = async function() {
     deposit:    document.getElementById('eDeposit').value || '',
     type:       document.getElementById('eType').value,
     bhk:        document.getElementById('eBhk').value,
-    area:       document.getElementById('eArea').value,
+    area:       document.getElementById('eArea').value || document.getElementById('eAreaSearch').value,
     floor:      document.getElementById('eFloor').value,
     address:    document.getElementById('eAddress').value,
     furnish:    document.getElementById('eFurnish').value,
@@ -518,6 +551,12 @@ window.saveChanges = async function() {
     mainPhoto:  allPhotos[0] || null,
     updatedAt:  new Date().toISOString()
   };
+
+  // Save lat/lng if locked
+  if (window._lockedLat && window._lockedLng) {
+    updates.lat = window._lockedLat;
+    updates.lng = window._lockedLng;
+  }
 
   try {
     await updateDoc(doc(db, 'properties', propId), updates);
@@ -558,6 +597,143 @@ function showToast(msg, err=false) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
+</script>
+
+<!-- LEAFLET -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── Searchable Area Dropdown ──────────────────────────────────────
+const AREA_LIST = [
+  { group: 'Central Nagpur', areas: ['Cotton Market','Gandhibagh','Ganeshpeth','Itwari','Lakadganj','Mahal','Maskasath','Mominpura','Pachpaoli','Sitabuldi'] },
+  { group: 'West Nagpur', areas: ['Ambazari','Bajaj Nagar','Byramji Town','Civil Lines','Dabha','Dharampeth','Friends Colony','Giripeth','Gokulpeth','Hingna Road','Law College Square','Laxmi Nagar','Mhalgi Nagar','Ramdaspeth','Ravi Nagar','Sadar','Seminary Hills','Shankar Nagar','Wadi'] },
+  { group: 'South-West Nagpur', areas: ['Airport Area','Beltarodi','Besa','Chatrapati Nagar','Chinchbhuvan','Digdoh','Hingna','Jaitala','Jamtha','Khamla','Khapri','Manish Nagar','MIHAN','Narendra Nagar','New Manish Nagar','Pipla','Pratap Nagar','Rajiv Nagar','Somalwada','Sonegaon','Trimurti Nagar','Ujwal Nagar','Wanadongri','Wardha Road','YCCE Area'] },
+  { group: 'South & South-East Nagpur', areas: ['Ayodhya Nagar','Bhandewadi','Bidgaon','Dighori','Gotal Pajri','Hudkeshwar','Hudkeshwar Road','Isasani','Kharbi','Manewada','Narsala','Omkar Nagar','Panjari','Pardi','Rameshwari','Wathoda'] },
+  { group: 'East Nagpur', areas: ['Bharatwada','Chandan Nagar','Hasanbagh','Kalamna','Kapsi','Nandanvan','Old Bagadganj','Wardhaman Nagar'] },
+  { group: 'North Nagpur', areas: ['Ashok Nagar','Bezanbagh','Gaddi Godam','Godhani','Gorewada','Indora','Jaripatka','Kadbi Chowk','Kamptee Road','Kapil Nagar','Koradi Road','Mankapur','Sugat Nagar','Yashodhara Nagar','Zingabai Takli'] }
+];
+
+function buildAreaDropdown(filter='') {
+  const dd = document.getElementById('eAreaDropdown');
+  if (!dd) return;
+  const q = filter.toLowerCase().trim();
+  let html = '', anyResult = false;
+  AREA_LIST.forEach(({ group, areas }) => {
+    const matched = q ? areas.filter(a => a.toLowerCase().includes(q)) : areas;
+    if (!matched.length) return;
+    anyResult = true;
+    html += `<div style="padding:0.4rem 0.8rem;font-size:0.72rem;font-weight:700;color:#1a6fe8;text-transform:uppercase;letter-spacing:0.8px;background:#f0f6ff;border-bottom:1px solid #e5eaf2;">${group}</div>`;
+    matched.forEach(a => {
+      html += `<div style="padding:0.55rem 1rem;cursor:pointer;font-size:0.88rem;color:#1e293b;transition:background 0.12s;"
+        onmousedown="selectArea('${a}')"
+        onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">${a}</div>`;
+    });
+  });
+  if (!anyResult) {
+    html = `<div style="padding:0.8rem 1rem;color:#94a3b8;font-size:0.85rem;">No area found</div>`;
+    if (q) {
+      const dq = filter.trim();
+      html += `<div style="padding:0.65rem 1rem;cursor:pointer;font-size:0.88rem;color:#1a6fe8;font-weight:700;background:#eff6ff;border-top:1px solid #e5eaf2;display:flex;align-items:center;gap:0.5rem;"
+        onmousedown="selectArea('${dq.replace(/'/g,"\\'")}');submitNewArea('${dq.replace(/'/g,"\\'")}');"
+        onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+        <span>➕</span> Add "<strong>${dq}</strong>" as new area
+      </div>`;
+    }
+  }
+  dd.innerHTML = html;
+}
+
+window.filterAreaList = function(val) {
+  buildAreaDropdown(val);
+  document.getElementById('eAreaDropdown').style.display = 'block';
+};
+window.showAreaList = function() {
+  buildAreaDropdown(document.getElementById('eAreaSearch').value);
+  document.getElementById('eAreaDropdown').style.display = 'block';
+};
+window.hideAreaListDelayed = function() {
+  setTimeout(() => { const dd = document.getElementById('eAreaDropdown'); if(dd) dd.style.display = 'none'; }, 200);
+};
+window.selectArea = function(val) {
+  document.getElementById('eAreaSearch').value = val;
+  document.getElementById('eArea').value = val;
+  document.getElementById('eAreaDropdown').style.display = 'none';
+};
+window.submitNewArea = async function(name) {
+  try {
+    const res = await fetch('https://firestore.googleapis.com/v1/projects/flatzyhomes/databases/(default)/documents/pending_areas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { name: { stringValue: name }, submittedAt: { stringValue: new Date().toISOString() }, status: { stringValue: 'pending' } } })
+    });
+    if (res.ok) console.log('New area submitted:', name);
+  } catch(e) {}
+};
+
+// ── Location Picker ───────────────────────────────────────────────
+let _locMap = null, _locMarker = null, _pendingLat = null, _pendingLng = null;
+window._lockedLat = null; window._lockedLng = null;
+
+function initLocMap(lat, lng) {
+  document.getElementById('eLocMapWrap').style.display = 'block';
+  document.getElementById('eLocLockWrap').style.display = 'block';
+  if (_locMap) { _locMap.setView([lat,lng],16); _locMarker.setLatLng([lat,lng]); _pendingLat=lat; _pendingLng=lng; return; }
+  _locMap = L.map('eLocMapWrap').setView([lat,lng],16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(_locMap);
+  _locMarker = L.marker([lat,lng],{draggable:true}).addTo(_locMap);
+  _locMarker.bindPopup('📍 Drag to set exact location').openPopup();
+  _pendingLat=lat; _pendingLng=lng;
+  _locMarker.on('dragend', e => {
+    const p = e.target.getLatLng();
+    _pendingLat=p.lat; _pendingLng=p.lng;
+    document.getElementById('eLocStatus').textContent = `📍 ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)} — Lock when ready.`;
+  });
+  _locMap.on('click', e => {
+    _locMarker.setLatLng(e.latlng); _pendingLat=e.latlng.lat; _pendingLng=e.latlng.lng;
+    document.getElementById('eLocStatus').textContent = `📍 ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)} — Lock when ready.`;
+  });
+}
+
+window.useCurrentLocation = function() {
+  const s = document.getElementById('eLocStatus');
+  if (!navigator.geolocation) { s.textContent='❌ GPS not supported.'; return; }
+  s.textContent = '⏳ Getting location…';
+  navigator.geolocation.getCurrentPosition(
+    pos => { s.textContent='✅ Found! Drag pin to adjust.'; initLocMap(pos.coords.latitude, pos.coords.longitude); },
+    () => { s.textContent='❌ GPS failed. Use manual search.'; },
+    { enableHighAccuracy:true, timeout:10000 }
+  );
+};
+
+window.searchManualLocation = function() {
+  const inp = document.getElementById('eManualLocationInput');
+  inp.style.display='block'; inp.focus();
+  inp.onkeydown = e => { if(e.key==='Enter') doManualSearch(); };
+};
+
+async function doManualSearch() {
+  const q = document.getElementById('eManualLocationInput').value.trim();
+  if (!q) return;
+  const s = document.getElementById('eLocStatus');
+  s.textContent = '⏳ Searching…';
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q+', Nagpur')}&format=json&limit=1`);
+    const data = await res.json();
+    if (!data.length) { s.textContent='❌ Not found. Try different name.'; return; }
+    s.textContent = `✅ Found! Drag pin to adjust.`;
+    initLocMap(parseFloat(data[0].lat), parseFloat(data[0].lon));
+  } catch(e) { s.textContent='❌ Search failed.'; }
+}
+
+window.lockLocation = function() {
+  if (!_pendingLat || !_pendingLng) return;
+  window._lockedLat = _pendingLat; window._lockedLng = _pendingLng;
+  document.getElementById('eLocLockWrap').style.display='none';
+  const info = document.getElementById('eLocLockedInfo');
+  info.style.display='block';
+  info.innerHTML=`✅ Location Locked! <span style="opacity:0.7;">(${_pendingLat.toFixed(5)}, ${_pendingLng.toFixed(5)})</span>`;
+  document.getElementById('eLocStatus').textContent='';
+};
 </script>
 
 </body>
