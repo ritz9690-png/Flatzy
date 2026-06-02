@@ -9,6 +9,24 @@
 <style>
 body { background: var(--dark2); }
 
+/* ══ NEARBY LANDMARKS ══ */
+.nearby-section { padding: 0 1rem; margin-top: 1.2rem; }
+.nearby-title { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+.nearby-scroll { display: flex; gap: 0.7rem; overflow-x: auto; padding-bottom: 0.4rem; scrollbar-width: none; }
+.nearby-scroll::-webkit-scrollbar { display: none; }
+.nearby-card {
+  flex-shrink: 0; min-width: 130px; max-width: 150px;
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 0.75rem 0.85rem;
+  box-shadow: 0 2px 8px rgba(26,111,232,0.07);
+}
+.nearby-card-icon { font-size: 1.3rem; margin-bottom: 0.3rem; }
+.nearby-card-type { font-size: 0.65rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 0.25rem; }
+.nearby-card-name { font-size: 0.78rem; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 0.4rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.nearby-card-dist { font-size: 0.72rem; font-weight: 700; color: #059669; background: #d1fae5; border-radius: 20px; padding: 0.15rem 0.5rem; display: inline-block; }
+.nearby-loading { color: var(--muted); font-size: 0.82rem; padding: 0.5rem 0; }
+.nearby-none { color: var(--muted); font-size: 0.82rem; padding: 0.5rem 0; }
+
 .share-icon {
   width: 22px;
   height: 22px;
@@ -842,6 +860,15 @@ function renderProperty(p) {
           <div class="amenity-grid">${p.amenities.map(a => `<span class="amen-pill">${a}</span>`).join('')}</div>` : ''}
       </div>
 
+      <!-- Nearby Landmarks -->
+      ${(p.lat && p.lng) ? `
+      <div class="nearby-section" id="nearbySection">
+        <div class="nearby-title">📍 Nearby Landmarks</div>
+        <div class="nearby-scroll" id="nearbyScroll">
+          <div class="nearby-loading">⏳ Finding nearby places…</div>
+        </div>
+      </div>` : ''}
+
       <!-- Contact Card (desktop) -->
       <div class="contact-card">
         <div class="managed-badge">
@@ -869,8 +896,118 @@ function renderProperty(p) {
   const swb = document.getElementById('stickyWaBtn');
   if (swb) swb.onclick = () => contactViaFlatzy();
 
+  // Fetch nearby landmarks if lat/lng available
+  if (p.lat && p.lng) fetchNearby(p.lat, p.lng);
+
   // Init touch swipe on gallery
   initGallerySwipe();
+}
+
+// ── Nearby Landmarks (Overpass API — Free) ────────
+const NEARBY_TYPES = [
+  { key: 'amenity=college',         icon: '🎓', label: 'College'      },
+  { key: 'amenity=school',          icon: '🏫', label: 'School'       },
+  { key: 'amenity=university',      icon: '🎓', label: 'University'   },
+  { key: 'amenity=hospital',        icon: '🏥', label: 'Hospital'     },
+  { key: 'amenity=clinic',          icon: '🏥', label: 'Clinic'       },
+  { key: 'railway=station',         icon: '🚉', label: 'Station'      },
+  { key: 'railway=halt',            icon: '🚉', label: 'Station'      },
+  { key: 'amenity=bus_station',     icon: '🚌', label: 'Bus Stand'    },
+  { key: 'highway=bus_stop',        icon: '🚌', label: 'Bus Stop'     },
+  { key: 'amenity=marketplace',     icon: '🛒', label: 'Market'       },
+  { key: 'shop=mall',               icon: '🏬', label: 'Mall'         },
+  { key: 'amenity=bank',            icon: '🏦', label: 'Bank'         },
+  { key: 'amenity=pharmacy',        icon: '💊', label: 'Pharmacy'     },
+  { key: 'leisure=park',            icon: '🌳', label: 'Park'         },
+];
+
+function haversineM(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function fmtDist(m) {
+  return m < 1000 ? `${Math.round(m)}m` : `${(m/1000).toFixed(1)}km`;
+}
+
+async function fetchNearby(lat, lng) {
+  const el = document.getElementById('nearbyScroll');
+  if (!el) return;
+
+  const radius = 2000; // 2km
+  // Build Overpass query for all types
+  const unionParts = NEARBY_TYPES.map(t => {
+    const [k, v] = t.key.split('=');
+    return `node["${k}"="${v}"](around:${radius},${lat},${lng});
+way["${k}"="${v}"](around:${radius},${lat},${lng});`;
+  }).join('\n');
+
+  const query = `[out:json][timeout:10];
+(
+${unionParts}
+);
+out center 40;`;
+
+  try {
+    const res = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      body: 'data=' + encodeURIComponent(query)
+    });
+    const data = await res.json();
+
+    if (!data.elements || !data.elements.length) {
+      el.innerHTML = '<div class="nearby-none">No nearby landmarks found.</div>';
+      return;
+    }
+
+    // Map each element to { name, dist, icon, label }
+    const seen = new Set();
+    const results = [];
+
+    for (const elem of data.elements) {
+      const name = elem.tags?.name;
+      if (!name || seen.has(name)) continue;
+      seen.add(name);
+
+      const eLat = elem.lat ?? elem.center?.lat;
+      const eLng = elem.lon ?? elem.center?.lon;
+      if (!eLat || !eLng) continue;
+
+      const dist = haversineM(lat, lng, eLat, eLng);
+
+      // Find matching type
+      let icon = '📍', label = 'Place';
+      for (const t of NEARBY_TYPES) {
+        const [k, v] = t.key.split('=');
+        if (elem.tags?.[k] === v) { icon = t.icon; label = t.label; break; }
+      }
+
+      results.push({ name, dist, icon, label });
+    }
+
+    if (!results.length) {
+      el.innerHTML = '<div class="nearby-none">No nearby landmarks found.</div>';
+      return;
+    }
+
+    // Sort by distance, show closest 10
+    results.sort((a, b) => a.dist - b.dist);
+    const top = results.slice(0, 10);
+
+    el.innerHTML = top.map(r => `
+      <div class="nearby-card">
+        <div class="nearby-card-icon">${r.icon}</div>
+        <div class="nearby-card-type">${r.label}</div>
+        <div class="nearby-card-name">${r.name}</div>
+        <div class="nearby-card-dist">${fmtDist(r.dist)}</div>
+      </div>`).join('');
+
+  } catch(e) {
+    el.innerHTML = '<div class="nearby-none">Could not load nearby places.</div>';
+  }
 }
 
 // ── Gallery: Touch Swipe ───────────────────────────

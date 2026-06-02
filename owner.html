@@ -315,6 +315,23 @@ body { background: var(--dark2); }
           </div>
         </div>
         <div class="form-group"><label>Full Address</label><input type="text" id="pAddress" placeholder="House/flat no, street, landmark"></div>
+
+        <!-- LOCATION PICKER -->
+        <div class="form-group" id="locationPickerWrap">
+          <label>📍 Property Location <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(optional — helps tenants find nearby places)</span></label>
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.6rem;flex-wrap:wrap;">
+            <button type="button" onclick="useCurrentLocation()" style="flex:1;min-width:130px;padding:0.5rem 0.8rem;background:#eff6ff;border:1.5px solid #1a6fe8;color:#1a6fe8;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">📡 Use Current Location</button>
+            <button type="button" onclick="searchManualLocation()" style="flex:1;min-width:130px;padding:0.5rem 0.8rem;background:#eff6ff;border:1.5px solid #1a6fe8;color:#1a6fe8;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">🔍 Search Location</button>
+          </div>
+          <input type="text" id="manualLocationInput" placeholder="Type area/address to search… e.g. YCCE Nagpur"
+            style="width:100%;padding:0.5rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.88rem;font-family:inherit;box-sizing:border-box;display:none;margin-bottom:0.5rem;" />
+          <div id="locStatus" style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;"></div>
+          <div id="locMapWrap" style="display:none;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);height:220px;margin-bottom:0.6rem;"></div>
+          <div id="locLockWrap" style="display:none;">
+            <button type="button" onclick="lockLocation()" style="width:100%;padding:0.55rem;background:#059669;color:white;border:none;border-radius:8px;font-weight:800;font-size:0.88rem;cursor:pointer;font-family:inherit;">🔒 Lock This Location</button>
+          </div>
+          <div id="locLockedInfo" style="display:none;background:#d1fae5;border:1.5px solid #059669;border-radius:8px;padding:0.6rem 0.8rem;font-size:0.82rem;color:#065f46;font-weight:600;"></div>
+        </div>
       </div>
 
       <div class="form-section">
@@ -436,6 +453,7 @@ const firebaseConfig = {
 const fbApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(fbApp);
 const db = getFirestore(fbApp);
+window._flatzyDb = db;
 
 let currentUser = null;
 
@@ -626,6 +644,8 @@ window.submitProperty = async function() {
     photos: uploadedPhotoUrls,
     mainPhoto: uploadedPhotoUrls[0] || null,
     videoUrl: uploadedVideoUrl || null,
+    lat: window._lockedLat || null,
+    lng: window._lockedLng || null,
     views: 0, inquiries: 0,
     postedAt: new Date().toISOString()
   };
@@ -825,7 +845,18 @@ function buildAreaDropdown(filter='') {
       html += `<div class="area-opt" data-val="${a}" style="padding:0.55rem 1rem;cursor:pointer;font-size:0.88rem;color:#1e293b;transition:background 0.12s;" onmousedown="selectArea('${a}')" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">${a}</div>`;
     });
   });
-  if (!anyResult) html = '<div style="padding:0.8rem 1rem;color:#94a3b8;font-size:0.85rem;">No area found</div>';
+  if (!anyResult) {
+    html = `<div style="padding:0.8rem 1rem;color:#94a3b8;font-size:0.85rem;">No area found</div>`;
+    if (q) {
+      const displayQ = filter.trim();
+      html += `<div class="area-opt area-add-new" data-val="${displayQ}"
+        style="padding:0.65rem 1rem;cursor:pointer;font-size:0.88rem;color:#1a6fe8;font-weight:700;background:#eff6ff;border-top:1px solid #e5eaf2;display:flex;align-items:center;gap:0.5rem;"
+        onmousedown="addNewArea('${displayQ.replace(/'/g,"\\'")}')"
+        onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+        <span style="font-size:1rem;">➕</span> Add "<strong>${displayQ}</strong>" as new area
+      </div>`;
+    }
+  }
   dd.innerHTML = html;
 }
 
@@ -850,6 +881,37 @@ window.selectArea = function(val) {
   document.getElementById('areaSearch').value = val;
   document.getElementById('pArea').value = val;
   document.getElementById('areaDropdown').style.display = 'none';
+};
+
+window.addNewArea = async function(areaName) {
+  if (!areaName || !areaName.trim()) return;
+  const name = areaName.trim();
+
+  // Immediately select it so owner can continue
+  document.getElementById('areaSearch').value = name;
+  document.getElementById('pArea').value = name;
+  document.getElementById('areaDropdown').style.display = 'none';
+
+  // Save to Firebase pending_areas
+  try {
+    const db2 = window._flatzyDb;
+    if (!db2) return;
+    // Check not already submitted
+    const existing = await getDocs(query(collection(db2, 'pending_areas'), where('name', '==', name)));
+    if (!existing.empty) {
+      showToast(`"${name}" already submitted for review ✅`);
+      return;
+    }
+    await addDoc(collection(db2, 'pending_areas'), {
+      name: name,
+      submittedAt: new Date().toISOString(),
+      status: 'pending'
+    });
+    showToast(`✅ "${name}" submitted! Admin will review & add it.`);
+  } catch(e) {
+    // Silently fail — area is already selected, owner can continue
+    console.warn('pending_areas save failed:', e.message);
+  }
 };
 
 // Init on tab switch – set default display value
@@ -905,5 +967,115 @@ function closeSidebar(){
 })();
 </script>
 
+<!-- LEAFLET for location picker -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── Location Picker (Leaflet + Nominatim — Free) ──────────────────
+let _locMap = null;
+let _locMarker = null;
+let _pendingLat = null;
+let _pendingLng = null;
+window._lockedLat = null;
+window._lockedLng = null;
+
+function initLocMap(lat, lng) {
+  const wrap = document.getElementById('locMapWrap');
+  wrap.style.display = 'block';
+  document.getElementById('locLockWrap').style.display = 'block';
+
+  if (_locMap) {
+    _locMap.setView([lat, lng], 16);
+    _locMarker.setLatLng([lat, lng]);
+    _pendingLat = lat; _pendingLng = lng;
+    return;
+  }
+
+  _locMap = L.map('locMapWrap').setView([lat, lng], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(_locMap);
+
+  _locMarker = L.marker([lat, lng], { draggable: true }).addTo(_locMap);
+  _locMarker.bindPopup('📍 Drag to set exact location').openPopup();
+  _pendingLat = lat; _pendingLng = lng;
+
+  _locMarker.on('dragend', function(e) {
+    const pos = e.target.getLatLng();
+    _pendingLat = pos.lat;
+    _pendingLng = pos.lng;
+    document.getElementById('locStatus').textContent = `📍 Pin at: ${pos.lat.toFixed(5)}, ${pos.lng.toFixed(5)} — Drag to adjust, then Lock.`;
+  });
+
+  _locMap.on('click', function(e) {
+    _locMarker.setLatLng(e.latlng);
+    _pendingLat = e.latlng.lat;
+    _pendingLng = e.latlng.lng;
+    document.getElementById('locStatus').textContent = `📍 Tapped: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)} — Lock when ready.`;
+  });
+}
+
+window.useCurrentLocation = function() {
+  const status = document.getElementById('locStatus');
+  if (!navigator.geolocation) {
+    status.textContent = '❌ GPS not supported on this device.';
+    return;
+  }
+  status.textContent = '⏳ Getting your location…';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      status.textContent = `✅ Location found! Drag pin to adjust exactly.`;
+      initLocMap(lat, lng);
+    },
+    err => {
+      status.textContent = '❌ GPS failed. Try manual search instead.';
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+};
+
+window.searchManualLocation = function() {
+  const inp = document.getElementById('manualLocationInput');
+  inp.style.display = 'block';
+  inp.focus();
+  inp.onkeydown = function(e) {
+    if (e.key === 'Enter') doManualSearch();
+  };
+};
+
+async function doManualSearch() {
+  const q = document.getElementById('manualLocationInput').value.trim();
+  if (!q) return;
+  const status = document.getElementById('locStatus');
+  status.textContent = '⏳ Searching…';
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q + ', Nagpur')}&format=json&limit=1`);
+    const data = await res.json();
+    if (!data.length) {
+      status.textContent = '❌ Not found. Try different name.';
+      return;
+    }
+    const lat = parseFloat(data[0].lat);
+    const lng = parseFloat(data[0].lon);
+    status.textContent = `✅ Found: ${data[0].display_name.split(',').slice(0,2).join(',')}. Drag pin to adjust.`;
+    initLocMap(lat, lng);
+  } catch(e) {
+    status.textContent = '❌ Search failed. Check internet.';
+  }
+}
+
+window.lockLocation = function() {
+  if (!_pendingLat || !_pendingLng) return;
+  window._lockedLat = _pendingLat;
+  window._lockedLng = _pendingLng;
+  document.getElementById('locLockWrap').style.display = 'none';
+  const info = document.getElementById('locLockedInfo');
+  info.style.display = 'block';
+  info.innerHTML = `✅ Location Locked! <span style="opacity:0.7;">(${_pendingLat.toFixed(5)}, ${_pendingLng.toFixed(5)})</span> — Nearby landmarks will show on listing.`;
+  document.getElementById('locStatus').textContent = '';
+};
+</script>
 </body>
 </html>
