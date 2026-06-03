@@ -1030,6 +1030,10 @@
         <span class="nav-icon">📍</span> Manage Areas
         <span class="nav-badge orange" id="nbAreas" style="display:none">0</span>
       </button>
+      <button class="nav-item" id="nav-locverify" onclick="switchTab('locverify')">
+        <span class="nav-icon">🗺️</span> Location Verify
+        <span class="nav-badge orange" id="nbLocVerify" style="display:none">0</span>
+      </button>
 
       <div class="sidebar-divider"></div>
       <div class="sidebar-section-label">Storage</div>
@@ -1296,6 +1300,34 @@
         <div class="loading-spinner"><div class="spinner"></div>Loading areas…</div>
       </div>
     </div><!-- end areasTab -->
+
+    <!-- ══ LOCATION VERIFY TAB ══ -->
+    <div id="locverifyTab" style="display:none">
+      <div class="page-heading">🗺️ Location Verify</div>
+      <div class="page-sub">Properties jinke owners ne location lock kiya — verify karo</div>
+
+      <div class="ref-stats" style="margin-bottom:1.4rem">
+        <div class="stat-card"><div class="stat-num" id="lvStatPending" style="color:#d97706">0</div><div class="stat-lbl">Pending Verify</div></div>
+        <div class="stat-card"><div class="stat-num" id="lvStatApproved" style="color:#16a34a">0</div><div class="stat-lbl">Approved</div></div>
+        <div class="stat-card"><div class="stat-num" id="lvStatRejected" style="color:#ef4444">0</div><div class="stat-lbl">Rejected</div></div>
+        <div class="stat-card"><div class="stat-num" id="lvStatTotal" style="color:var(--primary)">0</div><div class="stat-lbl">Total with Location</div></div>
+      </div>
+
+      <div class="ref-filter-bar">
+        <button class="ref-filter-btn active" id="lvfAll"      onclick="filterLocVerify('all')">All</button>
+        <button class="ref-filter-btn"        id="lvfPending"  onclick="filterLocVerify('pending')">⏳ Pending</button>
+        <button class="ref-filter-btn"        id="lvfApproved" onclick="filterLocVerify('approved')">✅ Approved</button>
+        <button class="ref-filter-btn"        id="lvfRejected" onclick="filterLocVerify('rejected')">❌ Rejected</button>
+        <input class="search-box" type="text" id="lvSearch"
+          placeholder="🔍 Search title, area, owner…"
+          oninput="filterLocVerify(window._lvFilter||'all')"
+          style="flex:1;min-width:160px;max-width:320px">
+      </div>
+
+      <div id="locverifyContainer">
+        <div class="loading-spinner"><div class="spinner"></div>Loading…</div>
+      </div>
+    </div><!-- end locverifyTab -->
 
   </div><!-- end admin-body -->
   </div><!-- end admin-layout -->
@@ -1782,7 +1814,7 @@ window.toggleSidebar = function() {
 window._refFilter  = 'all';
 window._userFilter = 'all';
 
-const ALL_TABS = ['listings','owners','users','referrals','referrers','storage','areas'];
+const ALL_TABS = ['listings','owners','users','referrals','referrers','storage','areas','locverify'];
 
 window.switchTab = function(tab) {
   ALL_TABS.forEach(t => {
@@ -1801,6 +1833,7 @@ window.switchTab = function(tab) {
   if (tab === 'referrers' && !window._referrersLoaded)  loadReferrersList();
   if (tab === 'storage'   && !window._storageLoaded)    loadCloudinaryStats();
   if (tab === 'areas'     && !window._areasLoaded)      loadAreas();
+  if (tab === 'locverify' && !window._locverifyLoaded)  loadLocVerify();
 };
 
 // ─── Load Users ───────────────────────────────────────────────────────────────
@@ -1915,6 +1948,13 @@ function updateSidebarBadges() {
       const pendingCount = window._allAreas?.filter(a => a.status === 'pending').length || 0;
       na.textContent = pendingCount;
       na.style.display = pendingCount > 0 ? 'inline-flex' : 'none';
+    }
+    // Location verify pending badge
+    const nlv = document.getElementById('nbLocVerify');
+    if (nlv) {
+      const lvPending = (window.allListings || []).filter(p => p.lat && p.lng && (!p.locationStatus || p.locationStatus === 'pending')).length;
+      nlv.textContent = lvPending;
+      nlv.style.display = lvPending > 0 ? 'inline-flex' : 'none';
     }
   } catch(e) {}
 }
@@ -2391,7 +2431,120 @@ window.rejectArea = async function(id) {
   }
 };
 
-// Auto-load pending areas count on admin load (for badge)
+// ─── Location Verify Tab ─────────────────────────────────────────────────────
+window._locverifyLoaded = false;
+window._lvFilter = 'all';
+window._lvList = [];
+
+window.loadLocVerify = function() {
+  window._locverifyLoaded = true;
+  // Use already-loaded listings (has lat/lng)
+  window._lvList = (window.allListings || []).filter(p => p.lat && p.lng);
+  renderLocVerifyStats();
+  renderLocVerify(window._lvList);
+  updateSidebarBadges();
+};
+
+function renderLocVerifyStats() {
+  const list = window._lvList;
+  document.getElementById('lvStatTotal').textContent    = list.length;
+  document.getElementById('lvStatPending').textContent  = list.filter(p => !p.locationStatus || p.locationStatus === 'pending').length;
+  document.getElementById('lvStatApproved').textContent = list.filter(p => p.locationStatus === 'approved').length;
+  document.getElementById('lvStatRejected').textContent = list.filter(p => p.locationStatus === 'rejected').length;
+}
+
+window.filterLocVerify = function(filter) {
+  window._lvFilter = filter;
+  ['lvfAll','lvfPending','lvfApproved','lvfRejected'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const map = { all:'lvfAll', pending:'lvfPending', approved:'lvfApproved', rejected:'lvfRejected' };
+  document.getElementById(map[filter]).classList.add('active');
+  const search = (document.getElementById('lvSearch').value || '').toLowerCase();
+  let list = window._lvList;
+  if (filter === 'pending')  list = list.filter(p => !p.locationStatus || p.locationStatus === 'pending');
+  if (filter === 'approved') list = list.filter(p => p.locationStatus === 'approved');
+  if (filter === 'rejected') list = list.filter(p => p.locationStatus === 'rejected');
+  if (search) list = list.filter(p =>
+    [p.title, p.area, p.ownerName, p.ownerPhone, p.address].some(v => (v||'').toLowerCase().includes(search)));
+  renderLocVerify(list);
+};
+
+function renderLocVerify(list) {
+  const container = document.getElementById('locverifyContainer');
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">🗺️</div><h3>Koi property nahi mili</h3><p>Is filter mein koi location-wali property nahi hai.</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="listings-grid">${list.map((p, i) => {
+    const isApproved = p.locationStatus === 'approved';
+    const isRejected = p.locationStatus === 'rejected';
+    const isPending  = !isApproved && !isRejected;
+    const thumb = p.photos && p.photos.length > 0 ? p.photos[0] : null;
+    const dateStr = p.postedAt
+      ? new Date(p.postedAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})
+      : '—';
+    return `<div class="listing-card" style="animation-delay:${i*0.04}s">
+      <div class="listing-thumb">
+        ${thumb ? `<img src="${thumb}" alt="${p.title||''}" loading="lazy" onerror="this.style.display='none';this.parentNode.textContent='🏠'">` : '🏠'}
+      </div>
+      <div class="listing-info">
+        <div class="listing-title">${p.title || 'Untitled Property'}</div>
+        <div class="listing-meta">
+          <span>📍 ${p.area || '—'}</span>
+          <span>🏗 ${p.type || '—'}</span>
+          <span>📅 ${dateStr}</span>
+        </div>
+        <div class="owner-info">
+          <span>👤</span>
+          <span class="owner-name">${p.ownerName || 'Unknown'}</span>
+          ${p.ownerPhone ? `<a class="owner-phone" href="tel:${p.ownerPhone}">📞 ${p.ownerPhone}</a>` : ''}
+        </div>
+        <div style="margin-top:0.5rem;font-size:0.78rem;color:var(--muted)">
+          📌 Lat: <b>${Number(p.lat).toFixed(5)}</b> &nbsp; Lng: <b>${Number(p.lng).toFixed(5)}</b>
+        </div>
+        <div style="margin-top:0.4rem;display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center">
+          <span class="status-badge ${isApproved ? 'status-paid' : isPending ? 'status-pending' : ''}"
+            style="${isRejected ? 'background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;' : ''}">
+            ${isApproved ? '✅ Approved' : isRejected ? '❌ Rejected' : '⏳ Pending Verify'}
+          </span>
+          <a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank"
+            style="font-size:0.75rem;color:var(--primary);font-weight:600;text-decoration:none;">
+            🗺️ Open in Maps
+          </a>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;flex-shrink:0;align-items:flex-end">
+        <div class="listing-rent">₹${Number(p.rent||0).toLocaleString('en-IN')}/mo</div>
+        ${isPending ? `
+          <button class="pay-btn" onclick="lvSetStatus('${p.id}','approved')">✅ Approve</button>
+          <button class="unpay-btn" onclick="lvSetStatus('${p.id}','rejected')">❌ Reject</button>
+        ` : isApproved ? `
+          <button class="unpay-btn" onclick="lvSetStatus('${p.id}','rejected')">❌ Reject</button>
+        ` : `
+          <button class="pay-btn" style="background:#16a34a;" onclick="lvSetStatus('${p.id}','approved')">✅ Approve</button>
+        `}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+window.lvSetStatus = async function(propId, status) {
+  try {
+    await updateDoc(doc(db, 'properties', propId), { locationStatus: status });
+    // Update in-memory
+    const idx = window.allListings.findIndex(p => p.id === propId);
+    if (idx !== -1) window.allListings[idx].locationStatus = status;
+    const lvIdx = window._lvList.findIndex(p => p.id === propId);
+    if (lvIdx !== -1) window._lvList[lvIdx].locationStatus = status;
+    renderLocVerifyStats();
+    filterLocVerify(window._lvFilter || 'all');
+    updateSidebarBadges();
+    showToast(status === 'approved' ? '✅ Location Approved!' : '❌ Location Rejected');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+};
+
+
 async function preloadAreasBadge() {
   try {
     const snap = await getDocs(collection(db, 'pending_areas'));
@@ -2404,6 +2557,12 @@ const _origLoadListings = window.loadListings;
 window.loadListings = async function() {
   await _origLoadListings();
   preloadAreasBadge();
+  // Refresh locverify list if tab was already visited
+  if (window._locverifyLoaded) {
+    window._lvList = (window.allListings || []).filter(p => p.lat && p.lng);
+    renderLocVerifyStats();
+    filterLocVerify(window._lvFilter || 'all');
+  }
 };
 </script>
 </body>
