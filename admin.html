@@ -1526,6 +1526,22 @@ function renderListings(listings) {
           ${p.ownerEmail || p.userEmail
             ? `<a class="owner-phone" href="mailto:${p.ownerEmail||p.userEmail}" style="color:#6366f1;">✉️ ${p.ownerEmail||p.userEmail}</a>`
             : '<span style="color:var(--muted);font-size:0.72rem;">No email</span>'}
+          ${p.lat && p.lng
+            ? `<a class="owner-phone" href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" style="color:#16a34a;">📍 View on Map</a>`
+            : '<span style="color:var(--muted);font-size:0.72rem;">No location</span>'}
+          ${p.lat && p.lng ? `
+            <div style="margin-top:0.4rem;display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+              ${p.locationStatus === 'approved'
+                ? `<span style="background:#dcfce7;color:#16a34a;border:1px solid #86efac;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.72rem;font-weight:700;">✅ Location Approved</span>
+                   <button onclick="setLocationStatus('${p.id}','rejected')" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.72rem;font-weight:700;cursor:pointer;">↩️ Reject</button>`
+                : p.locationStatus === 'rejected'
+                ? `<span style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.72rem;font-weight:700;">❌ Location Rejected</span>
+                   <button onclick="setLocationStatus('${p.id}','approved')" style="background:#dcfce7;color:#16a34a;border:1px solid #86efac;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.72rem;font-weight:700;cursor:pointer;">✅ Approve</button>`
+                : `<span style="background:#fef9c3;color:#854d0e;border:1px solid #fde047;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.72rem;font-weight:700;">⏳ Pending Verify</span>
+                   <button onclick="setLocationStatus('${p.id}','approved')" style="background:#dcfce7;color:#16a34a;border:1px solid #86efac;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.72rem;font-weight:700;cursor:pointer;">✅ Approve</button>
+                   <button onclick="setLocationStatus('${p.id}','rejected')" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:0.2rem 0.6rem;font-size:0.72rem;font-weight:700;cursor:pointer;">❌ Reject</button>`
+              }
+            </div>` : ''}
         </div>
       </div>
       <div class="listing-right">
@@ -1546,6 +1562,19 @@ function renderListings(listings) {
     </div>`;
   }).join('')}</div>`;
 }
+
+// ─── Location Verify ────────────────────────────────────────────────────────
+window.setLocationStatus = async function(propId, status) {
+  try {
+    await updateDoc(doc(db, 'properties', propId), { locationStatus: status });
+    const idx = window.allListings.findIndex(p => p.id === propId);
+    if (idx !== -1) window.allListings[idx].locationStatus = status;
+    renderListings(window.allListings);
+    showToast(status === 'approved' ? '✅ Location Approved!' : '❌ Location Rejected');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+};
 
 // ─── Filter ─────────────────────────────────────────────────────────────────
 window.filterListings = function() {
