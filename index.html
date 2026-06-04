@@ -1615,5 +1615,123 @@ function closeSidebar(){
 </script>
 <script src="config.js"></script>
 <script type="module" src="user-tracker.js"></script>
+
+<!-- ══ AD POPUP ══ -->
+<div id="adPopup" style="
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.92);
+  z-index:99999;
+  align-items:center;
+  justify-content:center;
+  animation:adFadeIn 0.4s ease;
+">
+  <div style="
+    position:relative;
+    width:min(96vw,1100px);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 30px 100px rgba(0,0,0,0.85);
+  ">
+    <!-- Close button — hamesha visible -->
+    <button id="adCloseBtn" onclick="closeAd()" style="
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:absolute;top:14px;right:14px;
+      background:rgba(0,0,0,0.75);
+      border:2px solid rgba(255,255,255,0.6);
+      color:white;
+      width:42px;height:42px;
+      border-radius:50%;
+      font-size:1.1rem;font-weight:900;
+      cursor:pointer;z-index:10;
+      backdrop-filter:blur(6px);
+      transition:background 0.2s, transform 0.15s;
+    " title="Close"
+    onmouseover="this.style.background='rgba(220,38,38,0.85)';this.style.transform='scale(1.1)'"
+    onmouseout="this.style.background='rgba(0,0,0,0.75)';this.style.transform='scale(1)'"
+    >✕</button>
+
+    <!-- Video -->
+    <video id="adVideo"
+      src="flatzy.mp4"
+      playsinline
+      style="width:100%;display:block;max-height:88vh;object-fit:contain;background:#000;">
+    </video>
+  </div>
+</div>
+
+<style>
+@keyframes adFadeIn {
+  from { opacity:0; transform:scale(0.97); }
+  to   { opacity:1; transform:scale(1); }
+}
+</style>
+
+<script>
+(function() {
+  // Har login pe dikhao — session mein sirf ek baar
+  if (sessionStorage.getItem('adShown')) return;
+
+  function showAd(user) {
+    if (!user) return;
+    if (sessionStorage.getItem('adShown')) return;
+    sessionStorage.setItem('adShown', '1');
+
+    const popup   = document.getElementById('adPopup');
+    const video   = document.getElementById('adVideo');
+
+    popup.style.display = 'flex';
+
+    // Sound ke saath play
+    video.muted = false;
+    video.volume = 1.0;
+    video.play().catch(() => {
+      // Autoplay blocked — muted se try karo
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+
+    // Video khatam hone pe popup band karo
+    video.addEventListener('ended', () => {
+      closeAd();
+    });
+  }
+
+  window.closeAd = function() {
+    const popup = document.getElementById('adPopup');
+    const video = document.getElementById('adVideo');
+    video.pause();
+    popup.style.display = 'none';
+  };
+
+  // Firebase auth check
+  const waitForAuth = setInterval(() => {
+    if (window._flatzyUser !== undefined) {
+      clearInterval(waitForAuth);
+      showAd(window._flatzyUser);
+      return;
+    }
+    // Fallback: directly use Firebase if available
+    if (typeof firebase !== 'undefined' || document.querySelector('script[src*="firebase"]')) {
+      // user-tracker.js already handles auth — wait for it
+    }
+  }, 300);
+
+  // user-tracker.js onAuthStateChanged ke baad _flatzyUser set hoga
+  // Agar 3 seconds mein nahi mila toh bhi try karo
+  setTimeout(() => {
+    clearInterval(waitForAuth);
+    const popup = document.getElementById('adPopup');
+    if (popup && popup.style.display === 'none') {
+      // Check if user is logged in via any means
+      if (window._flatzyUser) showAd(window._flatzyUser);
+    }
+  }, 3000);
+
+})();
+</script>
+
 </body>
 </html>

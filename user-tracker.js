@@ -172,6 +172,7 @@ onAuthStateChanged(auth, async user => {
   if (user) {
     const wasNull = !_currentUser;
     _currentUser = user;
+    window._flatzyUser = user; // Ad popup ke liye
 
     if (wasNull) {
       await checkBlocked();

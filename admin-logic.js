@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, setDoc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -291,6 +291,17 @@ window.openEdit = function(p) {
   document.getElementById('e_ownerPhone').value= p.ownerPhone || '';
   document.getElementById('e_address').value   = p.address || '';
   document.getElementById('e_desc').value      = p.desc || p.description || '';
+  document.getElementById('e_lat').value        = p.lat || '';
+  document.getElementById('e_lng').value        = p.lng || '';
+  // Maps link
+  const mapsDiv = document.getElementById('e_mapsLink');
+  const mapsA   = document.getElementById('e_mapsAnchor');
+  if (p.lat && p.lng) {
+    mapsA.href = `https://www.google.com/maps?q=${p.lat},${p.lng}`;
+    mapsDiv.style.display = 'block';
+  } else {
+    mapsDiv.style.display = 'none';
+  }
   setSelect('e_bhk', p.bhk); setSelect('e_type', p.type); setSelect('e_furnish', p.furnish);
   document.getElementById('editModal').classList.add('open');
 };
@@ -321,6 +332,14 @@ window.saveEdit = async function() {
     address:    document.getElementById('e_address').value.trim(),
     desc:       document.getElementById('e_desc').value.trim(),
   };
+  // Add lat/lng if provided
+  const latVal = document.getElementById('e_lat').value.trim();
+  const lngVal = document.getElementById('e_lng').value.trim();
+  if (latVal && lngVal) {
+    updates.lat = parseFloat(latVal);
+    updates.lng = parseFloat(lngVal);
+    updates.locationStatus = 'pending'; // Admin se verify hoga
+  }
   try {
     await updateDoc(doc(db, 'properties', editingId), updates);
     const idx = window.allListings.findIndex(p => p.id === editingId);
@@ -1461,49 +1480,3 @@ window.loadListings = async function() {
   }
 };
 
-
-// ─── Clear All Activity Logs ──────────────────────────────────────────────────
-window.clearAllLogs = async function() {
-  const confirmed = window.confirm('⚠️ Saare activity logs delete ho jayenge!\nKya aap sure hain?');
-  if (!confirmed) return;
-
-  const feed = document.getElementById('liveActivityFeed');
-  feed.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">🗑️ Deleting all logs…</div>`;
-
-  try {
-    const snap = await getDocs(collection(db, 'activityLogs'));
-    if (snap.empty) {
-      showToast('Koi logs nahi the already ✅');
-      feed.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">Koi activity nahi mili. <code>user-tracker.js</code> sab pages pe include karo.</div>`;
-      return;
-    }
-
-    // Batch delete in groups of 499
-    let batch = writeBatch(db);
-    let count = 0;
-    const batches = [];
-
-    snap.docs.forEach(d => {
-      batch.delete(d.ref);
-      count++;
-      if (count === 499) {
-        batches.push(batch.commit());
-        batch = writeBatch(db);
-        count = 0;
-      }
-    });
-    if (count > 0) batches.push(batch.commit());
-    await Promise.all(batches);
-
-    showToast(`✅ ${snap.size} logs delete ho gaye!`);
-    feed.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">✅ Saare logs clear ho gaye.</div>`;
-
-    // Reset online count
-    document.getElementById('liveCount').textContent = '0 online';
-    document.getElementById('uStatOnline').textContent = '0';
-
-  } catch(e) {
-    showToast('❌ Error: ' + e.message, 'error');
-    feed.innerHTML = `<div style="color:#ef4444;font-size:0.82rem;padding:1rem">⚠️ Clear failed: ${e.message}</div>`;
-  }
-};
