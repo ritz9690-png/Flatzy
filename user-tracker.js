@@ -8,15 +8,17 @@
  *   • Property actions (add, edit, delete, photo upload)
  *   • lastSeen heartbeat (every 2 min) — online/offline detect ke liye
  *   • Block check — blocked user ko force logout karta hai
+ *   • Auto cleanup — 1 din se purane activityLogs delete ho jaate hain
  *
  * Usage: <script type="module" src="user-tracker.js"></script>
  *        (config.js ke baad, baaki scripts ke pehle)
  */
 
-import { initializeApp, getApps }                   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeApp, getApps }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, updateDoc,
-         collection, serverTimestamp, getDoc }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+         collection, getDoc, getDocs,
+         query, where, writeBatch }                       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ── Init (reuse existing app if already initialized) ─────────────────────────
 const app = getApps().length ? getApps()[0] : initializeApp(window.firebaseConfig || {
@@ -50,6 +52,44 @@ function getPageName() {
 
 let _currentUser = null;
 let _heartbeatInterval = null;
+
+// ── Auto Cleanup: 1 din se purane logs delete karo ───────────────────────────
+async function cleanOldLogs() {
+  try {
+    // Sirf ek baar per session run karo
+    if (window._cleanupDone) return;
+    window._cleanupDone = true;
+
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const snap = await getDocs(
+      query(collection(db, 'activityLogs'), where('timestamp', '<', oneDayAgo))
+    );
+
+    if (snap.empty) return;
+
+    // Firestore batch delete (max 500 per batch)
+    const batches = [];
+    let batch = writeBatch(db);
+    let count = 0;
+
+    snap.docs.forEach(d => {
+      batch.delete(d.ref);
+      count++;
+      if (count === 499) {
+        batches.push(batch.commit());
+        batch = writeBatch(db);
+        count = 0;
+      }
+    });
+
+    if (count > 0) batches.push(batch.commit());
+    await Promise.all(batches);
+
+    console.log(`[Tracker] ${snap.size} purane logs delete kiye ✅`);
+  } catch(e) {
+    console.warn('[Tracker] Cleanup failed:', e.message);
+  }
+}
 
 // ── Core: Log activity to Firestore ──────────────────────────────────────────
 async function logActivity(type, extra = {}) {
@@ -94,7 +134,6 @@ async function checkBlocked() {
     if (snap.exists() && snap.data().blocked === true) {
       clearInterval(_heartbeatInterval);
       await signOut(auth);
-      // Show blocked message
       document.body.innerHTML = `
         <div style="
           min-height:100vh;display:flex;align-items:center;justify-content:center;
@@ -124,8 +163,8 @@ function startHeartbeat() {
   clearInterval(_heartbeatInterval);
   _heartbeatInterval = setInterval(async () => {
     await updatePresence(false);
-    await checkBlocked(); // also re-check block on every heartbeat
-  }, 2 * 60 * 1000); // 2 minutes
+    await checkBlocked();
+  }, 2 * 60 * 1000);
 }
 
 // ── Auth state listener ───────────────────────────────────────────────────────
@@ -135,11 +174,12 @@ onAuthStateChanged(auth, async user => {
     _currentUser = user;
 
     if (wasNull) {
-      // Fresh login or page load while logged in
-      await checkBlocked();           // immediate block check
-      await updatePresence(true);     // update lastLogin + lastSeen
-      await logActivity('login');     // log login event
-      startHeartbeat();               // start 2-min heartbeat
+      await checkBlocked();
+      await updatePresence(true);
+      await logActivity('login');
+      startHeartbeat();
+      // Login ke time purane logs cleanup karo
+      cleanOldLogs();
     }
 
     // Log page visit
@@ -147,7 +187,6 @@ onAuthStateChanged(auth, async user => {
 
   } else {
     if (_currentUser) {
-      // User just logged out
       await logActivity('logout');
       clearInterval(_heartbeatInterval);
     }
@@ -163,7 +202,6 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ── Logout cleanup ────────────────────────────────────────────────────────────
-// Expose so you can call window.trackerLogout() before signOut in owner.html
 window.trackerLogout = async function() {
   if (_currentUser) {
     await logActivity('logout');
@@ -171,12 +209,7 @@ window.trackerLogout = async function() {
   }
 };
 
-// ── Public API: call these from other JS files ────────────────────────────────
-/**
- * Track a property action.
- * type: 'property_add' | 'property_edit' | 'property_delete' | 'photo_upload'
- * extra: { propertyId, title, ... }
- */
+// ── Public API ────────────────────────────────────────────────────────────────
 window.trackActivity = async function(type, extra = {}) {
   await logActivity(type, extra);
 };

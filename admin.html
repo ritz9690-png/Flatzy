@@ -1255,6 +1255,7 @@
           <span class="live-dot"></span> Live Activity Feed
           <span id="liveCount" class="live-badge" style="margin-left:0.3rem">0 online</span>
           <button onclick="refreshLiveActivity()" style="margin-left:auto;background:none;border:1.5px solid #86efac;color:#15803d;padding:0.3rem 0.8rem;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">🔄 Refresh</button>
+          <button onclick="clearAllLogs()" style="background:none;border:1.5px solid #fca5a5;color:#dc2626;padding:0.3rem 0.8rem;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">🗑️ Clear All</button>
         </div>
         <div id="liveActivityFeed">
           <div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">Loading activity…</div>
@@ -1553,7 +1554,6 @@
 
 
 <script src="config.js"></script>
-<script type="module" src="user-tracker.js"></script>
 <script type="module" src="admin-logic.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, setDoc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -1461,3 +1461,49 @@ window.loadListings = async function() {
   }
 };
 
+
+// ─── Clear All Activity Logs ──────────────────────────────────────────────────
+window.clearAllLogs = async function() {
+  const confirmed = window.confirm('⚠️ Saare activity logs delete ho jayenge!\nKya aap sure hain?');
+  if (!confirmed) return;
+
+  const feed = document.getElementById('liveActivityFeed');
+  feed.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">🗑️ Deleting all logs…</div>`;
+
+  try {
+    const snap = await getDocs(collection(db, 'activityLogs'));
+    if (snap.empty) {
+      showToast('Koi logs nahi the already ✅');
+      feed.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">Koi activity nahi mili. <code>user-tracker.js</code> sab pages pe include karo.</div>`;
+      return;
+    }
+
+    // Batch delete in groups of 499
+    let batch = writeBatch(db);
+    let count = 0;
+    const batches = [];
+
+    snap.docs.forEach(d => {
+      batch.delete(d.ref);
+      count++;
+      if (count === 499) {
+        batches.push(batch.commit());
+        batch = writeBatch(db);
+        count = 0;
+      }
+    });
+    if (count > 0) batches.push(batch.commit());
+    await Promise.all(batches);
+
+    showToast(`✅ ${snap.size} logs delete ho gaye!`);
+    feed.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">✅ Saare logs clear ho gaye.</div>`;
+
+    // Reset online count
+    document.getElementById('liveCount').textContent = '0 online';
+    document.getElementById('uStatOnline').textContent = '0';
+
+  } catch(e) {
+    showToast('❌ Error: ' + e.message, 'error');
+    feed.innerHTML = `<div style="color:#ef4444;font-size:0.82rem;padding:1rem">⚠️ Clear failed: ${e.message}</div>`;
+  }
+};
