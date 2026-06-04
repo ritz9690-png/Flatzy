@@ -1674,6 +1674,8 @@ function closeSidebar(){
     <video id="adVideo"
       src="flatzy.mp4"
       playsinline
+      muted
+      autoplay
       style="width:100%;display:block;max-height:88vh;object-fit:contain;background:#000;">
     </video>
   </div>
@@ -1712,18 +1714,7 @@ window.closeAd = function() {
   // Mobile pe user interaction chahiye sound ke liye
   // Pehle muted se start karo — fir unmute button dikhao
   video.muted = true;
-  var playPromise = video.play();
-
-  if (playPromise !== undefined) {
-    playPromise.then(() => {
-      // Autoplay succeed hua — unmute karne ki koshish karo
-      video.muted = false;
-      video.volume = 1.0;
-    }).catch(() => {
-      // Autoplay bhi block — user ko tap karna hoga
-      video.muted = true;
-    });
-  }
+  video.play().catch(() => {});
 
   // Sound ON button — mobile ke liye
   var soundBtn = document.getElementById('adSoundBtn');
