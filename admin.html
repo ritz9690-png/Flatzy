@@ -1254,8 +1254,7 @@
         <div class="live-section-title">
           <span class="live-dot"></span> Live Activity Feed
           <span id="liveCount" class="live-badge" style="margin-left:0.3rem">0 online</span>
-          <button onclick="refreshLiveActivity()" style="margin-left:auto;background:none;border:1.5px solid #86efac;color:#15803d;padding:0.3rem 0.8rem;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">🔄 Refresh</button>
-          <button onclick="clearAllLogs()" style="background:none;border:1.5px solid #fca5a5;color:#dc2626;padding:0.3rem 0.8rem;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">🗑️ Clear All</button>
+          <button onclick="refreshLiveActivity()" style="margin-left:auto;background:none;border:1.5px solid #86efac;color:#15803d;padding:0.3rem 0.8rem;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">🔄 Refresh</button><button onclick="clearAllLogs()" style="background:none;border:1.5px solid #fca5a5;color:#dc2626;padding:0.3rem 0.8rem;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:0.5rem;">🗑️ Clear All</button>
         </div>
         <div id="liveActivityFeed">
           <div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:1.5rem">Loading activity…</div>
@@ -1557,3 +1556,62 @@
 <script type="module" src="admin-logic.js"></script>
 </body>
 </html>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = getApps().length ? getApps()[0] : initializeApp(window.firebaseConfig || {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+});
+const db = getFirestore(app);
+
+window.clearAllLogs = async function() {
+  const confirmed = window.confirm('🗑️ Saare activity logs permanently delete ho jayenge!\nKya aap sure hain?');
+  if (!confirmed) return;
+
+  const feed = document.getElementById('liveActivityFeed');
+  feed.innerHTML = `<div style="color:#64748b;font-size:0.82rem;text-align:center;padding:1.5rem">🗑️ Deleting all logs…</div>`;
+
+  try {
+    const snap = await getDocs(collection(db, 'activityLogs'));
+
+    if (snap.empty) {
+      feed.innerHTML = `<div style="color:#64748b;font-size:0.82rem;text-align:center;padding:1.5rem">✅ Koi logs nahi the already.</div>`;
+      return;
+    }
+
+    let batch = writeBatch(db);
+    let count = 0;
+    const batches = [];
+
+    snap.docs.forEach(d => {
+      batch.delete(d.ref);
+      count++;
+      if (count === 499) {
+        batches.push(batch.commit());
+        batch = writeBatch(db);
+        count = 0;
+      }
+    });
+    if (count > 0) batches.push(batch.commit());
+    await Promise.all(batches);
+
+    feed.innerHTML = `<div style="color:#16a34a;font-size:0.85rem;text-align:center;padding:1.5rem;font-weight:700">✅ ${snap.size} logs delete ho gaye!</div>`;
+
+    // Reset counters
+    const liveCount = document.getElementById('liveCount');
+    const uStatOnline = document.getElementById('uStatOnline');
+    if (liveCount) liveCount.textContent = '0 online';
+    if (uStatOnline) uStatOnline.textContent = '0';
+
+  } catch(e) {
+    feed.innerHTML = `<div style="color:#ef4444;font-size:0.82rem;padding:1rem">⚠️ Error: ${e.message}</div>`;
+  }
+};
+</script>
