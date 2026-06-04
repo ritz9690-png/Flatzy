@@ -1653,6 +1653,22 @@ function closeSidebar(){
     onmouseout="this.style.background='rgba(0,0,0,0.75)';this.style.transform='scale(1)'"
     >✕</button>
 
+    <!-- Sound button — mobile ke liye -->
+    <button id="adSoundBtn" style="
+      display:none;
+      align-items:center;
+      justify-content:center;
+      position:absolute;bottom:14px;right:14px;
+      background:rgba(0,0,0,0.75);
+      border:2px solid rgba(255,255,255,0.6);
+      color:white;
+      width:42px;height:42px;
+      border-radius:50%;
+      font-size:1.2rem;
+      cursor:pointer;z-index:10;
+      backdrop-filter:blur(6px);
+    ">🔊</button>
+
     <!-- Video -->
     <video id="adVideo"
       src="flatzy.mp4"
@@ -1673,28 +1689,51 @@ function closeSidebar(){
 window.closeAd = function() {
   const popup = document.getElementById('adPopup');
   const video = document.getElementById('adVideo');
-  if (video) video.pause();
-  if (popup) popup.style.display = 'none';
+  if (video) { video.pause(); video.currentTime = 0; }
+  if (popup) {
+    popup.style.opacity = '0';
+    popup.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => { popup.style.display = 'none'; popup.style.opacity = '1'; }, 300);
+  }
 };
 
-// Page open hote hi — koi login check nahi
 (function() {
   const popup = document.getElementById('adPopup');
   const video = document.getElementById('adVideo');
   if (!popup || !video) return;
 
+  // Video khatam hone pe smoothly band karo
+  video.addEventListener('ended', () => { window.closeAd(); });
+
+  // Show popup
   popup.style.display = 'flex';
 
-  // Sound ke saath play
-  video.muted = false;
-  video.volume = 1.0;
-  video.play().catch(() => {
-    video.muted = true;
-    video.play().catch(() => {});
-  });
+  // Mobile pe user interaction chahiye sound ke liye
+  // Pehle muted se start karo — fir unmute button dikhao
+  video.muted = true;
+  var playPromise = video.play();
 
-  // Video khatam hone pe band karo
-  video.addEventListener('ended', () => { window.closeAd(); });
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      // Autoplay succeed hua — unmute karne ki koshish karo
+      video.muted = false;
+      video.volume = 1.0;
+    }).catch(() => {
+      // Autoplay bhi block — user ko tap karna hoga
+      video.muted = true;
+    });
+  }
+
+  // Sound ON button — mobile ke liye
+  var soundBtn = document.getElementById('adSoundBtn');
+  if (soundBtn) {
+    soundBtn.style.display = 'flex';
+    soundBtn.onclick = function() {
+      video.muted = !video.muted;
+      video.volume = 1.0;
+      soundBtn.textContent = video.muted ? '🔇' : '🔊';
+    };
+  }
 })();
 </script>
 
