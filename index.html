@@ -401,37 +401,35 @@ Div.social-strip-track {
 .notif-badge.show { display: flex; }
 
 /* FREE SERVICES STRIP */
-.free-services-strip{
-    width:100%;
-    box-sizing:border-box;
-    background:linear-gradient(90deg,#065f46,#047857,#065f46);
-    padding:0.55rem 5%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:5rem;
-    flex-wrap:wrap;
-    border-bottom:1px solid #064e3b;
+.free-services-strip {
+    width: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(90deg,#065f46,#047857,#065f46);
+    padding: 12px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
 
-    /* Animation band */
-    animation:none;
-    transform:none;
-    margin:0;
-    overflow:hidden;
+    /* IMPORTANT */
+    flex-wrap: nowrap;
+
+    margin: 0;
+    overflow: hidden;
+}
+.free-services-strip {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
 }
 
-.free-svc-item{
-    display:flex;
-    align-items:center;
-    gap:0.45rem;
-    color:#d1fae5;
-    font-size:0.8rem;
-    font-weight:700;
-    white-space:nowrap;
+.free-services-strip a {
+    color: #fff;
+    text-decoration: underline;
 }
-
-.free-svc-item .svc-icon{
-    font-size:1rem;
+.free-services-strip span,
+.free-services-strip a {
+    white-space: nowrap;
 }
 /* APP BANNER */
 .app-banner {
@@ -569,13 +567,16 @@ Div.social-strip-track {
 
 <!-- FREE SERVICES STRIP -->
 <div class="free-services-strip">
-  <div class="free-svc-item"><span class="svc-icon">🚚</span> Free Shifting on Move-in</div>
-  <span class="free-svc-sep">✦</span>
-  <div class="free-svc-item"><span class="svc-icon">🧹</span> Free First Cleaning</div>
-  <span class="free-svc-sep">✦</span>
-  <div class="free-svc-item"><span class="svc-icon">✅</span> Verified Listings</div>
-  <span class="free-svc-sep">✦</span>
-  <a href="legal.html?tab=terms" style="color:#ffffff;font-size:0.72rem;margin-left:0.3rem;text-decoration:underline;">*T&C Apply</a>
+    <span>🚚 Free Shifting on Move-In</span>
+    <span>✦</span>
+
+    <span>🧹 Free First Cleaning</span>
+    <span>✦</span>
+
+    <span>✅ Verified Listings</span>
+    <span>✦</span>
+
+    <a href="legal.html">*T&C Apply</a>
 </div>
 
 <!-- SEARCH -->
