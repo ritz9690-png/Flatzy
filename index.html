@@ -401,20 +401,38 @@ Div.social-strip-track {
 .notif-badge.show { display: flex; }
 
 /* FREE SERVICES STRIP */
-.free-services-strip {
-  background: linear-gradient(90deg, #065f46, #047857, #065f46);
-  padding: 0.55rem 5%; display: flex; align-items: center;
-  justify-content: center; gap: 2rem; flex-wrap: wrap;
-  border-bottom: 1px solid #064e3b;
-}
-.free-svc-item {
-  display: flex; align-items: center; gap: 0.45rem;
-  color: #d1fae5; font-size: 0.8rem; font-weight: 700;
-  white-space: nowrap;
-}
-.free-svc-item .svc-icon { font-size: 1rem; }
-.free-svc-sep { color: #6ee7b7; font-size: 0.6rem; }
+.free-services-strip{
+    width:100%;
+    box-sizing:border-box;
+    background:linear-gradient(90deg,#065f46,#047857,#065f46);
+    padding:0.55rem 5%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5rem;
+    flex-wrap:wrap;
+    border-bottom:1px solid #064e3b;
 
+    /* Animation band */
+    animation:none;
+    transform:none;
+    margin:0;
+    overflow:hidden;
+}
+
+.free-svc-item{
+    display:flex;
+    align-items:center;
+    gap:0.45rem;
+    color:#d1fae5;
+    font-size:0.8rem;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.free-svc-item .svc-icon{
+    font-size:1rem;
+}
 /* APP BANNER */
 .app-banner {
   display: flex; align-items: center; gap: 3rem;
@@ -557,8 +575,7 @@ Div.social-strip-track {
   <span class="free-svc-sep">✦</span>
   <div class="free-svc-item"><span class="svc-icon">✅</span> Verified Listings</div>
   <span class="free-svc-sep">✦</span>
-  <div class="free-svc-item"><span class="svc-icon">🚫</span> 0% Broker Fee</div>
-  <a href="legal.html?tab=terms" style="color:#6ee7b7;font-size:0.72rem;margin-left:0.3rem;text-decoration:underline;">*T&C Apply</a>
+  <a href="legal.html?tab=terms" style="color:#ffffff;font-size:0.72rem;margin-left:0.3rem;text-decoration:underline;">*T&C Apply</a>
 </div>
 
 <!-- SEARCH -->
