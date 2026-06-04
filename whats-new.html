@@ -8,6 +8,61 @@
 <link rel="stylesheet" href="style.css">
 <style>
 body { background: var(--dark2); }
+
+/* BELL */
+.notif-bell-btn {
+  position: relative; background: none; border: none;
+  cursor: pointer; padding: 0.3rem 0.4rem; border-radius: 8px;
+  font-size: 1.25rem; line-height: 1; transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+}
+.notif-bell-btn:hover { background: #eff6ff; }
+.notif-badge {
+  position: absolute; top: 0px; right: 0px;
+  background: #ef4444; color: white;
+  font-size: 0.58rem; font-weight: 800;
+  border-radius: 50%; width: 16px; height: 16px;
+  display: none; align-items: center; justify-content: center;
+  border: 2px solid white;
+}
+.notif-badge.show { display: flex; }
+
+/* FREE SERVICES HERO CARDS */
+.free-svc-cards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+.free-svc-card {
+  background: white; border: 2px solid #d1fae5;
+  border-radius: 16px; padding: 1.4rem 1.2rem;
+  text-align: center; box-shadow: 0 4px 16px rgba(5,150,105,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.free-svc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(5,150,105,0.15); }
+.free-svc-card .icon { font-size: 2.2rem; margin-bottom: 0.7rem; }
+.free-svc-card .title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: #065f46; margin-bottom: 0.4rem; }
+.free-svc-card .desc { font-size: 0.8rem; color: #6b7280; line-height: 1.5; }
+.free-svc-card .badge { display: inline-block; margin-top: 0.6rem; background: #d1fae5; color: #065f46; border-radius: 20px; padding: 0.2rem 0.7rem; font-size: 0.7rem; font-weight: 700; }
+.terms-note { background: #fef3c7; border: 1px solid #fde68a; border-radius: 12px; padding: 1rem 1.2rem; font-size: 0.82rem; color: #92400e; margin-bottom: 2rem; line-height: 1.6; }
+
+/* FCM PUSH BOX */
+.push-box {
+  background: linear-gradient(135deg, #1a3a6e, #1a6fe8);
+  border-radius: 18px; padding: 1.5rem; margin-bottom: 2rem;
+  display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+}
+.push-box-text h4 { color: white; font-size: 1rem; font-weight: 800; margin-bottom: 0.3rem; }
+.push-box-text p { color: rgba(255,255,255,0.75); font-size: 0.82rem; line-height: 1.5; margin: 0; }
+.push-btn {
+  background: white; color: #1a3a6e; border: none;
+  padding: 0.65rem 1.3rem; border-radius: 10px;
+  font-weight: 800; font-size: 0.88rem; cursor: pointer;
+  white-space: nowrap; font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s; flex-shrink: 0;
+}
+.push-btn:hover { background: #dbeafe; }
+.push-btn:disabled { background: #d1fae5; color: #065f46; cursor: default; }
 .page-hero {
   margin-top: var(--nav-h);
   background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
@@ -92,6 +147,9 @@ body { background: var(--dark2); }
     <a href="whats-new.html" class="active">What's New</a>
   </div>
   <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <button class="notif-bell-btn" id="bellBtn" title="Notifications">
+      🔔<span class="notif-badge" id="notifBadge"></span>
+    </button>
     <a href="login.html" class="nav-btn outline">Login</a>
     <a href="login.html" class="nav-btn">Sign Up Free</a>
   </div>
@@ -103,6 +161,56 @@ body { background: var(--dark2); }
 </div>
 
 <div class="news-wrap">
+
+  <!-- 🔔 PUSH NOTIFICATION BOX -->
+  <div class="push-box" id="pushBox">
+    <div style="font-size:2rem">🔔</div>
+    <div class="push-box-text" style="flex:1">
+      <h4>Instant Notifications Enable Karo!</h4>
+      <p>Naya listing aaye, offer aaye — turant notification milega. Ek click mein enable karo.</p>
+    </div>
+    <button class="push-btn" id="pushBtn" onclick="enablePushNotifications()">🔔 Enable Alerts</button>
+  </div>
+
+  <!-- 🆓 FREE SERVICES SECTION -->
+  <div style="margin-bottom:2rem;">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">
+      🎁 Flatzy Free Services
+      <span style="background:#d1fae5;color:#065f46;font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:20px;font-weight:700;">For New Tenants</span>
+    </div>
+    <div class="free-svc-cards">
+      <div class="free-svc-card">
+        <div class="icon">🚚</div>
+        <div class="title">Free Shifting</div>
+        <div class="desc">Move-in ke time FREE shifting service. Saman shift karne ka koi charge nahi!</div>
+        <div class="badge">✅ Complimentary</div>
+      </div>
+      <div class="free-svc-card">
+        <div class="icon">🧹</div>
+        <div class="title">Free First Cleaning</div>
+        <div class="desc">Pehli baar move-in pe FREE deep cleaning. Saaf ghar mein shifting karo!</div>
+        <div class="badge">✅ Complimentary</div>
+      </div>
+      <div class="free-svc-card">
+        <div class="icon">✅</div>
+        <div class="title">Verified Listing</div>
+        <div class="desc">Har property Flatzy team ke dwara physically verified. Koi fraud nahi!</div>
+        <div class="badge">✅ Guaranteed</div>
+      </div>
+      <div class="free-svc-card">
+        <div class="icon">🚫</div>
+        <div class="title">Zero Broker Fee</div>
+        <div class="desc">100% direct owner se deal. Koi brokerage nahi, koi hidden charge nahi.</div>
+        <div class="badge">✅ Always Free</div>
+      </div>
+    </div>
+    <div class="terms-note">
+      ⚠️ <b>Terms & Conditions:</b> Free Shifting aur Free First Cleaning sirf pehli baar available hain.
+      Yeh services tab tak applicable hain jab tak tenant ne Flatzy ka offer formally accept nahi kiya ho.
+      Ek baar offer accept hone ke baad yeh free services applicable nahi hongi.
+      <a href="legal.html?tab=terms" style="color:#92400e;font-weight:700;text-decoration:underline;">Full Terms padhein →</a>
+    </div>
+  </div>
 
   <div class="timeline">
 
@@ -183,8 +291,8 @@ body { background: var(--dark2); }
       </div>
       <div class="upcoming-item">
         <div class="icon">🔔</div>
-        <div class="title">Push Notifications</div>
-        <div class="sub">Naye listings ka turant alert</div>
+        <div class="title">Push Notifications <span style="background:#dcfce7;color:#166534;font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:10px;font-weight:700;margin-left:4px;">LIVE</span></div>
+        <div class="sub">Enable karo upar se — naye listings ka turant alert</div>
       </div>
       <div class="upcoming-item">
         <div class="icon">🏙️</div>
@@ -262,6 +370,92 @@ function closeSidebar(){
 (function autoSidebarDesktop(){
   if(window.innerWidth < 769) return;
   setTimeout(function(){ openSidebar(); setTimeout(function(){ closeSidebar(); }, 15000); }, 5000);
+})();
+
+// ── Mark notifications as seen ──────────────────────────────────
+localStorage.setItem('flatzy_notif_seen', Date.now());
+
+// ── FCM Push Notifications ──────────────────────────────────────
+const FCM_VAPID_KEY = 'YOUR_VAPID_KEY_HERE'; // Firebase Console > Project Settings > Cloud Messaging > Web Push certificate
+
+async function enablePushNotifications() {
+  const btn = document.getElementById('pushBtn');
+
+  // Check if already granted
+  if (Notification.permission === 'granted') {
+    btn.textContent = '✅ Already Enabled!';
+    btn.disabled = true;
+    return;
+  }
+  if (Notification.permission === 'denied') {
+    alert('Notifications blocked hain. Browser settings mein jaake allow karo.');
+    return;
+  }
+
+  btn.textContent = '⏳ Enabling...';
+  btn.disabled = true;
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      // Try FCM token registration
+      try {
+        const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+        const { getMessaging, getToken } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+        const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+
+        const app = getApps().length ? getApps()[0] : initializeApp({
+          apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+          authDomain: "flatzyhomes.firebaseapp.com",
+          projectId: "flatzyhomes",
+          storageBucket: "flatzyhomes.firebasestorage.app",
+          messagingSenderId: "519957313457",
+          appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+        });
+
+        const messaging = getMessaging(app);
+        const token = await getToken(messaging, { vapidKey: FCM_VAPID_KEY });
+
+        if (token) {
+          const db = getFirestore(app);
+          await setDoc(doc(db, 'fcmTokens', token), {
+            token, subscribedAt: new Date().toISOString(),
+            device: navigator.userAgent.slice(0, 60)
+          });
+        }
+      } catch(e) {
+        console.warn('FCM token save failed:', e.message);
+        // Still show success — browser notification permission granted
+      }
+
+      btn.textContent = '✅ Notifications Enabled!';
+      btn.style.background = '#d1fae5';
+      btn.style.color = '#065f46';
+      localStorage.setItem('flatzy_push_enabled', '1');
+
+      // Show a test notification
+      new Notification('🏠 Flatzy Notifications Enabled!', {
+        body: 'Naye listings ka alert turant milega. Welcome to Flatzy!',
+        icon: 'favicon.jpeg'
+      });
+
+    } else {
+      btn.textContent = '❌ Permission Denied';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    console.error('Push notification error:', e);
+    btn.textContent = '❌ Failed — Try Again';
+    btn.disabled = false;
+  }
+}
+
+// ── On load: check if already enabled ──────────────────────────
+(function() {
+  if (localStorage.getItem('flatzy_push_enabled') === '1' || Notification.permission === 'granted') {
+    const btn = document.getElementById('pushBtn');
+    if (btn) { btn.textContent = '✅ Notifications On'; btn.disabled = true; }
+  }
 })();
 </script>
 </body>

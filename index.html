@@ -381,6 +381,40 @@ Div.social-strip-track {
   /* keep toggle visible on desktop too */
 }
 
+/* NOTIFICATION BELL */
+.notif-bell-btn {
+  position: relative; background: none; border: none;
+  cursor: pointer; padding: 0.3rem 0.4rem; border-radius: 8px;
+  font-size: 1.25rem; line-height: 1; transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+}
+.notif-bell-btn:hover { background: #eff6ff; }
+.notif-badge {
+  position: absolute; top: 0px; right: 0px;
+  background: #ef4444; color: white;
+  font-size: 0.58rem; font-weight: 800;
+  border-radius: 50%; width: 16px; height: 16px;
+  display: none; align-items: center; justify-content: center;
+  border: 2px solid white; line-height: 1;
+}
+.notif-badge.show { display: flex; }
+
+/* FREE SERVICES STRIP */
+.free-services-strip {
+  background: linear-gradient(90deg, #065f46, #047857, #065f46);
+  padding: 0.55rem 5%; display: flex; align-items: center;
+  justify-content: center; gap: 2rem; flex-wrap: wrap;
+  border-bottom: 1px solid #064e3b;
+}
+.free-svc-item {
+  display: flex; align-items: center; gap: 0.45rem;
+  color: #d1fae5; font-size: 0.8rem; font-weight: 700;
+  white-space: nowrap;
+}
+.free-svc-item .svc-icon { font-size: 1rem; }
+.free-svc-sep { color: #6ee7b7; font-size: 0.6rem; }
+
 /* APP BANNER */
 .app-banner {
   display: flex; align-items: center; gap: 3rem;
@@ -479,12 +513,18 @@ Div.social-strip-track {
   <!-- Nav: shown when logged out -->
   <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
     <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu" title="Menu">☰</button>
+    <button class="notif-bell-btn" id="bellBtn" onclick="openNotifications()" title="What's New">
+      🔔<span class="notif-badge" id="notifBadge">1</span>
+    </button>
     <a href="login.html" class="nav-btn outline">Login</a>
     <a href="login.html" class="nav-btn">Sign Up Free</a>
   </div>
   <!-- Nav: shown when logged in -->
   <div id="navUser" style="display:none;gap:0.5rem;align-items:center;">
     <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu" title="Menu">☰</button>
+    <button class="notif-bell-btn" id="bellBtnUser" onclick="openNotifications()" title="What's New">
+      🔔<span class="notif-badge" id="notifBadgeUser">1</span>
+    </button>
     <img id="navPhoto" src="" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;">
     <span id="navName" style="font-size:0.88rem;font-weight:600;color:var(--text);"></span>
     <button onclick="logoutUser()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;font-size:0.82rem;">Logout</button>
@@ -508,6 +548,18 @@ Div.social-strip-track {
   </div>
 
 </section>
+
+<!-- FREE SERVICES STRIP -->
+<div class="free-services-strip">
+  <div class="free-svc-item"><span class="svc-icon">🚚</span> Free Shifting on Move-in</div>
+  <span class="free-svc-sep">✦</span>
+  <div class="free-svc-item"><span class="svc-icon">🧹</span> Free First Cleaning</div>
+  <span class="free-svc-sep">✦</span>
+  <div class="free-svc-item"><span class="svc-icon">✅</span> Verified Listings</div>
+  <span class="free-svc-sep">✦</span>
+  <div class="free-svc-item"><span class="svc-icon">🚫</span> 0% Broker Fee</div>
+  <a href="legal.html?tab=terms" style="color:#6ee7b7;font-size:0.72rem;margin-left:0.3rem;text-decoration:underline;">*T&C Apply</a>
+</div>
 
 <!-- SEARCH -->
 <div class="search-section">
@@ -675,7 +727,7 @@ Div.social-strip-track {
 <!-- TRUST TICKER -->
 <div class="trust-ticker">
   <div class="ticker-track">
-    <span>✅ 100% Verified Listings</span><span>🏆 Nagpur's #1 Platform</span><span>💸 Trusted Platform</span><span>📞 Direct Flatzy Contact</span><span>🚀 Instant Booking</span><span>⭐ 4.8/5 Rating</span><span>✅ 100% Verified Listings</span><span>🏆 Nagpur's #1 Platform</span><span>💸 Trusted Platform</span><span>📞 Direct Flatzy Contact</span><span>🚀 Instant Booking</span><span>⭐ 4.8/5 Rating</span>
+    <span>✅ 100% Verified Listings</span><span>🏆 Nagpur's #1 Platform</span><span>🚚 Free Shifting on Move-in</span><span>🧹 Free First Cleaning</span><span>💸 0% Broker Fee</span><span>📞 Direct Flatzy Contact</span><span>🚀 Instant Booking</span><span>⭐ 4.8/5 Rating</span><span>✅ 100% Verified Listings</span><span>🏆 Nagpur's #1 Platform</span><span>🚚 Free Shifting on Move-in</span><span>🧹 Free First Cleaning</span><span>💸 0% Broker Fee</span><span>📞 Direct Flatzy Contact</span><span>🚀 Instant Booking</span><span>⭐ 4.8/5 Rating</span>
   </div>
 </div>
 
@@ -1489,6 +1541,30 @@ window.showToast = function(msg, err=false) {
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 3000);
 };
+
+// ── Notification Bell ──────────────────────────────────────────────
+window.openNotifications = function() {
+  // Mark as seen
+  localStorage.setItem('flatzy_notif_seen', Date.now());
+  // Hide badge
+  ['notifBadge','notifBadgeUser'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  window.location = 'whats-new.html';
+};
+
+// Show badge if not seen in last 3 days
+(function checkNotifBadge() {
+  const lastSeen = parseInt(localStorage.getItem('flatzy_notif_seen') || '0');
+  const threeDays = 3 * 24 * 60 * 60 * 1000;
+  if (Date.now() - lastSeen > threeDays) {
+    ['notifBadge','notifBadgeUser'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('show');
+    });
+  }
+})();
 
 // ── Run ───────────────────────────────────────────────────────────
 init();
