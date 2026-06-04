@@ -1670,66 +1670,31 @@ function closeSidebar(){
 </style>
 
 <script>
+window.closeAd = function() {
+  const popup = document.getElementById('adPopup');
+  const video = document.getElementById('adVideo');
+  if (video) video.pause();
+  if (popup) popup.style.display = 'none';
+};
+
+// Page open hote hi — koi login check nahi
 (function() {
-  // Har login pe dikhao — session mein sirf ek baar
-  if (sessionStorage.getItem('adShown')) return;
+  const popup = document.getElementById('adPopup');
+  const video = document.getElementById('adVideo');
+  if (!popup || !video) return;
 
-  function showAd(user) {
-    if (!user) return;
-    if (sessionStorage.getItem('adShown')) return;
-    sessionStorage.setItem('adShown', '1');
+  popup.style.display = 'flex';
 
-    const popup   = document.getElementById('adPopup');
-    const video   = document.getElementById('adVideo');
+  // Sound ke saath play
+  video.muted = false;
+  video.volume = 1.0;
+  video.play().catch(() => {
+    video.muted = true;
+    video.play().catch(() => {});
+  });
 
-    popup.style.display = 'flex';
-
-    // Sound ke saath play
-    video.muted = false;
-    video.volume = 1.0;
-    video.play().catch(() => {
-      // Autoplay blocked — muted se try karo
-      video.muted = true;
-      video.play().catch(() => {});
-    });
-
-    // Video khatam hone pe popup band karo
-    video.addEventListener('ended', () => {
-      closeAd();
-    });
-  }
-
-  window.closeAd = function() {
-    const popup = document.getElementById('adPopup');
-    const video = document.getElementById('adVideo');
-    video.pause();
-    popup.style.display = 'none';
-  };
-
-  // Firebase auth check
-  const waitForAuth = setInterval(() => {
-    if (window._flatzyUser !== undefined) {
-      clearInterval(waitForAuth);
-      showAd(window._flatzyUser);
-      return;
-    }
-    // Fallback: directly use Firebase if available
-    if (typeof firebase !== 'undefined' || document.querySelector('script[src*="firebase"]')) {
-      // user-tracker.js already handles auth — wait for it
-    }
-  }, 300);
-
-  // user-tracker.js onAuthStateChanged ke baad _flatzyUser set hoga
-  // Agar 3 seconds mein nahi mila toh bhi try karo
-  setTimeout(() => {
-    clearInterval(waitForAuth);
-    const popup = document.getElementById('adPopup');
-    if (popup && popup.style.display === 'none') {
-      // Check if user is logged in via any means
-      if (window._flatzyUser) showAd(window._flatzyUser);
-    }
-  }, 3000);
-
+  // Video khatam hone pe band karo
+  video.addEventListener('ended', () => { window.closeAd(); });
 })();
 </script>
 
