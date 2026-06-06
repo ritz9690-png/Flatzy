@@ -664,6 +664,53 @@ nav.topnav::after {
   </main>
 </div>
 
+<!-- Early functions — must be defined before Firebase loads -->
+<script>
+function showSection(id, mobileTabEl) {
+  document.querySelectorAll('.acc-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.acc-nav-link').forEach(l => l.classList.remove('active'));
+  var sec = document.getElementById('sec-' + id);
+  if(sec) sec.classList.add('active');
+  var navLink = document.getElementById('nav-' + id);
+  if(navLink) navLink.classList.add('active');
+  if(mobileTabEl) {
+    document.querySelectorAll('.mob-tab').forEach(function(t){ t.classList.remove('active'); });
+    mobileTabEl.classList.add('active');
+  }
+  window.scrollTo(0,0);
+}
+function toggleTheme(isDark) {
+  var mode = isDark ? 'dark' : 'light';
+  document.getElementById('theme-css').href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  var tog = document.getElementById('darkToggle');
+  var lbl = document.getElementById('themeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(lbl) lbl.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+function selectGender(g) {
+  window._selectedGender = g;
+  ['Male','Female','Other'].forEach(function(x){
+    var btn = document.getElementById('g'+x);
+    if(btn) btn.classList.toggle('selected', x === g);
+  });
+}
+function doLogout() {
+  if(confirm('Logout from Flatzy?')) {
+    if(window._flatzyAuth) {
+      window._flatzyAuth.signOut().then(function(){ window.location = 'index.html'; });
+    } else { window.location = 'index.html'; }
+  }
+}
+function saveProfile() { if(window._saveProfileFn) window._saveProfileFn(); }
+function handleProfilePhotoChange(input) { if(window._handlePhotFn) window._handlePhotFn(input); }
+// Apply saved theme immediately
+(function(){ 
+  var m = localStorage.getItem('flatzy_theme') || 'light';
+  document.getElementById('theme-css').href = m === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+})();
+</script>
+
 <!-- Firebase Compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -683,6 +730,7 @@ if (!firebase.apps.length) {
 }
 const auth = firebase.auth();
 const db   = firebase.firestore();
+window._flatzyAuth = auth; // used by early doLogout()
 
 // ── Theme ──────────────────────────────────────────────
 function applyTheme(mode) {
@@ -719,7 +767,7 @@ const UPLOAD_PRESET = 'flatzy_upload';
 
 // ── Profile ─────────────────────────────────────────────
 let currentUser = null;
-let selectedGender = '';
+// selectedGender is managed by early selectGender() via window._selectedGender
 let uploadedProfilePhotoUrl = null; // new photo chosen but not yet saved
 
 function renderAvatar(photoURL, name) {
@@ -788,7 +836,7 @@ async function loadProfile() {
   document.getElementById('inp-email').value    = email;
   document.getElementById('inp-dob').value      = dob;
   document.getElementById('inp-location').value = loc;
-  if(gender) selectGender(gender, true);
+  if(gender) { window._selectedGender = gender; selectGender(gender); }
 }
 
 function setDisp(id, val) {
@@ -807,7 +855,7 @@ window.selectGender = function(g, silent) {
 }
 
 // ── Profile Photo Upload ────────────────────────────────
-window.handleProfilePhotoChange = async function(input) {
+window._handlePhotFn = async function(input) {
   const file = input.files[0];
   if(!file) return;
   if(file.size > 5 * 1024 * 1024) {
@@ -837,7 +885,7 @@ window.handleProfilePhotoChange = async function(input) {
   }
 }
 
-window.saveProfile = async function() {
+window._saveProfileFn = async function() {
   if(!currentUser) return;
 
   const name  = document.getElementById('inp-name').value.trim();
@@ -847,7 +895,7 @@ window.saveProfile = async function() {
   const loc   = document.getElementById('inp-location').value.trim();
 
   // Build data object — only update photoURL if new one was uploaded
-  const data = { name, phone, email, gender: selectedGender, dob, location: loc, updatedAt: new Date().toISOString() };
+  const data = { name, phone, email, gender: window._selectedGender || '', dob, location: loc, updatedAt: new Date().toISOString() };
   if(uploadedProfilePhotoUrl) data.photoURL = uploadedProfilePhotoUrl;
 
   try {
