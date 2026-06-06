@@ -519,18 +519,6 @@ nav.topnav::after {
       <div class="acc-panel">
         <div class="acc-panel-title">✏️ Edit Details</div>
         <div class="edit-form-grid">
-
-          <!-- Profile Photo -->
-          <div class="form-group" style="flex-direction:row;align-items:center;gap:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
-            <div id="editAvatarPreview" class="acc-avatar" style="width:72px;height:72px;font-size:1.8rem;flex-shrink:0;cursor:pointer;" onclick="document.getElementById('profilePhotoInput').click()">U</div>
-            <div>
-              <div style="font-weight:700;font-size:0.9rem;color:var(--text);margin-bottom:0.3rem;">Profile Photo</div>
-              <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">JPG/PNG · Max 5MB</div>
-              <button type="button" onclick="document.getElementById('profilePhotoInput').click()" style="padding:0.45rem 1rem;background:var(--primary-light);color:var(--primary);border:1.5px solid var(--primary);border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit;">📷 Change Photo</button>
-              <input type="file" id="profilePhotoInput" accept="image/*" style="display:none" onchange="handleProfilePhotoChange(this)">
-            </div>
-          </div>
-
           <div class="form-group">
             <label class="form-label">Mobile Number</label>
             <div class="phone-row">
@@ -662,31 +650,7 @@ nav.topnav::after {
   </main>
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="config.js"></script>
 <script>
-// ── Firebase Init ──────────────────────────────────────
-if (!firebase.apps.length) {
-  firebase.initializeApp(window.FIREBASE_CONFIG || {
-    apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
-    authDomain: "flatzyhomes.firebaseapp.com",
-    projectId: "flatzyhomes",
-    storageBucket: "flatzyhomes.firebasestorage.app",
-    messagingSenderId: "519957313457",
-    appId: "1:519957313457:web:1ffc1685819120edd7ef90"
-  });
-}
-const auth = firebase.auth();
-const db   = firebase.firestore();
-
-// ── Cloudinary ─────────────────────────────────────────
-const CLOUD_NAME    = 'dhl8byas2';
-const UPLOAD_PRESET = 'flatzy_upload';
-let uploadedProfilePhotoUrl = null;
-
 // ── Theme ──────────────────────────────────────────────
 const savedTheme = localStorage.getItem('flatzy_theme') || 'light';
 applyTheme(savedTheme);
@@ -714,6 +678,7 @@ function showSection(id, mobileTabEl) {
   if(sec) sec.classList.add('active');
   const navLink = document.getElementById('nav-' + id);
   if(navLink) navLink.classList.add('active');
+  // mobile tabs
   if(mobileTabEl) {
     document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
     mobileTabEl.classList.add('active');
@@ -721,65 +686,43 @@ function showSection(id, mobileTabEl) {
   window.scrollTo(0,0);
 }
 
-// ── Avatar render ──────────────────────────────────────
-function renderAvatar(photoURL, name) {
-  const initial = (name || 'U').charAt(0).toUpperCase();
+// ── Profile ─────────────────────────────────────────────
+let profile = JSON.parse(localStorage.getItem('flatzy_profile') || '{}');
+
+function loadProfile() {
+  // Try firebase user first
+  const name = profile.name || (window.flatzyUser && window.flatzyUser.displayName) || 'User';
+  const phone = profile.phone || '';
+  const email = profile.email || (window.flatzyUser && window.flatzyUser.email) || '';
+  const gender = profile.gender || '';
+  const dob = profile.dob || '';
+  const location = profile.location || '';
+
+  // Set sidebar/mobile initials
+  const initial = name.charAt(0).toUpperCase();
   ['sideAvatarLetter','mobileAvatarLetter'].forEach(id => {
     const el = document.getElementById(id);
-    if(!el) return;
-    el.innerHTML = photoURL
-      ? `<img src="${photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
-      : initial;
+    if(el) el.textContent = initial;
   });
-  const prev = document.getElementById('editAvatarPreview');
-  if(prev) prev.innerHTML = photoURL
-    ? `<img src="${photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
-    : initial;
-}
-
-// ── Load Profile from Firestore ────────────────────────
-async function loadProfile() {
-  if(!window._currentUser) return;
-  const user = window._currentUser;
-
-  let name = user.displayName || '', email = user.email || '',
-      phone = '', gender = '', dob = '', loc = '',
-      photoURL = user.photoURL || '';
-
-  try {
-    const snap = await db.collection('users').doc(user.uid).get();
-    if(snap.exists) {
-      const d = snap.data();
-      name    = d.name     || name;
-      email   = d.email    || email;
-      phone   = d.phone    || '';
-      gender  = d.gender   || '';
-      dob     = d.dob      || '';
-      loc     = d.location || '';
-      photoURL= d.photoURL || photoURL;
-    }
-  } catch(e) { console.warn('Firestore load:', e); }
-
-  // Sidebar names
   ['sideUserName','mobileUserName'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.textContent = name ? (name.length > 12 ? name.split(' ')[0] : name) : 'User';
+    if(el) el.textContent = name.length > 12 ? name.split(' ')[0] : name;
   });
 
-  renderAvatar(photoURL, name);
+  // Display fields
+  setDisp('disp-name', name);
+  setDisp('disp-phone', phone ? '+91 ' + phone : null);
+  setDisp('disp-email', email);
+  setDisp('disp-gender', gender);
+  setDisp('disp-dob', dob);
+  setDisp('disp-location', location);
 
-  setDisp('disp-name',     name);
-  setDisp('disp-phone',    phone ? '+91 ' + phone : null);
-  setDisp('disp-email',    email);
-  setDisp('disp-gender',   gender);
-  setDisp('disp-dob',      dob);
-  setDisp('disp-location', loc);
-
-  document.getElementById('inp-name').value     = name !== 'User' ? name : '';
-  document.getElementById('inp-phone').value    = phone;
-  document.getElementById('inp-email').value    = email;
-  document.getElementById('inp-dob').value      = dob;
-  document.getElementById('inp-location').value = loc;
+  // Form inputs
+  document.getElementById('inp-name').value = name !== 'User' ? name : '';
+  document.getElementById('inp-phone').value = phone;
+  document.getElementById('inp-email').value = email;
+  document.getElementById('inp-dob').value = dob;
+  document.getElementById('inp-location').value = location;
   if(gender) selectGender(gender, true);
 }
 
@@ -799,122 +742,55 @@ function selectGender(g, silent) {
   });
 }
 
-// ── Profile Photo Upload ───────────────────────────────
-async function handleProfilePhotoChange(input) {
-  const file = input.files[0];
-  if(!file) return;
-  if(file.size > 5 * 1024 * 1024) { showToastMsg('❌ Max 5MB allowed'); return; }
-
-  const prev = document.getElementById('editAvatarPreview');
-  if(prev) prev.innerHTML = '<span style="font-size:0.7rem;color:var(--muted)">⏳</span>';
-
-  const fd = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', UPLOAD_PRESET);
-
-  try {
-    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd });
-    const data = await res.json();
-    if(data.secure_url) {
-      uploadedProfilePhotoUrl = data.secure_url;
-      if(prev) prev.innerHTML = `<img src="${data.secure_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-      showToastMsg('✅ Photo ready! Click Save to apply.');
-    } else throw new Error(data.error?.message || 'failed');
-  } catch(e) {
-    showToastMsg('❌ Upload failed. Try again.');
-    if(prev) prev.textContent = (window._currentUser?.displayName||'U').charAt(0).toUpperCase();
-  }
+function saveProfile() {
+  profile.name     = document.getElementById('inp-name').value.trim();
+  profile.phone    = document.getElementById('inp-phone').value.trim();
+  profile.email    = document.getElementById('inp-email').value.trim();
+  profile.gender   = selectedGender;
+  profile.dob      = document.getElementById('inp-dob').value;
+  profile.location = document.getElementById('inp-location').value.trim();
+  localStorage.setItem('flatzy_profile', JSON.stringify(profile));
+  loadProfile();
+  showSection('profile');
+  // show toast if available
+  if(window.showToast) showToast('✅ Profile saved!');
+  else alert('Profile saved!');
 }
 
-// ── Save Profile to Firestore ──────────────────────────
-async function saveProfile() {
-  if(!window._currentUser) return;
-
-  const data = {
-    name:      document.getElementById('inp-name').value.trim(),
-    phone:     document.getElementById('inp-phone').value.trim(),
-    email:     document.getElementById('inp-email').value.trim(),
-    gender:    selectedGender,
-    dob:       document.getElementById('inp-dob').value,
-    location:  document.getElementById('inp-location').value.trim(),
-    updatedAt: new Date().toISOString()
-  };
-  if(uploadedProfilePhotoUrl) data.photoURL = uploadedProfilePhotoUrl;
-
-  try {
-    await db.collection('users').doc(window._currentUser.uid).set(data, { merge: true });
-    uploadedProfilePhotoUrl = null;
-    await loadProfile();
-    showSection('profile');
-    showToastMsg('✅ Profile saved!');
-  } catch(e) { showToastMsg('❌ Save failed: ' + e.message); }
-}
-
-// ── Saved Properties ───────────────────────────────────
-async function loadSaved() {
+// ── Saved properties ───────────────────────────────────
+function loadSaved() {
+  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
   const wrap = document.getElementById('savedPropsWrap');
   if(!wrap) return;
-  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
-  if(!wl.length) return;
-  const ids = wl.map(i => typeof i === 'string' ? i : i.id).filter(Boolean);
-  if(!ids.length) return;
-
-  wrap.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">⏳ Loading...</div>';
-  try {
-    const chunks = [];
-    for(let i=0;i<ids.length;i+=10) chunks.push(ids.slice(i,i+10));
-    let props = [];
-    for(const chunk of chunks) {
-      const snap = await db.collection('properties').where(firebase.firestore.FieldPath.documentId(),'in',chunk).get();
-      snap.forEach(doc => props.push({id:doc.id,...doc.data()}));
-    }
-    if(!props.length) { wrap.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">No saved properties found.</div>'; return; }
-    wrap.innerHTML = props.map(p => {
-      const img = (p.photos&&p.photos[0]) ? `<img src="${p.photos[0]}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🏠';
-      return `<div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 0;border-bottom:1px solid var(--border);">
-        <div style="width:56px;height:56px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;overflow:hidden;">${img}</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title||'Property'}</div>
-          <div style="font-size:0.78rem;color:var(--muted);">${p.area||''} • ₹${p.rent?p.rent.toLocaleString('en-IN'):'—'}/mo</div>
-        </div>
-        <a href="rent.html#${p.id}" style="flex-shrink:0;font-size:0.8rem;color:var(--primary);font-weight:700;text-decoration:none;">View →</a>
-      </div>`;
-    }).join('');
-  } catch(e) { wrap.innerHTML = '<div style="padding:1rem;color:var(--muted)">⚠️ Could not load saved properties.</div>'; }
+  if(!wl.length) return; // keep empty state
+  wrap.innerHTML = wl.map(p => `
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 0;border-bottom:1px solid var(--border);">
+      <div style="width:56px;height:56px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🏠</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title || 'Property'}</div>
+        <div style="font-size:0.78rem;color:var(--muted);">${p.area || ''} • ₹${p.rent || '—'}/mo</div>
+      </div>
+      <a href="rent.html" style="flex-shrink:0;font-size:0.8rem;color:var(--primary);font-weight:700;text-decoration:none;">View →</a>
+    </div>
+  `).join('');
 }
 
 // ── Logout ─────────────────────────────────────────────
 function doLogout() {
   if(confirm('Logout from Flatzy?')) {
-    auth.signOut().then(() => {
-      localStorage.removeItem('flatzy_user');
-      window.location = 'index.html';
-    });
+    localStorage.removeItem('flatzy_user');
+    localStorage.removeItem('flatzy_profile');
+    window.location = 'index.html';
   }
 }
 
-// ── Toast ──────────────────────────────────────────────
-function showToastMsg(msg) {
-  let t = document.getElementById('sToast');
-  if(!t) {
-    t = document.createElement('div');
-    t.id = 'sToast';
-    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:white;padding:0.7rem 1.4rem;border-radius:10px;font-size:0.88rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity 0.3s;pointer-events:none;';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg; t.style.opacity = '1';
-  setTimeout(() => t.style.opacity = '0', 2800);
-}
+// ── Init ───────────────────────────────────────────────
+loadProfile();
+loadSaved();
 
-// ── Auth ───────────────────────────────────────────────
-auth.onAuthStateChanged(async user => {
-  if(!user) { window.location = 'login.html'; return; }
-  window._currentUser = user;
-  await loadProfile();
-  loadSaved();
-  const hash = location.hash.replace('#','');
-  if(hash) showSection(hash);
-});
+// Handle URL hash navigation
+const hash = location.hash.replace('#','');
+if(hash) showSection(hash);
 </script>
 </body>
 </html>
