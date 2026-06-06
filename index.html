@@ -4,18 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flatzy Nagpur – Find Your Perfect Home</title>
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/png" href="favicon.jpeg">
 <style>
 /* ---- SOCIAL STRIP ---- */
-.card-nearby { font-size: 0.75rem; color: #0369a1; background: #e0f2fe; border-radius: 6px; padding: 0.18rem 0.5rem; margin: 0.2rem 0 0.4rem; display: inline-block; font-weight: 600; }
+.card-nearby { font-size: 0.75rem; color: var(--primary); background: var(--primary-light); border-radius: 6px; padding: 0.18rem 0.5rem; margin: 0.2rem 0 0.4rem; display: inline-block; font-weight: 600; }
 .social-strip-wrap {
   position: fixed;
   top: 63px;
   width: 100%;
   z-index: 1001;
   overflow: hidden;
-  background: linear-gradient(90deg, #0f172a, #1a3a6e, #0f172a);
+  background: linear-gradient(90deg, #0f172a, #1a3a6e, #0f172a); 
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
   padding: 0.45rem 0;
 }
 
@@ -35,7 +37,7 @@ Div.social-strip-track {
 }
 
 .social-strip-track span, .social-strip-track a {
-  color: #e2e8f0;
+  color: white;
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
@@ -44,8 +46,8 @@ Div.social-strip-track {
   align-items: center;
   gap: 4px;
 }
-.social-strip-track a:hover { color: #60b4ff; }
-.ssep { color: #60b4ff !important; font-size: 0.65rem !important; }
+.social-strip-track a:hover { color: var(--primary); }
+.ssep { color: var(--primary) !important; font-size: 0.65rem !important; }
 @keyframes socialScroll {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -117,19 +119,19 @@ Div.social-strip-track {
 }
 
 .hero-tag { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); color: #fff; padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.8rem; font-weight: 500; margin-bottom: 1.5rem; width: fit-content; backdrop-filter: blur(8px); }
-.hero-tag .dot { width: 6px; height: 6px; background: #60b4ff; border-radius: 50%; animation: pulse 2s infinite; }
+.hero-tag .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
 .hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800; line-height: 1.1; letter-spacing: -2px; margin-bottom: 1.2rem; color: #ffffff; text-shadow: 0 2px 20px rgba(0,0,0,0.4); }
-.hero h1 em { color: #60b4ff; font-style: normal; }
+.hero h1 em { color: var(--accent); font-style: normal; }
 .hero p { font-size: 1.1rem; color: rgba(255,255,255,0.85); max-width: 520px; line-height: 1.7; margin-bottom: 2.5rem; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
 .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
 .hero-stats { display: flex; gap: 3rem; flex-wrap: wrap; }
-.stat-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: #60b4ff; }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--accent); }
 .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
 
 /* SEARCH */
-.search-section { padding: 2rem 5%; background: white; }
+.search-section { padding: 2rem 5%; background: var(--bg); }
 .search-box {
-  background-color: #afd6e4; border: 1.5px solid var(--border); border-radius: 16px;
+  background-color: var(--card-body-bg); border: 1.5px solid var(--border); border-radius: 16px;
   padding: 1.2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: flex-end;
   box-shadow: var(--shadow-md);
 }
@@ -141,23 +143,23 @@ Div.social-strip-track {
 }
 .search-field { flex: 1; min-width: 160px; }
 .search-field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-.search-field select, .search-field input { width: 100%; background: var(--dark2); border: 1.5px solid var(--border); color: var(--text); padding: 0.7rem 1rem; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-.search-field select:focus, .search-field input:focus { border-color: var(--primary); background: white; }
+.search-field select, .search-field input { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); color: var(--text); padding: 0.7rem 1rem; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+.search-field select:focus, .search-field input:focus { border-color: var(--primary); background: var(--bg); }
 .search-btn { background: var(--primary); color: white; border: none; padding: 0.7rem 2rem; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 700; cursor: pointer; font-size: 1rem; transition: all 0.2s; white-space: nowrap; box-shadow: 0 3px 10px rgba(26,111,232,0.25); }
 .search-btn:hover { background: var(--primary-dark); }
 
 /* HOW IT WORKS */
 .how-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
-.how-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; padding: 1.8rem; position: relative; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s; }
+.how-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 1.8rem; position: relative; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s; }
 .how-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-.how-num { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: rgba(26,111,232,0.1); position: absolute; top: 1rem; right: 1.2rem; line-height: 1; }
+.how-num { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: var(--primary-glow); position: absolute; top: 1rem; right: 1.2rem; line-height: 1; }
 .how-icon { font-size: 2rem; margin-bottom: 1rem; }
 .how-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
 .how-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
 
 /* AREAS */
 .areas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
-.area-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 1.2rem; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+.area-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.2rem; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
 .area-card:hover { border-color: var(--primary); background: var(--primary-light); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .area-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
 .area-name { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; }
@@ -167,7 +169,7 @@ Div.social-strip-track {
 .properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
 
 /* HOVER VIDEO */
-.card-img { position: relative; overflow: hidden; height: 200px; background: #1a1a2e; }
+.card-img { position: relative; overflow: hidden; height: 200px; background: var(--bg2); }
 .card-img-photo { transition: opacity 0.3s; width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
 .card-hover-video {
   position: absolute; inset: 0;
@@ -198,15 +200,15 @@ Div.social-strip-track {
 
 /* LIFESTYLE TAGS */
 .lifestyle-tag {
-  background: #f0f9ff; border: 1.5px solid #bae6fd; color: #0369a1;
+  background: var(--primary-light); border: 1.5px solid var(--border); color: var(--primary);
   padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.82rem;
   font-weight: 600; cursor: default; transition: all 0.2s;
 }
-.lifestyle-tag:hover { background: #e0f2fe; border-color: #0ea5e9; }
+.lifestyle-tag:hover { background: var(--primary-light); border-color: #0ea5e9; }
 
 /* TRUST TICKER */
 .trust-ticker {
-  overflow: hidden; background: #1a6fe8; padding: 0.6rem 0;
+  overflow: hidden; background: var(--primary); padding: 0.6rem 0;
 }
 .ticker-track {
   display: flex; gap: 3rem; width: max-content;
@@ -223,13 +225,13 @@ Div.social-strip-track {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem;
 }
 .amenity-card {
-  background: white; border: 1.5px solid var(--border); border-radius: 14px;
+  background: var(--card); border: 1.5px solid var(--border); border-radius: 14px;
   padding: 1.4rem 1rem; text-align: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.2s;
 }
 .amenity-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(26,111,232,0.12); }
 .amenity-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-.amenity-name { font-size: 0.8rem; font-weight: 700; color: #1a1a2e; }
+.amenity-name { font-size: 0.8rem; font-weight: 700; color: var(--text); }
 
 /* WHY FLATZY */
 .why-grid {
@@ -250,7 +252,7 @@ Div.social-strip-track {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;
 }
 .testi-card {
-  background: white; border: 1.5px solid var(--border); border-radius: 18px;
+  background: var(--card); border: 1.5px solid var(--border); border-radius: 18px;
   padding: 1.8rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06); transition: transform 0.2s;
 }
 .testi-card:hover { transform: translateY(-4px); }
@@ -259,7 +261,7 @@ Div.social-strip-track {
 .testi-author { display: flex; align-items: center; gap: 0.8rem; }
 .testi-avatar {
   width: 40px; height: 40px; border-radius: 50%;
-  background: #1a6fe8; color: white; font-weight: 800;
+  background: var(--primary); color: white; font-weight: 800;
   display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
   flex-shrink: 0;
 }
@@ -271,7 +273,7 @@ Div.social-strip-track {
 .sidebar-overlay {
   display: block;
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: var(--modal-overlay);
   z-index: 1099;
   backdrop-filter: blur(2px);
   opacity: 0;
@@ -288,7 +290,7 @@ Div.social-strip-track {
   position: fixed;
   top: 0; left: 0;
   width: 280px; height: 100vh;
-  background: white;
+  background: var(--sidebar-bg);
   z-index: 1100;
   transform: translateX(-100%);
   visibility: hidden;
@@ -309,13 +311,13 @@ Div.social-strip-track {
 .sidebar-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.2rem 1.2rem 1rem;
-  background: linear-gradient(135deg,#1a3a6e,#0ea5e9);
+  background: var(--sidebar-header-bg);
   flex-shrink: 0;
 }
 .sidebar-logo {
-  font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px;
+  font-size: 1.5rem; font-weight: 800; color: var(--sidebar-logo-color); letter-spacing: -0.5px;
 }
-.sidebar-logo span { color: #93c5fd; }
+.sidebar-logo span { color: var(--sidebar-logo-span); }
 .sidebar-close {
   background: rgba(255,255,255,0.15); border: none; color: white;
   width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
@@ -333,15 +335,15 @@ Div.social-strip-track {
 .sb-link {
   display: flex; align-items: center; gap: 0.7rem;
   padding: 0.75rem 1rem; border-radius: 10px;
-  text-decoration: none; color: #1e293b;
+  text-decoration: none; color: var(--text);
   font-size: 0.95rem; font-weight: 500;
   transition: background 0.15s, color 0.15s;
 }
 .sb-link:hover, .sb-link.active {
-  background: #eff6ff; color: #1a6fe8;
+  background: var(--primary-light); color: var(--primary);
 }
 .sb-divider {
-  height: 1px; background: #e2e8f0;
+  height: 1px; background: var(--border);
   margin: 0.5rem 0;
 }
 .sb-wish-badge {
@@ -360,9 +362,9 @@ Div.social-strip-track {
 .sidebar-social a {
   display: flex; align-items: center; justify-content: center;
   width: 38px; height: 38px; border-radius: 10px;
-  background: #f1f5f9; transition: background 0.2s;
+  background: var(--bg2); transition: background 0.2s;
 }
-.sidebar-social a:hover { background: #dbeafe; }
+.sidebar-social a:hover { background: var(--primary-light); }
 
 /* Sidebar toggle button — visible on ALL screen sizes */
 .sidebar-toggle {
@@ -373,7 +375,7 @@ Div.social-strip-track {
   color: var(--text); padding: 0.3rem 0.5rem;
   border-radius: 8px; transition: background 0.15s;
 }
-.sidebar-toggle:hover { background: #eff6ff; }
+.sidebar-toggle:hover { background: var(--primary-light); }
 
 /* Show sidebar toggle on ALL screen sizes */
 .sidebar-toggle { display: flex !important; }
@@ -389,10 +391,10 @@ Div.social-strip-track {
   display: flex; align-items: center; justify-content: center;
   color: var(--text);
 }
-.notif-bell-btn:hover { background: #eff6ff; }
+.notif-bell-btn:hover { background: var(--primary-light); }
 .notif-badge {
   position: absolute; top: 0px; right: 0px;
-  background: #ef4444; color: white;
+  background: var(--red); color: white;
   font-size: 0.58rem; font-weight: 800;
   border-radius: 50%; width: 16px; height: 16px;
   display: none; align-items: center; justify-content: center;
@@ -439,11 +441,16 @@ Div.social-strip-track {
 .app-banner-left { flex: 1; min-width: 280px; }
 .app-banner-right { flex-shrink: 0; }
 .app-store-btn {
-  display: flex; align-items: center; gap: 0.8rem;
-  background: #1a1a2e; color: white; padding: 0.7rem 1.4rem;
-  border-radius: 12px; text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: #000000;
+    color: #ffffff;
+    padding: 0.7rem 1.4rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 .app-store-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
 .app-mockup {
@@ -451,9 +458,63 @@ Div.social-strip-track {
   border-radius: 28px; padding: 4px; box-shadow: 0 20px 60px rgba(26,111,232,0.3);
 }
 .app-screen {
-  background: white; border-radius: 24px; padding: 1.8rem 1.5rem;
+  background: var(--card); border-radius: 24px; padding: 1.8rem 1.5rem;
   width: 200px; text-align: center;
 }
+
+/* ══ DARK MODE FIXES — Flatzy Obsidian+Gold theme ══ */
+body.dark-mode .section-title          { color: #F7F3EC !important; }
+body.dark-mode .section-sub            { color: #c8bfa8 !important; }
+
+/* How it works */
+body.dark-mode .how-card               { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .how-title              { color: #F7F3EC !important; }
+body.dark-mode .how-desc               { color: #c8bfa8 !important; }
+
+/* Area cards */
+body.dark-mode .area-card              { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .area-name              { color: #F7F3EC !important; }
+body.dark-mode .area-count             { color: #c8bfa8 !important; }
+
+/* Listing/Property cards */
+body.dark-mode .card-body              { background: #181818 !important; }
+body.dark-mode .card-title             { color: #F7F3EC !important; }
+body.dark-mode .card-location          { color: #c8bfa8 !important; }
+body.dark-mode .card-price             { color: #C9A84C !important; }
+body.dark-mode .card-price span        { color: #c8bfa8 !important; }
+body.dark-mode .card-chip              { background: #1a1a1a !important; border-color: rgba(201,168,76,0.2) !important; color: #F7F3EC !important; }
+body.dark-mode .card-nearby            { background: rgba(201,168,76,0.12) !important; color: #C9A84C !important; }
+
+/* Amenity cards */
+body.dark-mode .amenity-card           { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .amenity-name           { color: #F7F3EC !important; }
+
+/* Testimonials */
+body.dark-mode .testi-card             { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .testi-text             { color: #c8bfa8 !important; }
+body.dark-mode .testi-name             { color: #F7F3EC !important; }
+body.dark-mode .testi-loc              { color: #c8bfa8 !important; }
+
+/* Lifestyle tags */
+body.dark-mode .lifestyle-tag          { background: #181818 !important; border-color: rgba(201,168,76,0.2) !important; color: #F7F3EC !important; }
+
+/* Search box */
+body.dark-mode .search-box             { background: #141414 !important; border-color: rgba(201,168,76,0.2) !important; }
+body.dark-mode .search-field label     { color: #c8bfa8 !important; }
+
+/* Action buttons on cards */
+body.dark-mode .enquire-btn            { background: #1a1a1a !important; color: #C9A84C !important; border-color: rgba(201,168,76,0.35) !important; }
+body.dark-mode .enquire-btn:hover      { background: rgba(201,168,76,0.12) !important; }
+
+/* App section */
+body.dark-mode .app-screen             { background: #181818 !important; }
+
+/* Sidebar */
+body.dark-mode .sidebar                { background: #141414 !important; }
+body.dark-mode .sb-link               { color: #F7F3EC !important; }
+body.dark-mode .sb-link:hover         { background: rgba(201,168,76,0.10) !important; color: #C9A84C !important; }
+body.dark-mode .sb-divider            { background: rgba(201,168,76,0.15) !important; }
+body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
 </style>
 </head>
 <body class="has-bottom-nav">
@@ -503,12 +564,26 @@ Div.social-strip-track {
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
     <div class="sb-divider"></div>
+    <a href="settings.html" class="sb-link">⚙️ Settings</a>
     <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
-    <a href="#" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <!-- Settings Icon -->
+    <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg2);transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </a>
+  </div>
+  <!-- Dark/Light Mode Toggle in sidebar footer -->
+  <div style="padding:0.6rem 1.2rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--muted);" id="sideThemeLabel">☀️ Light Mode</span>
+    <label style="position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;">
+      <input type="checkbox" id="sidebarDarkToggle" onchange="toggleTheme(this.checked)" style="opacity:0;width:0;height:0;">
+      <div id="sideToggleTrack" style="position:absolute;inset:0;background:#d0ddef;border-radius:100px;transition:background 0.3s;"></div>
+      <div id="sideToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+    </label>
   </div>
 </aside>
 
@@ -730,7 +805,7 @@ Div.social-strip-track {
 </div>
 
 <!-- LIFESTYLE TAGS (Zolo-inspired) -->
-<section style="padding:1.5rem 5%;background:white;border-bottom:1.5px solid var(--border);">
+<section style="padding:1.5rem 5%;background:var(--bg);border-bottom:1.5px solid var(--border);">
   <div style="display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center;align-items:center;">
     <span style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-right:0.5rem;">Your Stay, Your Way:</span>
     <div class="lifestyle-tag">⏱️ Short or Long Term</div>
@@ -803,34 +878,34 @@ Div.social-strip-track {
   <div style="margin-top:1.5rem;padding:0 5%;">
     <div style="font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.8rem;">More Areas in Nagpur</div>
     <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-      <span onclick="browseArea('Ambazari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ambazari</span>
-      <span onclick="browseArea('Laxmi Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Laxmi Nagar</span>
-      <span onclick="browseArea('Shankar Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Shankar Nagar</span>
-      <span onclick="browseArea('Ramdaspeth')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ramdaspeth</span>
-      <span onclick="browseArea('Ravi Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ravi Nagar</span>
-      <span onclick="browseArea('Seminary Hills')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Seminary Hills</span>
-      <span onclick="browseArea('Wadi')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Wadi</span>
-      <span onclick="browseArea('Jaitala')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Jaitala</span>
-      <span onclick="browseArea('Rajiv Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Rajiv Nagar</span>
-      <span onclick="browseArea('Khamla')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Khamla</span>
-      <span onclick="browseArea('Sonegaon')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Sonegaon</span>
-      <span onclick="browseArea('Besa')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Besa</span>
-      <span onclick="browseArea('Manewada')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Manewada</span>
-      <span onclick="browseArea('Rameshwari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Rameshwari</span>
-      <span onclick="browseArea('Hudkeshwar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Hudkeshwar</span>
-      <span onclick="browseArea('Nandanvan')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Nandanvan</span>
-      <span onclick="browseArea('Wardhaman Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Wardhaman Nagar</span>
-      <span onclick="browseArea('Jaripatka')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Jaripatka</span>
-      <span onclick="browseArea('Kamptee Road')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Kamptee Road</span>
-      <span onclick="browseArea('Indora')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Indora</span>
-      <span onclick="browseArea('Sadar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Sadar</span>
-      <span onclick="browseArea('Byramji Town')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Byramji Town</span>
-      <span onclick="browseArea('Mahal')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Mahal</span>
-      <span onclick="browseArea('Itwari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Itwari</span>
-      <span onclick="browseArea('Manish Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Manish Nagar</span>
-      <span onclick="browseArea('Khapri')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Khapri</span>
-      <span onclick="browseArea('Pipla')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Pipla</span>
-      <span onclick="browseArea('Kapsi')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Kapsi</span>
+      <span onclick="browseArea('Ambazari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ambazari</span>
+      <span onclick="browseArea('Laxmi Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Laxmi Nagar</span>
+      <span onclick="browseArea('Shankar Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Shankar Nagar</span>
+      <span onclick="browseArea('Ramdaspeth')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ramdaspeth</span>
+      <span onclick="browseArea('Ravi Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Ravi Nagar</span>
+      <span onclick="browseArea('Seminary Hills')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Seminary Hills</span>
+      <span onclick="browseArea('Wadi')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Wadi</span>
+      <span onclick="browseArea('Jaitala')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Jaitala</span>
+      <span onclick="browseArea('Rajiv Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Rajiv Nagar</span>
+      <span onclick="browseArea('Khamla')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Khamla</span>
+      <span onclick="browseArea('Sonegaon')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Sonegaon</span>
+      <span onclick="browseArea('Besa')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Besa</span>
+      <span onclick="browseArea('Manewada')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Manewada</span>
+      <span onclick="browseArea('Rameshwari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Rameshwari</span>
+      <span onclick="browseArea('Hudkeshwar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Hudkeshwar</span>
+      <span onclick="browseArea('Nandanvan')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Nandanvan</span>
+      <span onclick="browseArea('Wardhaman Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Wardhaman Nagar</span>
+      <span onclick="browseArea('Jaripatka')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Jaripatka</span>
+      <span onclick="browseArea('Kamptee Road')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Kamptee Road</span>
+      <span onclick="browseArea('Indora')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Indora</span>
+      <span onclick="browseArea('Sadar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Sadar</span>
+      <span onclick="browseArea('Byramji Town')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Byramji Town</span>
+      <span onclick="browseArea('Mahal')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Mahal</span>
+      <span onclick="browseArea('Itwari')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Itwari</span>
+      <span onclick="browseArea('Manish Nagar')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Manish Nagar</span>
+      <span onclick="browseArea('Khapri')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Khapri</span>
+      <span onclick="browseArea('Pipla')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Pipla</span>
+      <span onclick="browseArea('Kapsi')" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Kapsi</span>
       <span onclick="window.location='rent.html'" style="padding:0.3rem 0.8rem;border-radius:20px;border:1.5px solid var(--primary);background:var(--primary-light);font-size:0.8rem;font-weight:700;color:var(--primary);cursor:pointer;">+ All Areas →</span>
     </div>
   </div>
@@ -846,11 +921,11 @@ Div.social-strip-track {
 </section>
 
 <!-- WHY FLATZY (Nestaway-inspired trust section) -->
-<section style="background:linear-gradient(135deg,#0f172a,#1a2744);padding:4rem 5%;">
+<section style="background: #092143;padding:4rem 5%;">
   <div class="section-header">
-    <div class="section-tag" style="background:rgba(255,255,255,0.1);color:#93c5fd;border-color:rgba(255,255,255,0.2);">Why Flatzy</div>
+    <div class="section-tag" style="background:var(--primary-light);color:var(--primary);border-color:var(--border);">Why Flatzy</div>
     <div class="section-title" style="color:white;">Nagpur Ka Sabse Bharosemand Platform</div>
-    <div class="section-sub" style="color:rgba(255,255,255,0.6);">Nagpur's Most Trusted Property Platform.</div>
+    <div class="section-sub" style="color:var(--muted);">Nagpur's Most Trusted Property Platform.</div>
   </div>
   <div class="why-grid">
     <div class="why-card">
@@ -965,7 +1040,7 @@ Div.social-strip-track {
 </section>
 
 <!-- APP DOWNLOAD (Colive-inspired) -->
-<section style="background:white;">
+<section style="background:var(--bg2);">
   <div class="app-banner">
     <div class="app-banner-left">
       <div class="section-tag" style="margin-bottom:1rem;">📱 Mobile App</div>
@@ -992,7 +1067,7 @@ Div.social-strip-track {
       <div class="app-mockup">
         <div class="app-screen">
           <div style="font-size:2rem;margin-bottom:0.5rem;">🏠</div>
-          <div style="font-weight:800;font-size:0.95rem;color:#1a1a2e;">Flatzy App</div>
+          <div style="font-weight:800;font-size:0.95rem;color:var(--text);">Flatzy App</div>
           <div style="font-size:0.75rem;color:var(--muted);margin:0.3rem 0 1rem;">Nagpur's #1 Property App</div>
         </div>
       </div>
@@ -1147,7 +1222,7 @@ Div.social-strip-track {
 .wa-popup {
   display: none;
   width: 300px;
-  background: white;
+  background: var(--card);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 40px rgba(0,0,0,0.18);
@@ -1186,25 +1261,25 @@ Div.social-strip-track {
 
 /* Body */
 .wa-popup-body {
-  background: #ECE5DD;
+  background: #0c665ceb;
   padding: 1rem;
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 .wa-bubble {
-  background: white;
+  background: var(--card);
   border-radius: 0 10px 10px 10px;
   padding: 0.7rem 0.85rem;
   font-size: 0.83rem;
   line-height: 1.5;
-  color: #1a1a2e;
+  color: var(--text);
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   margin-bottom: 0.85rem;
 }
 .wa-options { display: flex; flex-direction: column; gap: 0.45rem; }
 .wa-option {
-  background: white;
+  background: var(--card);
   border: 1.5px solid #25D366;
-  color: #075E54;
+  color: var(--text);
   border-radius: 20px;
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
@@ -1265,7 +1340,7 @@ setTimeout(function() {
 }
 .schedule-btn {
   flex: 1;
-  background: #1a6fe8;
+  background: var(--primary);
   color: white;
   border: none;
   padding: 0.55rem 0.5rem;
@@ -1275,11 +1350,11 @@ setTimeout(function() {
   cursor: pointer;
   transition: background 0.2s;
 }
-.schedule-btn:hover { background: #1558c0; }
+.schedule-btn:hover { background: var(--primary-dark); }
 .enquire-btn {
   flex: 1;
-  background: white;
-  color: #1a6fe8;
+  background: var(--card);
+  color: var(--primary);
   border: 1.5px solid #1a6fe8;
   padding: 0.55rem 0.5rem;
   border-radius: 8px;
@@ -1288,7 +1363,7 @@ setTimeout(function() {
   cursor: pointer;
   transition: all 0.2s;
 }
-.enquire-btn:hover { background: #e8f0fd; }
+.enquire-btn:hover { background: var(--primary-light); }
 </style>
 
 <script type="module">
@@ -1727,6 +1802,33 @@ window.closeAd = function() {
     };
   }
 })();
+</script>
+
+<script>
+// ── Theme Toggle ───────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  // sync sidebar toggle
+  const tog = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if(thumb) thumb.style.transform = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if(label) label.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
 </script>
 
 </body>

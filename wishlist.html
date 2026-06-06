@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Saved Properties – Flatzy Nagpur</title>
   <link rel="icon" type="image/png" href="favicon.jpeg">
-  <link rel="stylesheet" href="style.css">
+  <link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+    <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    body { background: var(--dark2); }
+    body { background: var(--bg); }
 
     .wl-header {
       background: linear-gradient(120deg, #e11d48 0%, #be185d 100%);
@@ -33,7 +34,7 @@
     }
 
     .wl-card {
-      background: white; border: 1.5px solid var(--border);
+      background: var(--card); border: 1.5px solid var(--border);
       border-radius: 16px; overflow: hidden;
       box-shadow: var(--shadow-sm); cursor: pointer;
       transition: all 0.2s;
@@ -42,7 +43,7 @@
 
     .wl-card-img {
       position: relative; height: 190px;
-      background: #1a1a2e; overflow: hidden;
+      background: var(--bg2); overflow: hidden;
     }
     .wl-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .wl-card-img .placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
@@ -66,7 +67,7 @@
     }
     .wl-card-type {
       position: absolute; top: 8px; left: 8px;
-      background: white; color: var(--text);
+      background: var(--card); color: var(--text);
       font-size: 0.7rem; font-weight: 700;
       padding: 3px 10px; border-radius: 20px;
     }
@@ -81,7 +82,7 @@
     .wl-card-loc { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; }
     .wl-card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
     .wl-card-tag {
-      font-size: 0.7rem; background: #f0f9ff; color: #0891b2;
+      font-size: 0.7rem; background: var(--primary-light); color: #0891b2;
       border-radius: 6px; padding: 3px 8px; font-weight: 600;
     }
     .wl-card-footer { display: flex; align-items: center; justify-content: space-between; }
@@ -97,7 +98,7 @@
     /* Empty state */
     .wl-empty {
       text-align: center; padding: 4rem 2rem;
-      background: white; border-radius: 16px;
+      background: var(--card); border-radius: 16px;
       border: 1.5px solid var(--border);
     }
     .wl-empty .icon { font-size: 3.5rem; margin-bottom: 1rem; }
@@ -120,22 +121,22 @@
     .wl-clear-btn:hover { background: #e11d48; color: white; }
 
     /* Sidebar same styles */
-    .sidebar-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.25s; }
+    .sidebar-overlay { position:fixed;inset:0;background: var(--modal-overlay);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.25s; }
     .sidebar-overlay.show { opacity:1;pointer-events:all; }
-    .sidebar { position:fixed;top:0;left:0;height:100%;width:280px;background:white;z-index:1000;transform:translateX(-100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.12); }
+    .sidebar { position:fixed;top:0;left:0;height:100%;width:280px;background: var(--sidebar-bg);z-index:1000;transform:translateX(-100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.12); }
     .sidebar.open { transform:translateX(0); }
     .sidebar-header { display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1rem 1rem;border-bottom:1px solid #e2e8f0; }
-    .sidebar-logo { font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#1a6fe8; }
-    .sidebar-logo span { color:#93c5fd; }
-    .sidebar-close { background:none;border:none;font-size:1.2rem;cursor:pointer;color:#64748b;padding:0.3rem;border-radius:6px; }
+    .sidebar-logo { font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--primary); }
+    .sidebar-logo span { color: var(--sidebar-logo-span); }
+    .sidebar-close { background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);padding:0.3rem;border-radius:6px; }
     .sidebar-nav { display:flex;flex-direction:column;padding:0.8rem 0.8rem 0;flex:1; }
-    .sb-link { display:flex;align-items:center;gap:0.7rem;padding:0.75rem 1rem;border-radius:10px;text-decoration:none;color:#1e293b;font-size:0.95rem;font-weight:500;transition:background 0.15s,color 0.15s; }
-    .sb-link:hover, .sb-link.active { background:#eff6ff;color:#1a6fe8; }
-    .sb-divider { height:1px;background:#e2e8f0;margin:0.5rem 0; }
+    .sb-link { display:flex;align-items:center;gap:0.7rem;padding:0.75rem 1rem;border-radius:10px;text-decoration:none;color: var(--text);font-size:0.95rem;font-weight:500;transition:background 0.15s,color 0.15s; }
+    .sb-link:hover, .sb-link.active { background: var(--primary-light);color: var(--primary); }
+    .sb-divider { height:1px;background: var(--border);margin:0.5rem 0; }
     .sb-wish-badge { margin-left:auto;background:#e11d48;color:white;font-size:0.65rem;font-weight:800;border-radius:50%;width:18px;height:18px;display:none;align-items:center;justify-content:center; }
     .sb-wish-badge.show { display:flex; }
     .sidebar-social { display:flex;gap:0.8rem;padding:1rem 1.2rem 1.5rem;border-top:1px solid #e2e8f0;margin-top:auto; }
-    .sidebar-social a { display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f1f5f9;transition:background 0.2s; }
+    .sidebar-social a { display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background: var(--bg2);transition:background 0.2s; }
     .sidebar-toggle { display:flex!important;align-items:center;justify-content:center;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);padding:0.3rem 0.5rem;border-radius:8px; }
 
     /* Toast */
@@ -149,6 +150,7 @@
 <div class="toast" id="toast"></div>
 
 <!-- Sidebar -->
+<!-- SIDEBAR OVERLAY -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
@@ -156,9 +158,9 @@
     <button class="sidebar-close" onclick="closeSidebar()">✕</button>
   </div>
   <nav class="sidebar-nav">
-    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="index.html" class="sb-link active">🏠 Home</a>
     <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
-    <a href="wishlist.html" class="sb-link active" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="wishlist.html" class="sb-link" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
     <a href="owner.html" class="sb-link">📋 List Property</a>
     <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
     <a href="about.html" class="sb-link">ℹ️ About Us</a>
@@ -170,12 +172,26 @@
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
     <div class="sb-divider"></div>
+    <a href="settings.html" class="sb-link">⚙️ Settings</a>
     <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
-    <a href="#" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <!-- Settings Icon -->
+    <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#1a1a2e;transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </a>
+  </div>
+  <!-- Dark/Light Mode Toggle in sidebar footer -->
+  <div style="padding:0.6rem 1.2rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--muted);" id="sideThemeLabel">☀️ Light Mode</span>
+    <label style="position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;">
+      <input type="checkbox" id="sidebarDarkToggle" onchange="toggleTheme(this.checked)" style="opacity:0;width:0;height:0;">
+      <div id="sideToggleTrack" style="position:absolute;inset:0;background:#d0ddef;border-radius:100px;transition:background 0.3s;"></div>
+      <div id="sideToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+    </label>
   </div>
 </aside>
 
@@ -335,5 +351,31 @@ render();
 </script>
 <script src="config.js"></script>
 <script type="module" src="user-tracker.js"></script>
+<script>
+// ── Theme Toggle ───────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  // sync sidebar toggle
+  const tog = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if(thumb) thumb.style.transform = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if(label) label.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account – Flatzy Nagpur</title>
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<style>
+/* ── SETTINGS PAGE STYLES ─────────────────────────────── */
+:root {
+  --nav-h: 64px;
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+}
+
+/* Reuse nav from main css, add page-specific */
+body { min-height: 100vh; }
+
+.settings-wrap {
+  display: flex;
+  min-height: calc(100vh - var(--nav-h));
+  margin-top: var(--nav-h);
+  background: var(--bg2);
+}
+
+/* ── LEFT SIDEBAR ── */
+.acc-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg);
+  border-right: 1.5px solid var(--border);
+  padding: 2rem 0 2rem;
+  position: sticky;
+  top: var(--nav-h);
+  height: calc(100vh - var(--nav-h));
+  overflow-y: auto;
+}
+@media(max-width:768px){ .acc-sidebar { display:none; } }
+
+.acc-profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.8rem;
+}
+.acc-avatar {
+  width: 48px; height: 48px;
+  background: var(--grad-primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem; font-weight: 800; color: white;
+  flex-shrink: 0;
+}
+.acc-name-mini { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.acc-edit-link { font-size: 0.78rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+.acc-edit-link:hover { text-decoration: underline; }
+
+.acc-nav-section { padding: 0.3rem 0.8rem; margin-bottom: 0.2rem; }
+.acc-nav-label { font-size: 0.68rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; padding: 0.5rem 0.4rem 0.3rem; }
+.acc-nav-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.6rem 0.8rem; border-radius: 10px;
+  text-decoration: none; color: var(--text);
+  font-size: 0.88rem; font-weight: 500;
+  transition: all 0.15s; cursor: pointer;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.acc-nav-link:hover { background: var(--primary-light); color: var(--primary); }
+.acc-nav-link.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+.acc-nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+/* ── MAIN CONTENT ── */
+.acc-main {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  min-width: 0;
+}
+@media(max-width:768px){ .acc-main { padding: 1rem; } }
+
+.acc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.acc-page-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.acc-page-sub { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+
+/* ── OVERVIEW CARDS GRID ── */
+.acc-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+.acc-card {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.6rem 1.2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  display: flex; flex-direction: column; align-items: center;
+}
+.acc-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.acc-card-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+.acc-card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--text); margin-bottom: 0.3rem; }
+.acc-card-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+/* ── SECTION PANEL ── */
+.acc-panel {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.acc-panel-title {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 1rem; color: var(--text);
+  margin-bottom: 1.2rem; padding-bottom: 0.8rem;
+  border-bottom: 1.5px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
+/* ── PROFILE DETAILS ── */
+.profile-field-row {
+  display: flex; align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.profile-field-row:last-child { border-bottom: none; }
+.profile-field-label {
+  width: 160px; flex-shrink: 0;
+  font-size: 0.85rem; color: var(--muted); font-weight: 500;
+}
+.profile-field-val {
+  flex: 1; font-size: 0.9rem; color: var(--text); font-weight: 600;
+}
+.profile-field-empty { color: var(--muted); font-style: italic; font-weight: 400; }
+
+/* ── EDIT FORM ── */
+.edit-form-grid {
+  display: grid;
+  gap: 1rem;
+}
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.form-input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.gender-row { display: flex; gap: 0.8rem; }
+.gender-btn {
+  flex: 1; padding: 0.7rem; border-radius: var(--r-sm);
+  border: 1.5px solid var(--border); background: var(--bg2);
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  cursor: pointer; color: var(--text); transition: all 0.15s;
+}
+.gender-btn.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); font-weight: 700; }
+.phone-row { display: flex; gap: 0; }
+.phone-code {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-right: none; padding: 0.75rem 0.9rem;
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  font-size: 0.9rem; color: var(--muted); font-weight: 600;
+  display: flex; align-items: center; white-space: nowrap;
+}
+.phone-row .form-input { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+
+/* ── SAVE BTN ── */
+.save-btn {
+  width: 100%; padding: 0.85rem;
+  background: var(--grad-primary);
+  color: white; border: none; border-radius: var(--r-sm);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 1rem; cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(26,111,232,0.28);
+  margin-top: 0.5rem;
+}
+.save-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+
+/* ── DARK MODE TOGGLE PANEL ── */
+.theme-toggle-wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 0;
+}
+.theme-label { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.theme-sublabel { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.toggle-switch {
+  position: relative; width: 52px; height: 28px; cursor: pointer;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0;
+  background: var(--border);
+  border-radius: 100px;
+  transition: background 0.3s;
+}
+.toggle-switch input:checked + .toggle-track { background: var(--primary); }
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 22px; height: 22px;
+  background: var(--card); border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.toggle-switch input:checked ~ .toggle-thumb { transform: translateX(24px); }
+
+/* ── LOGOUT BTN ── */
+.logout-btn {
+  width: 100%; padding: 0.8rem;
+  background: transparent;
+  color: var(--red, #ef4444);
+  border: 1.5px solid var(--red, #ef4444);
+  border-radius: var(--r-sm);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 0.95rem; cursor: pointer;
+  transition: all 0.2s; margin-top: 0.5rem;
+}
+.logout-btn:hover { background: rgba(239,68,68,0.08); }
+
+/* ── MOBILE PROFILE BAR ── */
+.mobile-acc-bar {
+  display: none;
+  background: var(--grad-primary);
+  padding: 1.2rem 1rem 1rem;
+  align-items: center; gap: 0.9rem;
+  margin-bottom: 1rem; border-radius: var(--r-md);
+}
+@media(max-width:768px){ .mobile-acc-bar { display: flex; } }
+.mobile-acc-avatar {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 800; color: white;
+  font-family: 'Syne', sans-serif; border: 2px solid rgba(255,255,255,0.5);
+}
+.mobile-acc-name { font-weight: 800; font-size: 1rem; color: white; }
+.mobile-acc-sub { font-size: 0.78rem; color: rgba(255,255,255,0.75); }
+
+/* ── MOBILE TABS ── */
+.mobile-tabs {
+  display: none;
+  gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+@media(max-width:768px){ .mobile-tabs { display: flex; } }
+.mob-tab {
+  flex-shrink: 0; padding: 0.5rem 1rem;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 100px; font-size: 0.82rem; font-weight: 600;
+  color: var(--muted); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.mob-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+/* ── NAV (reusing from main) ── */
+nav.topnav {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--nav-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4%; height: var(--nav-h);
+  box-shadow: 0 1px 0 var(--nav-border), 0 4px 24px rgba(0,0,0,0.05);
+}
+nav.topnav::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: var(--nav-shimmer);
+  background-size: 200% 100%;
+  animation: navLineShimmer 3s linear infinite;
+}
+@keyframes navLineShimmer {
+  0%{ background-position:200% center; } 100%{ background-position:-200% center; }
+}
+.logo {
+  font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800;
+  color: var(--primary); letter-spacing: -1px; text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.logo span { color: var(--text); }
+.nav-btn {
+  background: var(--grad-primary); color: white; border: none;
+  padding: 0.48rem 1.1rem; border-radius: var(--r-sm);
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  font-size: 0.85rem; text-decoration: none; cursor: pointer;
+  display: inline-flex; align-items: center; transition: all 0.2s;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 0.4rem;
+  color: var(--muted); text-decoration: none;
+  font-size: 0.88rem; font-weight: 600;
+  transition: color 0.15s; padding: 0.4rem 0.6rem;
+  border-radius: var(--r-sm); border: 1.5px solid var(--border);
+  background: var(--bg);
+}
+.back-btn:hover { color: var(--primary); border-color: var(--primary); }
+
+/* active section toggle */
+.acc-section { display: none; }
+.acc-section.active { display: block; }
+</style>
+</head>
+<body>
+<script>(function(){if(localStorage.getItem('flatzy_theme')==='dark')document.body.classList.add('dark-mode');})();</script>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy" style="height:38px;width:auto;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <div style="display:flex;align-items:center;gap:0.8rem;">
+    <a href="index.html" class="back-btn">← Back to Home</a>
+  </div>
+</nav>
+
+<!-- MAIN WRAP -->
+<div class="settings-wrap">
+
+  <!-- LEFT SIDEBAR (desktop) -->
+  <aside class="acc-sidebar">
+    <div class="acc-profile-mini">
+      <div class="acc-avatar" id="sideAvatarLetter">R</div>
+      <div>
+        <div class="acc-name-mini" id="sideUserName">Ritesh G.</div>
+        <a href="#" class="acc-edit-link" onclick="showSection('profile-edit')">View &amp; Edit Profile</a>
+      </div>
+    </div>
+
+    <!-- Account -->
+    <div class="acc-nav-section">
+      <div class="acc-nav-label">Account</div>
+      <button class="acc-nav-link active" onclick="showSection('overview')" id="nav-overview">
+        <span class="acc-nav-icon">🏠</span> Overview
+      </button>
+      <button class="acc-nav-link" onclick="showSection('profile')" id="nav-profile">
+        <span class="acc-nav-icon">👤</span> Profile Details
+      </button>
+      <button class="acc-nav-link" onclick="showSection('profile-edit')" id="nav-profile-edit">
+        <span class="acc-nav-icon">✏️</span> Edit Profile
+      </button>
+      <button class="acc-nav-link" onclick="showSection('saved')" id="nav-saved">
+        <span class="acc-nav-icon">❤️</span> Saved Properties
+      </button>
+    </div>
+
+    <!-- Settings -->
+    <div class="acc-nav-section">
+      <div class="acc-nav-label">Settings</div>
+      <button class="acc-nav-link" onclick="showSection('appearance')" id="nav-appearance">
+        <span class="acc-nav-icon">🎨</span> Appearance
+      </button>
+      <button class="acc-nav-link" onclick="showSection('notifications')" id="nav-notifications">
+        <span class="acc-nav-icon">🔔</span> Notifications
+      </button>
+    </div>
+
+    <!-- Legal -->
+    <div class="acc-nav-section">
+      <div class="acc-nav-label">Legal</div>
+      <a class="acc-nav-link" href="legal.html?tab=terms">
+        <span class="acc-nav-icon">📄</span> Terms &amp; Conditions
+      </a>
+      <a class="acc-nav-link" href="legal.html?tab=policy">
+        <span class="acc-nav-icon">🔒</span> Privacy Policy
+      </a>
+    </div>
+
+    <div style="padding:0.5rem 1.2rem;margin-top:auto;">
+      <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="acc-main">
+
+    <!-- Mobile profile bar -->
+    <div class="mobile-acc-bar">
+      <div class="mobile-acc-avatar" id="mobileAvatarLetter">R</div>
+      <div>
+        <div class="mobile-acc-name" id="mobileUserName">Ritesh G.</div>
+        <div class="mobile-acc-sub">Flatzy Member</div>
+      </div>
+    </div>
+
+    <!-- Mobile tabs -->
+    <div class="mobile-tabs">
+      <button class="mob-tab active" onclick="showSection('overview',this)">Overview</button>
+      <button class="mob-tab" onclick="showSection('profile',this)">Profile</button>
+      <button class="mob-tab" onclick="showSection('profile-edit',this)">Edit</button>
+      <button class="mob-tab" onclick="showSection('saved',this)">Saved</button>
+      <button class="mob-tab" onclick="showSection('appearance',this)">Appearance</button>
+    </div>
+
+    <!-- ══ OVERVIEW ══ -->
+    <div id="sec-overview" class="acc-section active">
+      <div class="acc-header">
+        <div>
+          <div class="acc-page-title">Account Overview</div>
+          <div class="acc-page-sub">Manage your Flatzy profile and preferences</div>
+        </div>
+      </div>
+      <div class="acc-overview-grid">
+        <div class="acc-card" onclick="showSection('saved')">
+          <div class="acc-card-icon">❤️</div>
+          <div class="acc-card-title">Saved Properties</div>
+          <div class="acc-card-desc">Your wishlist of favourite flats &amp; PGs</div>
+        </div>
+        <div class="acc-card" onclick="window.location='owner.html'">
+          <div class="acc-card-icon">📋</div>
+          <div class="acc-card-title">My Listings</div>
+          <div class="acc-card-desc">Properties you have listed on Flatzy</div>
+        </div>
+        <div class="acc-card" onclick="showSection('profile')">
+          <div class="acc-card-icon">👤</div>
+          <div class="acc-card-title">Profile Details</div>
+          <div class="acc-card-desc">View your personal information</div>
+        </div>
+        <div class="acc-card" onclick="showSection('profile-edit')">
+          <div class="acc-card-icon">✏️</div>
+          <div class="acc-card-title">Edit Profile</div>
+          <div class="acc-card-desc">Update your name, email, and more</div>
+        </div>
+        <div class="acc-card" onclick="showSection('appearance')">
+          <div class="acc-card-icon">🎨</div>
+          <div class="acc-card-title">Appearance</div>
+          <div class="acc-card-desc">Switch between Light &amp; Dark mode</div>
+        </div>
+        <div class="acc-card" onclick="window.location='refer.html'">
+          <div class="acc-card-icon">🎁</div>
+          <div class="acc-card-title">Refer &amp; Earn</div>
+          <div class="acc-card-desc">Invite friends and earn rewards</div>
+        </div>
+        <div class="acc-card" onclick="showSection('notifications')">
+          <div class="acc-card-icon">🔔</div>
+          <div class="acc-card-title">Notifications</div>
+          <div class="acc-card-desc">Manage your notification preferences</div>
+        </div>
+        <div class="acc-card" onclick="doLogout()" style="border-color:#fecaca;">
+          <div class="acc-card-icon">🚪</div>
+          <div class="acc-card-title" style="color:#ef4444;">Logout</div>
+          <div class="acc-card-desc">Sign out of your Flatzy account</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROFILE DETAILS ══ -->
+    <div id="sec-profile" class="acc-section">
+      <div class="acc-header">
+        <div>
+          <div class="acc-page-title">Profile Details</div>
+          <div class="acc-page-sub">Your personal information</div>
+        </div>
+        <button class="save-btn" style="width:auto;padding:0.55rem 1.4rem;font-size:0.88rem;" onclick="showSection('profile-edit')">✏️ Edit</button>
+      </div>
+      <div class="acc-panel">
+        <div class="acc-panel-title">👤 Personal Information</div>
+        <div class="profile-field-row">
+          <div class="profile-field-label">Full Name</div>
+          <div class="profile-field-val" id="disp-name">—</div>
+        </div>
+        <div class="profile-field-row">
+          <div class="profile-field-label">Mobile Number</div>
+          <div class="profile-field-val" id="disp-phone">—</div>
+        </div>
+        <div class="profile-field-row">
+          <div class="profile-field-label">Email ID</div>
+          <div class="profile-field-val" id="disp-email"><span class="profile-field-empty">– not added –</span></div>
+        </div>
+        <div class="profile-field-row">
+          <div class="profile-field-label">Gender</div>
+          <div class="profile-field-val" id="disp-gender"><span class="profile-field-empty">– not added –</span></div>
+        </div>
+        <div class="profile-field-row">
+          <div class="profile-field-label">Date of Birth</div>
+          <div class="profile-field-val" id="disp-dob"><span class="profile-field-empty">– not added –</span></div>
+        </div>
+        <div class="profile-field-row">
+          <div class="profile-field-label">Location</div>
+          <div class="profile-field-val" id="disp-location"><span class="profile-field-empty">– not added –</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EDIT PROFILE ══ -->
+    <div id="sec-profile-edit" class="acc-section">
+      <div class="acc-header">
+        <div>
+          <div class="acc-page-title">Edit Profile</div>
+          <div class="acc-page-sub">Update your personal information</div>
+        </div>
+      </div>
+      <div class="acc-panel">
+        <div class="acc-panel-title">✏️ Edit Details</div>
+        <div class="edit-form-grid">
+          <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <div class="phone-row">
+              <div class="phone-code">🇮🇳 +91</div>
+              <input id="inp-phone" class="form-input" type="tel" placeholder="10-digit mobile number" maxlength="10">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email ID</label>
+            <input id="inp-email" class="form-input" type="email" placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input id="inp-name" class="form-input" type="text" placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <div class="gender-row">
+              <button class="gender-btn" id="gMale" onclick="selectGender('Male')">♂ Male</button>
+              <button class="gender-btn" id="gFemale" onclick="selectGender('Female')">♀ Female</button>
+              <button class="gender-btn" id="gOther" onclick="selectGender('Other')">⚧ Other</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input id="inp-dob" class="form-input" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location / City</label>
+            <input id="inp-location" class="form-input" type="text" placeholder="e.g. Nagpur, Maharashtra">
+          </div>
+          <button class="save-btn" onclick="saveProfile()">💾 Save Details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SAVED PROPERTIES ══ -->
+    <div id="sec-saved" class="acc-section">
+      <div class="acc-header">
+        <div>
+          <div class="acc-page-title">Saved Properties</div>
+          <div class="acc-page-sub">Properties you've added to wishlist</div>
+        </div>
+      </div>
+      <div class="acc-panel" id="savedPropsWrap">
+        <div style="text-align:center;padding:3rem 1rem;color:var(--muted);">
+          <div style="font-size:3rem;margin-bottom:1rem;">❤️</div>
+          <div style="font-weight:700;margin-bottom:0.5rem;">No saved properties yet</div>
+          <div style="font-size:0.85rem;margin-bottom:1.5rem;">Browse properties and tap ❤️ to save them here</div>
+          <a href="rent.html" class="save-btn" style="text-decoration:none;display:inline-block;padding:0.7rem 1.6rem;width:auto;">🔍 Browse Properties</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ APPEARANCE ══ -->
+    <div id="sec-appearance" class="acc-section">
+      <div class="acc-header">
+        <div>
+          <div class="acc-page-title">Appearance</div>
+          <div class="acc-page-sub">Customize how Flatzy looks</div>
+        </div>
+      </div>
+      <div class="acc-panel">
+        <div class="acc-panel-title">🎨 Theme Settings</div>
+        <div class="theme-toggle-wrap">
+          <div>
+            <div class="theme-label" id="themeLabel">☀️ Light Mode</div>
+            <div class="theme-sublabel">Switch to dark mode for a better night experience</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="darkToggle" onchange="toggleTheme(this.checked)">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div style="margin-top:1.5rem;padding:1rem;background:var(--bg2);border-radius:var(--r-md);border:1.5px solid var(--border);">
+          <div style="font-size:0.85rem;color:var(--muted);font-weight:600;">💡 Theme preview</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:0.3rem;">Changes apply instantly across Flatzy. Your preference is saved automatically.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NOTIFICATIONS ══ -->
+    <div id="sec-notifications" class="acc-section">
+      <div class="acc-header">
+        <div>
+          <div class="acc-page-title">Notifications</div>
+          <div class="acc-page-sub">Manage what updates you receive</div>
+        </div>
+      </div>
+      <div class="acc-panel">
+        <div class="acc-panel-title">🔔 Notification Preferences</div>
+        <div class="theme-toggle-wrap" style="padding:0.8rem 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div class="theme-label">New Property Alerts</div>
+            <div class="theme-sublabel">Get notified when new listings match your search</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="theme-toggle-wrap" style="padding:0.8rem 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div class="theme-label">WhatsApp Updates</div>
+            <div class="theme-sublabel">Receive property updates via WhatsApp</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="theme-toggle-wrap" style="padding:0.8rem 0;">
+          <div>
+            <div class="theme-label">Promotional Offers</div>
+            <div class="theme-sublabel">Deals, discounts and refer &amp; earn updates</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Theme ──────────────────────────────────────────────
+const savedTheme = localStorage.getItem('flatzy_theme') || 'light';
+applyTheme(savedTheme);
+
+function applyTheme(mode) {
+  const link = document.getElementById('theme-css');
+  link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  document.body.classList.toggle('dark-mode', mode === 'dark');
+  const tog = document.getElementById('darkToggle');
+  const lbl = document.getElementById('themeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(lbl) lbl.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+
+// ── Section nav ────────────────────────────────────────
+function showSection(id, mobileTabEl) {
+  document.querySelectorAll('.acc-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.acc-nav-link').forEach(l => l.classList.remove('active'));
+  const sec = document.getElementById('sec-' + id);
+  if(sec) sec.classList.add('active');
+  const navLink = document.getElementById('nav-' + id);
+  if(navLink) navLink.classList.add('active');
+  // mobile tabs
+  if(mobileTabEl) {
+    document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+    mobileTabEl.classList.add('active');
+  }
+  window.scrollTo(0,0);
+}
+
+// ── Profile ─────────────────────────────────────────────
+let profile = JSON.parse(localStorage.getItem('flatzy_profile') || '{}');
+
+function loadProfile() {
+  // Try firebase user first
+  const name = profile.name || (window.flatzyUser && window.flatzyUser.displayName) || 'User';
+  const phone = profile.phone || '';
+  const email = profile.email || (window.flatzyUser && window.flatzyUser.email) || '';
+  const gender = profile.gender || '';
+  const dob = profile.dob || '';
+  const location = profile.location || '';
+
+  // Set sidebar/mobile initials
+  const initial = name.charAt(0).toUpperCase();
+  ['sideAvatarLetter','mobileAvatarLetter'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = initial;
+  });
+  ['sideUserName','mobileUserName'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = name.length > 12 ? name.split(' ')[0] : name;
+  });
+
+  // Display fields
+  setDisp('disp-name', name);
+  setDisp('disp-phone', phone ? '+91 ' + phone : null);
+  setDisp('disp-email', email);
+  setDisp('disp-gender', gender);
+  setDisp('disp-dob', dob);
+  setDisp('disp-location', location);
+
+  // Form inputs
+  document.getElementById('inp-name').value = name !== 'User' ? name : '';
+  document.getElementById('inp-phone').value = phone;
+  document.getElementById('inp-email').value = email;
+  document.getElementById('inp-dob').value = dob;
+  document.getElementById('inp-location').value = location;
+  if(gender) selectGender(gender, true);
+}
+
+function setDisp(id, val) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(val) { el.textContent = val; el.style.color = ''; }
+  else { el.innerHTML = '<span class="profile-field-empty">– not added –</span>'; }
+}
+
+let selectedGender = '';
+function selectGender(g, silent) {
+  selectedGender = g;
+  ['Male','Female','Other'].forEach(x => {
+    const btn = document.getElementById('g'+x);
+    if(btn) btn.classList.toggle('selected', x === g);
+  });
+}
+
+function saveProfile() {
+  profile.name     = document.getElementById('inp-name').value.trim();
+  profile.phone    = document.getElementById('inp-phone').value.trim();
+  profile.email    = document.getElementById('inp-email').value.trim();
+  profile.gender   = selectedGender;
+  profile.dob      = document.getElementById('inp-dob').value;
+  profile.location = document.getElementById('inp-location').value.trim();
+  localStorage.setItem('flatzy_profile', JSON.stringify(profile));
+  loadProfile();
+  showSection('profile');
+  // show toast if available
+  if(window.showToast) showToast('✅ Profile saved!');
+  else alert('Profile saved!');
+}
+
+// ── Saved properties ───────────────────────────────────
+function loadSaved() {
+  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+  const wrap = document.getElementById('savedPropsWrap');
+  if(!wrap) return;
+  if(!wl.length) return; // keep empty state
+  wrap.innerHTML = wl.map(p => `
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 0;border-bottom:1px solid var(--border);">
+      <div style="width:56px;height:56px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🏠</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title || 'Property'}</div>
+        <div style="font-size:0.78rem;color:var(--muted);">${p.area || ''} • ₹${p.rent || '—'}/mo</div>
+      </div>
+      <a href="rent.html" style="flex-shrink:0;font-size:0.8rem;color:var(--primary);font-weight:700;text-decoration:none;">View →</a>
+    </div>
+  `).join('');
+}
+
+// ── Logout ─────────────────────────────────────────────
+function doLogout() {
+  if(confirm('Logout from Flatzy?')) {
+    localStorage.removeItem('flatzy_user');
+    localStorage.removeItem('flatzy_profile');
+    window.location = 'index.html';
+  }
+}
+
+// ── Init ───────────────────────────────────────────────
+loadProfile();
+loadSaved();
+
+// Handle URL hash navigation
+const hash = location.hash.replace('#','');
+if(hash) showSection(hash);
+</script>
+</body>
+</html>

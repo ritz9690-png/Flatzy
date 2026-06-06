@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edit Property – Flatzy</title>
 <link rel="icon" type="image/png" href="favicon.jpeg">
-<link rel="stylesheet" href="style.css">
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+    <link rel="stylesheet" href="style.css">
 <style>
-body { background: var(--dark2); padding-bottom: 80px; }
+body { background: var(--bg2); padding-bottom: 80px; }
 
 /* ── PAGE HEADER ── */
 .edit-header {
@@ -31,7 +32,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
 /* ── EDIT CONTENT ── */
 .edit-content { padding: 2rem 5%; }
 .edit-card {
-  background: white; border: 1.5px solid var(--border);
+  background: var(--card); border: 1.5px solid var(--border);
   border-radius: 18px; padding: 2rem; box-shadow: var(--shadow-sm);
   max-width: 720px; margin: 0 auto;
 }
@@ -49,7 +50,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
 .amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 .amenity-item {
   display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.55rem 0.8rem; background: var(--dark2);
+  padding: 0.55rem 0.8rem; background: var(--bg2);
   border: 1.5px solid var(--border); border-radius: 8px;
   cursor: pointer; font-size: 0.82rem; color: var(--muted);
   transition: all 0.15s; user-select: none; font-weight: 500;
@@ -70,7 +71,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
 .photo-drop {
   border: 2px dashed var(--border); border-radius: 12px;
   padding: 1.5rem; text-align: center; cursor: pointer;
-  transition: all 0.2s; background: var(--dark2); margin-top: 0.8rem;
+  transition: all 0.2s; background: var(--bg2); margin-top: 0.8rem;
 }
 .photo-drop:hover { border-color: var(--primary); background: var(--primary-light); }
 .photo-drop-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
@@ -85,7 +86,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
 .photo-remove {
   position: absolute; top: -6px; right: -6px;
   width: 20px; height: 20px; border-radius: 50%;
-  background: #ef4444; color: white; border: none;
+  background: var(--red); color: white; border: none;
   font-size: 0.65rem; cursor: pointer; display: flex;
   align-items: center; justify-content: center; font-weight: 800;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
@@ -100,7 +101,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
 /* ── SAVE BTN ── */
 .save-bar {
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: white; border-top: 1.5px solid var(--border);
+  background: var(--card); border-top: 1.5px solid var(--border);
   padding: 1rem 5%; display: flex; gap: 1rem;
   z-index: 500; box-shadow: 0 -4px 20px rgba(26,111,232,0.1);
 }
@@ -114,7 +115,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
 .save-btn:hover { background: var(--primary-dark); }
 .save-btn:disabled { background: var(--muted); box-shadow: none; cursor: not-allowed; }
 .cancel-btn {
-  background: var(--dark2); color: var(--text);
+  background: var(--bg2); color: var(--text);
   border: 1.5px solid var(--border); padding: 0.85rem 1.5rem;
   border-radius: 12px; font-family: 'Syne', sans-serif;
   font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
@@ -137,6 +138,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
 </style>
 </head>
 <body>
+<script>(function(){if(localStorage.getItem('flatzy_theme')==='dark')document.body.classList.add('dark-mode');})();</script>
 
 <!-- NAV -->
 <nav class="topnav">
@@ -200,7 +202,7 @@ body { background: var(--dark2); padding-bottom: 80px; }
               style="width:100%;padding:0.55rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:inherit;outline:none;box-sizing:border-box;"
               oninput="filterAreaList(this.value)" onfocus="showAreaList()" onblur="hideAreaListDelayed()">
             <input type="hidden" id="eArea">
-            <div id="eAreaDropdown" style="display:none;position:absolute;z-index:999;background:white;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);max-height:220px;overflow-y:auto;width:100%;left:0;top:calc(100% + 4px);"></div>
+            <div id="eAreaDropdown" style="display:none;position:absolute;z-index:999;background: var(--card);border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);max-height:220px;overflow-y:auto;width:100%;left:0;top:calc(100% + 4px);"></div>
           </div>
         </div>
         <div class="form-group">
@@ -738,5 +740,39 @@ window.lockLocation = function() {
 <script src="config.js"></script>
 <script type="module" src="user-tracker.js"></script>
 
+<script>
+(function(){
+  const m = localStorage.getItem('flatzy_theme') || 'light';
+  const l = document.getElementById('theme-css');
+  if(l) l.href = m === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+})();
+</script>
+<script>
+// ── Theme Toggle ───────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  document.body.classList.toggle('dark-mode', mode === 'dark');
+  // sync sidebar toggle
+  const tog = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if(thumb) thumb.style.transform = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if(label) label.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+</script>
 </body>
 </html>

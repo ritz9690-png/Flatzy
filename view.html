@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Property Details – Flatzy Nagpur</title>
 <link rel="icon" type="image/png" href="favicon.jpeg">
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
 <link rel="stylesheet" href="style.css">
 <style>
-body { background: var(--dark2); }
+body { background: var(--bg); }
 
 /* ══ NEARBY LANDMARKS ══ */
 .nearby-section { padding: 0 1rem; margin-top: 1.2rem; }
@@ -569,9 +570,63 @@ body { background: var(--dark2); }
   border-radius: 8px; transition: background 0.15s;
 }
 .sidebar-toggle:hover { background: #eff6ff; }
+
+/* ── Dark mode ONLY — light mode CSS above is 100% untouched ── */
+body.dark-mode { background: var(--bg) !important; }
+body.dark-mode .back-bar { background: rgba(10,10,10,0.95) !important; border-bottom-color: var(--border) !important; }
+body.dark-mode .back-bar-title { color: var(--text) !important; }
+body.dark-mode .prop-card { background: var(--card) !important; border-color: var(--border) !important; }
+body.dark-mode .prop-chip { background: var(--bg2) !important; border-color: var(--border) !important; color: var(--text) !important; }
+body.dark-mode .contact-card { background: var(--card) !important; border-color: var(--border) !important; }
+body.dark-mode .managed-badge { background: var(--bg2) !important; border-color: var(--border) !important; }
+body.dark-mode .similar-section { background: var(--card) !important; border-color: var(--border) !important; }
+body.dark-mode .similar-card { background: var(--bg2) !important; border-color: var(--border) !important; }
+body.dark-mode .ov-item { background: var(--bg2) !important; border-color: var(--border) !important; }
+body.dark-mode .gallery-thumbs { background: var(--bg2) !important; border-bottom-color: var(--border) !important; }
+body.dark-mode .gallery-dot.active { background: var(--primary) !important; }
+body.dark-mode .nearby-card { background: var(--bg2) !important; border-color: var(--border) !important; }
+body.dark-mode .sticky-contact { background: rgba(10,10,10,0.97) !important; border-top-color: var(--border) !important; }
+body.dark-mode .sidebar { background: var(--card) !important; }
+body.dark-mode .sb-link { color: var(--text) !important; }
+body.dark-mode .sb-link:hover, body.dark-mode .sb-link.active { background: var(--primary-light) !important; color: var(--primary) !important; }
+body.dark-mode .sb-divider { background: var(--border) !important; }
+body.dark-mode .sidebar-social { border-top-color: var(--border) !important; }
+body.dark-mode .sidebar-social a { background: var(--bg2) !important; }
+body.dark-mode .sidebar-toggle:hover { background: var(--primary-light) !important; }
+
+/* ── Dark mode TEXT fixes — matched to flatzy-dark.css gold theme ── */
+body.dark-mode .prop-title         { color: #F7F3EC !important; }
+body.dark-mode .prop-desc          { color: #c8bfa8 !important; }
+body.dark-mode .prop-price-unit    { color: #c8bfa8 !important; }
+body.dark-mode .prop-deposit       { color: #c8bfa8 !important; }
+body.dark-mode .prop-location      { color: #c8bfa8 !important; }
+body.dark-mode .prop-location *    { color: #c8bfa8 !important; }
+body.dark-mode .ov-label           { color: #c8bfa8 !important; }
+body.dark-mode .ov-val             { color: #F7F3EC !important; }
+body.dark-mode .similar-name       { color: #F7F3EC !important; }
+body.dark-mode .similar-area       { color: #c8bfa8 !important; }
+body.dark-mode .similar-head       { color: #F7F3EC !important; }
+body.dark-mode .managed-title      { color: #C9A84C !important; }
+body.dark-mode .managed-sub        { color: #c8bfa8 !important; }
+body.dark-mode .nearby-card-name   { color: #F7F3EC !important; }
+body.dark-mode .nearby-card        { color: #F7F3EC !important; }
+body.dark-mode .privacy-note       { color: #c8bfa8 !important; }
+body.dark-mode .prop-badge         { background: rgba(201,168,76,0.12) !important; color: #C9A84C !important; }
+body.dark-mode .prop-chip          { background: #141414 !important; border-color: rgba(201,168,76,0.2) !important; color: #F7F3EC !important; }
+body.dark-mode .prop-card          { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .contact-card       { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .similar-section    { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .sec-title          { color: #C9A84C !important; }
+body.dark-mode .sec-title::after   { background: linear-gradient(90deg, rgba(201,168,76,0.2), transparent) !important; }
+body.dark-mode .divider            { border-top-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .ov-item            { background: #141414 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .managed-badge      { background: #141414 !important; border-color: rgba(201,168,76,0.2) !important; }
+body.dark-mode .similar-card       { background: #141414 !important; border-color: rgba(201,168,76,0.15) !important; }
+body.dark-mode .nearby-card        { background: #141414 !important; border-color: rgba(201,168,76,0.15) !important; }
 </style>
 </head>
 <body class="has-bottom-nav">
+<script>(function(){if(localStorage.getItem('flatzy_theme')==='dark')document.body.classList.add('dark-mode');})();</script>
 
 <!-- NAV -->
 <!-- SIDEBAR OVERLAY -->
@@ -827,6 +882,7 @@ function renderProperty(p) {
           ${p.tenants ? `<span class="prop-badge green">👤 ${p.tenants}</span>` : ''}
         </div>
         <div class="prop-title">${p.title}</div>
+        <div class="prop-location">📍 ${p.area}, Nagpur${p.address ? ' — ' + p.address : ''}</div>
         <div class="prop-chips">
           <span class="prop-chip">🛏 ${p.bhk}</span>
           <span class="prop-chip">🏗 ${p.furnish}</span>
@@ -1192,7 +1248,19 @@ function closeSidebar(){
   setTimeout(function(){ openSidebar(); setTimeout(function(){ closeSidebar(); }, 15000); }, 5000);
 })();
 </script>
-<script src="config.js"></script>
-<script type="module" src="user-tracker.js"></script>
+
+<script>
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  document.body.classList.toggle('dark-mode', mode === 'dark');
+}
+function toggleTheme(isDark) { applyTheme(isDark ? 'dark' : 'light'); }
+</script>
 </body>
 </html>

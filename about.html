@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About Us – Flatzy Nagpur</title>
 <link rel="icon" type="image/png" href="favicon.jpeg">
-<link rel="stylesheet" href="style.css">
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+    <link rel="stylesheet" href="style.css">
 <style>
-body { background: var(--dark2); }
+body { background: var(--bg); }
 
 /* HERO BANNER */
 .about-hero {
@@ -29,7 +30,7 @@ body { background: var(--dark2); }
   font-weight: 800; color: white;
   letter-spacing: -1px; margin-bottom: 1rem;
 }
-.about-hero h1 span { color: #60b4ff; }
+.about-hero h1 span { color: var(--accent); }
 .about-hero p {
   color: rgba(255,255,255,0.75); font-size: 1rem;
   max-width: 540px; margin: 0 auto; line-height: 1.7;
@@ -54,7 +55,7 @@ body { background: var(--dark2); }
 
 /* STORY CARD */
 .story-card {
-  background: white; border: 1.5px solid var(--border);
+  background: var(--card); border: 1.5px solid var(--border);
   border-radius: 20px; padding: 2rem;
   box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -62,7 +63,7 @@ body { background: var(--dark2); }
 .story-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 32px rgba(26,111,232,0.12);
-  border-color: #93c5fd;
+  border-color: var(--border-strong);
 }
 .story-card p {
   font-size: 0.95rem; line-height: 1.8;
@@ -96,7 +97,7 @@ body { background: var(--dark2); }
   font-size: 0.95rem; line-height: 1.8;
   max-width: 600px; margin: 0 auto;
 }
-.mission-card p span { color: #60b4ff; font-weight: 700; }
+.mission-card p span { color: var(--accent); font-weight: 700; }
 .mission-card p strong {
   color: white;
   font-family: monospace; font-size: 0.9rem;
@@ -111,7 +112,7 @@ body { background: var(--dark2); }
   gap: 1rem; margin-bottom: 1.5rem;
 }
 .value-card {
-  background: white; border: 1.5px solid var(--border);
+  background: var(--card); border: 1.5px solid var(--border);
   border-radius: 16px; padding: 1.8rem 1.2rem;
   text-align: center; box-shadow: var(--shadow-sm);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -141,7 +142,7 @@ body { background: var(--dark2); }
   gap: 1.2rem; margin-bottom: 1.5rem;
 }
 .team-card {
-  background: white; border: 1.5px solid var(--border);
+  background: var(--card); border: 1.5px solid var(--border);
   border-radius: 20px; padding: 2rem 1.5rem;
   text-align: center; box-shadow: var(--shadow-sm);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -181,7 +182,7 @@ body { background: var(--dark2); }
 
 /* STATS STRIP */
 .stats-strip {
-  background: white; border: 1.5px solid var(--border);
+  background: var(--card); border: 1.5px solid var(--border);
   border-radius: 20px; padding: 1.8rem 2rem;
   display: flex; justify-content: space-around;
   flex-wrap: wrap; gap: 1rem;
@@ -191,7 +192,7 @@ body { background: var(--dark2); }
 .stats-strip:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 28px rgba(26,111,232,0.10);
-  border-color: #93c5fd;
+  border-color: var(--border-strong);
 }
 .stat-item { text-align: center; }
 .stat-num {
@@ -211,7 +212,7 @@ body { background: var(--dark2); }
   color: rgba(255,255,255,0.6); font-size: 0.85rem;
 }
 .dev-credit p span {
-  color: #60b4ff; font-weight: 700;
+  color: var(--accent); font-weight: 700;
 }
 
 /* CTA */
@@ -232,8 +233,8 @@ body { background: var(--dark2); }
   font-size: 0.9rem; text-decoration: none;
   transition: all 0.2s; cursor: pointer; border: none;
 }
-.cta-btn.white { background: white; color: var(--primary); }
-.cta-btn.white:hover { background: #f0f4ff; }
+.cta-btn.white { background: var(--card); color: var(--primary); }
+.cta-btn.white:hover { background: var(--bg2); }
 .cta-btn.outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.5); }
 .cta-btn.outline:hover { background: rgba(255,255,255,0.1); }
 
@@ -252,14 +253,14 @@ body { background: var(--dark2); }
 /* ---- SIDEBAR ---- */
 .sidebar-overlay {
   display: block; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45); z-index: 1099;
+  background: var(--modal-overlay); z-index: 1099;
   backdrop-filter: blur(2px); opacity: 0; pointer-events: none;
   transition: opacity 0.3s;
 }
 .sidebar-overlay.show { opacity: 1; pointer-events: all; }
 .sidebar {
   position: fixed; top: 0; left: 0;
-  width: 280px; height: 100vh; background: white; z-index: 1100;
+  width: 280px; height: 100vh; background: var(--sidebar-bg); z-index: 1100;
   transform: translateX(-100%); visibility: hidden;
   transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0.3s;
   box-shadow: 4px 0 32px rgba(0,0,0,0.15);
@@ -274,8 +275,8 @@ body { background: var(--dark2); }
   padding: 1.2rem 1.2rem 1rem;
   background: linear-gradient(135deg,#1a3a6e,#0ea5e9); flex-shrink: 0;
 }
-.sidebar-logo { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px; }
-.sidebar-logo span { color: #93c5fd; }
+.sidebar-logo { font-size: 1.5rem; font-weight: 800; color: var(--sidebar-logo-color); letter-spacing: -0.5px; }
+.sidebar-logo span { color: var(--sidebar-logo-span); }
 .sidebar-close {
   background: rgba(255,255,255,0.15); border: none; color: white;
   width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
@@ -287,12 +288,12 @@ body { background: var(--dark2); }
 .sb-link {
   display: flex; align-items: center; gap: 0.7rem;
   padding: 0.75rem 1rem; border-radius: 10px;
-  text-decoration: none; color: #1e293b;
+  text-decoration: none; color: var(--text);
   font-size: 0.95rem; font-weight: 500;
   transition: background 0.15s, color 0.15s;
 }
-.sb-link:hover, .sb-link.active { background: #eff6ff; color: #1a6fe8; }
-.sb-divider { height: 1px; background: #e2e8f0; margin: 0.5rem 0; }
+.sb-link:hover, .sb-link.active { background: var(--primary-light); color: var(--primary); }
+.sb-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
 .sb-wish-badge {
   margin-left: auto; background: #e11d48; color: white;
   font-size: 0.65rem; font-weight: 800;
@@ -306,19 +307,20 @@ body { background: var(--dark2); }
 .sidebar-social a {
   display: flex; align-items: center; justify-content: center;
   width: 38px; height: 38px; border-radius: 10px;
-  background: #f1f5f9; transition: background 0.2s;
+  background: var(--bg2); transition: background 0.2s;
 }
-.sidebar-social a:hover { background: #dbeafe; }
+.sidebar-social a:hover { background: var(--primary-light); }
 .sidebar-toggle {
   display: flex !important; align-items: center; justify-content: center;
   background: none; border: none; font-size: 1.4rem; cursor: pointer;
   color: var(--text); padding: 0.3rem 0.5rem;
   border-radius: 8px; transition: background 0.15s;
 }
-.sidebar-toggle:hover { background: #eff6ff; }
+.sidebar-toggle:hover { background: var(--primary-light); }
 </style>
 </head>
 <body class="has-bottom-nav">
+<script>(function(){if(localStorage.getItem('flatzy_theme')==='dark')document.body.classList.add('dark-mode');})();</script>
 
 <!-- NAV -->
 <!-- SIDEBAR OVERLAY -->
@@ -326,15 +328,15 @@ body { background: var(--dark2); }
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo">Flat<span>zy</span></div>
-    <button class="sidebar-close" onclick="closeSidebar()">&#x2715;</button>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
   </div>
   <nav class="sidebar-nav">
-    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="index.html" class="sb-link active">🏠 Home</a>
     <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
-    <a href="wishlist.html" class="sb-link">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="wishlist.html" class="sb-link" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
     <a href="owner.html" class="sb-link">📋 List Property</a>
     <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
-    <a href="about.html" class="sb-link active">ℹ️ About Us</a>
+    <a href="about.html" class="sb-link">ℹ️ About Us</a>
     <div class="sb-divider"></div>
     <a href="faq.html" class="sb-link">❓ FAQ</a>
     <a href="services.html" class="sb-link">⭐ Our Services</a>
@@ -343,12 +345,26 @@ body { background: var(--dark2); }
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
     <div class="sb-divider"></div>
+    <a href="settings.html" class="sb-link">⚙️ Settings</a>
     <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <!-- Settings Icon -->
+    <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#1a1a2e;transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </a>
+  </div>
+  <!-- Dark/Light Mode Toggle in sidebar footer -->
+  <div style="padding:0.6rem 1.2rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--muted);" id="sideThemeLabel">☀️ Light Mode</span>
+    <label style="position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;">
+      <input type="checkbox" id="sidebarDarkToggle" onchange="toggleTheme(this.checked)" style="opacity:0;width:0;height:0;">
+      <div id="sideToggleTrack" style="position:absolute;inset:0;background:#d0ddef;border-radius:100px;transition:background 0.3s;"></div>
+      <div id="sideToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background: var(--card);border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+    </label>
   </div>
 </aside>
 <nav class="topnav">
@@ -552,5 +568,32 @@ function closeSidebar(){
 </script>
 <script src="config.js"></script>
 <script type="module" src="user-tracker.js"></script>
+<script>
+// ── Theme Toggle ───────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  document.body.classList.toggle('dark-mode', mode === 'dark');
+  // sync sidebar toggle
+  const tog = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if(thumb) thumb.style.transform = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if(label) label.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+</script>
 </body>
 </html>

@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home – Flatzy Nagpur</title>
 <link rel="icon" type="image/png" href="favicon.jpeg">
-<link rel="stylesheet" href="style.css">
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+    <link rel="stylesheet" href="style.css">
 <style>
-body { background: var(--dark2); padding-bottom: 72px; }
+body { background: var(--bg); padding-bottom: 72px; }
 
 .welcome-banner {
   background: linear-gradient(120deg, var(--primary) 0%, #0EA5E9 100%);
@@ -17,7 +18,7 @@ body { background: var(--dark2); padding-bottom: 72px; }
 .welcome-banner p { opacity: 0.85; font-size: 0.9rem; }
 
 .quick-search {
-  background: white; border-radius: 16px; padding: 1rem 1.2rem;
+  background: var(--card); border-radius: 16px; padding: 1rem 1.2rem;
   margin: 1rem 5%; display: flex; gap: 0.8rem; align-items: center;
   box-shadow: var(--shadow-md); border: 1.5px solid var(--border);
 }
@@ -26,7 +27,7 @@ body { background: var(--dark2); padding-bottom: 72px; }
 .qs-btn { background: var(--primary); color: white; border: none; padding: 0.55rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: 'Syne',sans-serif; font-size: 0.9rem; white-space: nowrap; }
 
 .stats-row { display: flex; gap: 1rem; padding: 0 5% 1.5rem; overflow-x: auto; }
-.stat-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 1rem 1.4rem; min-width: 140px; box-shadow: var(--shadow-sm); flex-shrink: 0; }
+.stat-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 1rem 1.4rem; min-width: 140px; box-shadow: var(--shadow-sm); flex-shrink: 0; }
 .stat-card .num { font-family: 'Syne',sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--primary); }
 .stat-card .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
 
@@ -35,24 +36,24 @@ body { background: var(--dark2); padding-bottom: 72px; }
 .home-section-title a { font-size: 0.85rem; color: var(--primary); font-weight: 600; text-decoration: none; }
 
 .cat-scroll { display: flex; gap: 0.7rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
-.cat-chip { background: white; border: 1.5px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; color: var(--muted); font-family: 'Syne',sans-serif; flex-shrink: 0; }
+.cat-chip { background: var(--card); border: 1.5px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; color: var(--muted); font-family: 'Syne',sans-serif; flex-shrink: 0; }
 .cat-chip.active, .cat-chip:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
 .props-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
 
 .wish-scroll { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem; }
-.wish-card { min-width: 220px; background: white; border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
+.wish-card { min-width: 220px; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
 .wish-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
-.wish-card .wc-img { width: 100%; height: 130px; object-fit: cover; background: #e8f4f8; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+.wish-card .wc-img { width: 100%; height: 130px; object-fit: cover; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
 .wish-card .wc-img img { width: 100%; height: 130px; object-fit: cover; }
 .wish-card .wc-body { padding: 0.75rem; }
 .wish-card .wc-title { font-family: 'Syne',sans-serif; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .wish-card .wc-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-.wish-card .wc-tag { font-size: 0.68rem; background: #f0f9ff; color: #0891b2; border-radius: 6px; padding: 2px 7px; font-weight: 600; }
+.wish-card .wc-tag { font-size: 0.68rem; background: var(--primary-light); color: var(--primary); border-radius: 6px; padding: 2px 7px; font-weight: 600; }
 .wish-card .wc-price { font-size: 0.9rem; color: var(--primary); font-weight: 800; }
 .wish-card .wc-loc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
 
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: white; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; z-index: 500; box-shadow: 0 -4px 24px rgba(26,111,232,0.08); }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: var(--card); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; z-index: 500; box-shadow: 0 -4px 24px rgba(26,111,232,0.08); }
 .bn-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.68rem; color: var(--muted); cursor: pointer; font-family: 'Syne',sans-serif; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 10px; transition: color 0.2s; position: relative; }
 .bn-item.active { color: var(--primary); }
 .bn-icon { font-size: 1.3rem; }
@@ -66,7 +67,7 @@ body { background: var(--dark2); padding-bottom: 72px; }
 .sidebar-overlay {
   display: block;
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: var(--modal-overlay);
   z-index: 1099;
   backdrop-filter: blur(2px);
   opacity: 0;
@@ -81,7 +82,7 @@ body { background: var(--dark2); padding-bottom: 72px; }
   position: fixed;
   top: 0; left: 0;
   width: 280px; height: 100vh;
-  background: white;
+  background: var(--sidebar-bg);
   z-index: 1100;
   transform: translateX(-100%);
   visibility: hidden;
@@ -101,8 +102,8 @@ body { background: var(--dark2); padding-bottom: 72px; }
   background: linear-gradient(135deg,#1a3a6e,#0ea5e9);
   flex-shrink: 0;
 }
-.sidebar-logo { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px; }
-.sidebar-logo span { color: #93c5fd; }
+.sidebar-logo { font-size: 1.5rem; font-weight: 800; color: var(--sidebar-logo-color); letter-spacing: -0.5px; }
+.sidebar-logo span { color: var(--sidebar-logo-span); }
 .sidebar-close {
   background: rgba(255,255,255,0.15); border: none; color: white;
   width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
@@ -118,12 +119,12 @@ body { background: var(--dark2); padding-bottom: 72px; }
 .sb-link {
   display: flex; align-items: center; gap: 0.7rem;
   padding: 0.75rem 1rem; border-radius: 10px;
-  text-decoration: none; color: #1e293b;
+  text-decoration: none; color: var(--text);
   font-size: 0.95rem; font-weight: 500;
   transition: background 0.15s, color 0.15s;
 }
-.sb-link:hover, .sb-link.active { background: #eff6ff; color: #1a6fe8; }
-.sb-divider { height: 1px; background: #e2e8f0; margin: 0.5rem 0; }
+.sb-link:hover, .sb-link.active { background: var(--primary-light); color: var(--primary); }
+.sb-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
 .sb-wish-badge {
   margin-left: auto; background: #e11d48; color: white;
   font-size: 0.65rem; font-weight: 800;
@@ -137,9 +138,9 @@ body { background: var(--dark2); padding-bottom: 72px; }
 .sidebar-social a {
   display: flex; align-items: center; justify-content: center;
   width: 38px; height: 38px; border-radius: 10px;
-  background: #f1f5f9; transition: background 0.2s;
+  background: var(--bg2); transition: background 0.2s;
 }
-.sidebar-social a:hover { background: #dbeafe; }
+.sidebar-social a:hover { background: var(--primary-light); }
 .sidebar-toggle {
   display: flex !important;
   align-items: center; justify-content: center;
@@ -148,7 +149,16 @@ body { background: var(--dark2); padding-bottom: 72px; }
   color: var(--text); padding: 0.3rem 0.5rem;
   border-radius: 8px; transition: background 0.15s;
 }
-.sidebar-toggle:hover { background: #eff6ff; }
+.sidebar-toggle:hover { background: var(--primary-light); }
+
+/* ── Dark mode overrides (only active when body.dark-mode) ── */
+body.dark-mode .stat-card { background: var(--card) !important; border-color: var(--border) !important; }
+body.dark-mode .cat-chip { background: var(--bg2) !important; border-color: var(--border) !important; color: var(--muted) !important; }
+body.dark-mode .cat-chip.active,
+body.dark-mode .cat-chip:hover { background: var(--primary) !important; color: #0A0A0A !important; border-color: var(--primary) !important; }
+body.dark-mode .wish-card { background: var(--card) !important; border-color: var(--border) !important; }
+body.dark-mode .bottom-nav { background: var(--bg2) !important; border-top-color: var(--border) !important; }
+body.dark-mode .sidebar-social { border-top-color: var(--border) !important; }
 
 /* Hover to play */
 .card-img-photo { width:100%;height:100%;object-fit:cover;border-radius:inherit;transition:opacity 0.35s ease; }
@@ -161,6 +171,7 @@ body { background: var(--dark2); padding-bottom: 72px; }
 </style>
 </head>
 <body class="has-bottom-nav">
+<script>(function(){if(localStorage.getItem('flatzy_theme')==='dark')document.body.classList.add('dark-mode');})();</script>
 
 <!-- SIDEBAR OVERLAY -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -170,9 +181,9 @@ body { background: var(--dark2); padding-bottom: 72px; }
     <button class="sidebar-close" onclick="closeSidebar()">✕</button>
   </div>
   <nav class="sidebar-nav">
-    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="index.html" class="sb-link active">🏠 Home</a>
     <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
-    <a href="wishlist.html" class="sb-link">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="wishlist.html" class="sb-link" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
     <a href="owner.html" class="sb-link">📋 List Property</a>
     <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
     <a href="about.html" class="sb-link">ℹ️ About Us</a>
@@ -184,12 +195,26 @@ body { background: var(--dark2); padding-bottom: 72px; }
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
     <div class="sb-divider"></div>
+    <a href="settings.html" class="sb-link">⚙️ Settings</a>
     <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <!-- Settings Icon -->
+    <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#1a1a2e;transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </a>
+  </div>
+  <!-- Dark/Light Mode Toggle in sidebar footer -->
+  <div style="padding:0.6rem 1.2rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--muted);" id="sideThemeLabel">☀️ Light Mode</span>
+    <label style="position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;">
+      <input type="checkbox" id="sidebarDarkToggle" onchange="toggleTheme(this.checked)" style="opacity:0;width:0;height:0;">
+      <div id="sideToggleTrack" style="position:absolute;inset:0;background:#d0ddef;border-radius:100px;transition:background 0.3s;"></div>
+      <div id="sideToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+    </label>
   </div>
 </aside>
 
@@ -510,5 +535,32 @@ function closeSidebar(){
 </script>
 <script src="config.js"></script>
 <script type="module" src="user-tracker.js"></script>
+<script>
+// ── Theme Toggle ───────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  document.body.classList.toggle('dark-mode', mode === 'dark');
+  // sync sidebar toggle
+  const tog = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if(thumb) thumb.style.transform = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if(label) label.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+</script>
 </body>
 </html>

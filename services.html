@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Services – Flatzy Nagpur</title>
 <link rel="icon" type="image/png" href="favicon.jpeg">
-<link rel="stylesheet" href="style.css">
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+    <link rel="stylesheet" href="style.css">
 <style>
-body { background: var(--dark2); }
+body { background: var(--bg); }
 .page-hero {
   margin-top: var(--nav-h);
   background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
@@ -15,16 +16,16 @@ body { background: var(--dark2); }
 }
 .page-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 50%,rgba(96,180,255,0.15) 0%,transparent 60%); pointer-events:none; }
 .page-hero h1 { font-size:clamp(2rem,5vw,3rem); font-weight:800; color:white; letter-spacing:-1px; margin-bottom:0.8rem; }
-.page-hero h1 span { color:#60b4ff; }
+.page-hero h1 span { color: var(--accent); }
 .page-hero p { color:rgba(255,255,255,0.7); font-size:0.95rem; max-width:500px; margin:0 auto; line-height:1.7; }
 .services-wrap { max-width: 1000px; margin: 0 auto; padding: 2.5rem 5%; }
 .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1.5rem; margin-bottom: 2rem; }
 .service-card {
-  background: white; border: 1.5px solid var(--border); border-radius: 20px;
+  background: var(--card); border: 1.5px solid var(--border); border-radius: 20px;
   padding: 2rem 1.5rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
-.service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 32px rgba(26,111,232,0.14); border-color: #93c5fd; }
+.service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 32px rgba(26,111,232,0.14); border-color: var(--border-strong); }
 .service-icon { font-size: 2.8rem; margin-bottom: 1rem; }
 .service-title { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--text); margin-bottom:0.6rem; }
 .service-desc { font-size:0.88rem; color:var(--muted); line-height:1.75; margin-bottom:1rem; }
@@ -37,46 +38,64 @@ body { background: var(--dark2); }
 .trust-banner p { color:rgba(255,255,255,0.65); font-size:0.9rem; max-width:500px; margin:0 auto 1.5rem; line-height:1.7; }
 .trust-stats { display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-top:1.5rem; }
 .trust-stat { text-align:center; }
-.trust-stat .num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:#60b4ff; }
+.trust-stat .num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color: var(--primary); }
 .trust-stat .lbl { font-size:0.75rem; color:rgba(255,255,255,0.6); margin-top:2px; }
 .process-steps { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
-.step-card { background:white; border:1.5px solid var(--border); border-radius:16px; padding:1.5rem 1rem; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.step-card { background: var(--card); border:1.5px solid var(--border); border-radius:16px; padding:1.5rem 1rem; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 .step-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--primary); margin-bottom:0.5rem; }
 .step-title { font-weight:700; font-size:0.9rem; color:var(--text); margin-bottom:0.4rem; }
 .step-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; }
 
 /* FREE SERVICES HIGHLIGHT */
 .free-highlight {
-  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
-  border: 2px solid #86efac; border-radius: 20px;
+  bbackground: linear-gradient(135deg, #000000, #000000);
+    border: 2px solid #ff0fdf; border-radius: 20px;
   padding: 2rem 1.5rem; margin-bottom: 2rem;
 }
 .free-highlight-title {
   font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem;
-  color: #065f46; margin-bottom: 0.4rem;
+  color: var(--green); margin-bottom: 0.4rem;
   display: flex; align-items: center; gap: 0.5rem;
 }
-.free-highlight-sub { font-size: 0.85rem; color: #6b7280; margin-bottom: 1.5rem; line-height: 1.6; }
+.free-highlight-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
 .free-cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.2rem; }
 .free-card {
-  background: white; border: 1.5px solid #bbf7d0;
+  background: var(--card); border: 1.5px solid  var(--border);
   border-radius: 14px; padding: 1.2rem 1rem; text-align: center;
   box-shadow: 0 2px 8px rgba(5,150,105,0.08);
 }
 .free-card .fc-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-.free-card .fc-title { font-family:'Syne',sans-serif; font-weight: 800; font-size: 0.9rem; color: #065f46; margin-bottom: 0.3rem; }
-.free-card .fc-desc { font-size: 0.78rem; color: #6b7280; line-height: 1.5; }
-.free-card .fc-badge { display:inline-block; margin-top:0.5rem; background:#d1fae5; color:#065f46; border-radius:20px; padding:0.15rem 0.6rem; font-size:0.68rem; font-weight:700; }
+.free-card .fc-title { font-family:'Syne',sans-serif; font-weight: 800; font-size: 0.9rem; color: var(--green); margin-bottom: 0.3rem; }
+.free-card .fc-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+.free-card .fc-badge { display:inline-block; margin-top:0.5rem; background:rgba(16,185,129,0.15); color:var(--green); border-radius:20px; padding:0.15rem 0.6rem; font-size:0.68rem; font-weight:700; }
 .terms-note-box {
-  background: #fef9c3; border: 1.5px solid #fde047;
+  background: rgba(245,158,11,0.12); border: 1.5px solid  rgba(245,158,11,0.3);
   border-radius: 12px; padding: 0.9rem 1.1rem;
-  font-size: 0.8rem; color: #854d0e; line-height: 1.6;
+  font-size: 0.8rem; color: var(--muted); line-height: 1.6;
+}
+.sidebar-toggle {
+    display: flex !important;
+  }
+.sidebar-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--text);
+    padding: 0.3rem 0.5rem;
+    border-radius: 8px;
+    transition: background 0.15s;
 }
 </style>
 </head>
 <body class="has-bottom-nav">
+<script>(function(){if(localStorage.getItem('flatzy_theme')==='dark')document.body.classList.add('dark-mode');})();</script>
 
 <!-- SIDEBAR -->
+<!-- SIDEBAR OVERLAY -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
@@ -84,26 +103,40 @@ body { background: var(--dark2); }
     <button class="sidebar-close" onclick="closeSidebar()">✕</button>
   </div>
   <nav class="sidebar-nav">
-    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="index.html" class="sb-link active">🏠 Home</a>
     <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
-    <a href="wishlist.html" class="sb-link">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="wishlist.html" class="sb-link" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
     <a href="owner.html" class="sb-link">📋 List Property</a>
     <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
     <a href="about.html" class="sb-link">ℹ️ About Us</a>
     <div class="sb-divider"></div>
     <a href="faq.html" class="sb-link">❓ FAQ</a>
-    <a href="services.html" class="sb-link active">⭐ Our Services</a>
+    <a href="services.html" class="sb-link">⭐ Our Services</a>
     <a href="whats-new.html" class="sb-link">🆕 What's New</a>
     <div class="sb-divider"></div>
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
     <div class="sb-divider"></div>
+    <a href="settings.html" class="sb-link">⚙️ Settings</a>
     <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <!-- Settings Icon -->
+    <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#1a1a2e;transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </a>
+  </div>
+  <!-- Dark/Light Mode Toggle in sidebar footer -->
+  <div style="padding:0.6rem 1.2rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--muted);" id="sideThemeLabel">☀️ Light Mode</span>
+    <label style="position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;">
+      <input type="checkbox" id="sidebarDarkToggle" onchange="toggleTheme(this.checked)" style="opacity:0;width:0;height:0;">
+      <div id="sideToggleTrack" style="position:absolute;inset:0;background:#d0ddef;border-radius:100px;transition:background 0.3s;"></div>
+      <div id="sideToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background: var(--card);border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+    </label>
   </div>
 </aside>
 
@@ -112,7 +145,6 @@ body { background: var(--dark2); }
     <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
     <span>Flat<span style="color:#0ea5e9;">zy</span></span>
   </a>
-  <button class="sidebar-toggle" onclick="openSidebar()" title="Menu">☰</button>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="rent.html">Browse</a>
@@ -122,6 +154,7 @@ body { background: var(--dark2); }
     <a href="services.html" class="active">Services</a>
   </div>
   <div id="navGuest" style="display:flex;gap:0.5rem;align-items:center;">
+    <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu" title="Menu">☰</button>
     <a href="login.html" class="nav-btn outline">Login</a>
     <a href="login.html" class="nav-btn">Sign Up Free</a>
   </div>
@@ -318,5 +351,32 @@ function closeSidebar(){
 </script>
 <script src="config.js"></script>
 <script type="module" src="user-tracker.js"></script>
+<script>
+// ── Theme Toggle ───────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  document.body.classList.toggle('dark-mode', mode === 'dark');
+  // sync sidebar toggle
+  const tog = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if(thumb) thumb.style.transform = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if(label) label.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+</script>
 </body>
 </html>

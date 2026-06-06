@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Owner Dashboard – Flatzy</title>
 <link rel="icon" type="image/png" href="favicon.jpeg">
-<link rel="stylesheet" href="style.css">
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+    <link rel="stylesheet" href="style.css">
 <style>
 body { background: var(--dark2); }
 
@@ -65,10 +66,10 @@ body { background: var(--dark2); }
   transition: all 0.15s;
   user-select: none;
 }
-.amenity-label:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
+.amenity-label:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 .amenity-label input[type="checkbox"] {
   width: 18px; height: 18px;
-  accent-color: #1a6fe8;
+  accent-color: var(--primary);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -82,14 +83,14 @@ body { background: var(--dark2); }
 .photo-thumb-placeholder { width: 72px; height: 72px; background: var(--primary-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--border); }
 
 /* VIDEO UPLOAD */
-.video-drop { border: 2px dashed #f59e0b; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; background: #fffbeb; margin-top: 1rem; }
-.video-drop:hover { border-color: #d97706; background: #fef3c7; }
+.video-drop { border: 2px dashed #f59e0b; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg2); margin-top: 1rem; }
+.video-drop:hover { border-color: #d97706; background: var(--bg3); }
 .video-drop-icon { font-size: 2rem; margin-bottom: 0.5rem; }
 .video-preview-wrap { margin-top: 1rem; position: relative; display: inline-block; }
 .video-preview-wrap video { width: 100%; max-width: 320px; border-radius: 10px; border: 2px solid #f59e0b; display: block; }
 .video-remove-btn { position: absolute; top: 6px; right: 6px; background: #DC2626; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 .video-uploading { color: var(--muted); font-size: 0.85rem; padding: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-.video-success { color: #065F46; background: #D1FAE5; border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem; display: inline-block; }
+.video-success { color: var(--green); background: rgba(16,185,129,0.15); border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem; display: inline-block; }
 
 /* LISTINGS TABLE */
 .listings-list { display: flex; flex-direction: column; gap: 1rem; }
@@ -103,14 +104,14 @@ body { background: var(--dark2); }
 .listing-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
 .act-btn { padding: 0.4rem 0.8rem; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: none; font-family: 'Syne',sans-serif; transition: all 0.2s; }
 .act-btn.edit { background: var(--primary-light); color: var(--primary); }
-.act-btn.del { background: #FEE2E2; color: #DC2626; }
+.act-btn.del { background: rgba(239,68,68,0.12); color: #DC2626; }
 .act-btn.edit:hover { background: var(--primary); color: white; }
 .act-btn.del:hover { background: #DC2626; color: white; }
 
 /* STATUS BADGE */
 .status-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; }
-.status-badge.active { background: #D1FAE5; color: #065F46; }
-.status-badge.pending { background: #FEF3C7; color: #92400E; }
+.status-badge.active { background: rgba(16,185,129,0.15); color: var(--green); }
+.status-badge.pending { background: rgba(245,158,11,0.12); color: var(--gold); }
 
 /* CONFIRM MODAL */
 .confirm-modal { max-width: 380px; text-align: center; }
@@ -134,7 +135,7 @@ body { background: var(--dark2); }
 .sidebar-overlay {
   display: block;
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: var(--modal-overlay);
   z-index: 1099;
   backdrop-filter: blur(2px);
   opacity: 0; pointer-events: none;
@@ -144,7 +145,7 @@ body { background: var(--dark2); }
 .sidebar {
   position: fixed; top: 0; left: 0;
   width: 280px; height: 100vh;
-  background: white; z-index: 1100;
+  background: var(--sidebar-bg); z-index: 1100;
   transform: translateX(-100%); visibility: hidden;
   transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0.3s;
   box-shadow: 4px 0 32px rgba(0,0,0,0.15);
@@ -159,8 +160,8 @@ body { background: var(--dark2); }
   padding: 1.2rem 1.2rem 1rem;
   background: linear-gradient(135deg,#1a3a6e,#0ea5e9); flex-shrink: 0;
 }
-.sidebar-logo { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px; }
-.sidebar-logo span { color: #93c5fd; }
+.sidebar-logo { font-size: 1.5rem; font-weight: 800; color: var(--sidebar-logo-color); letter-spacing: -0.5px; }
+.sidebar-logo span { color: var(--sidebar-logo-span); }
 .sidebar-close {
   background: rgba(255,255,255,0.15); border: none; color: white;
   width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
@@ -172,12 +173,12 @@ body { background: var(--dark2); }
 .sb-link {
   display: flex; align-items: center; gap: 0.7rem;
   padding: 0.75rem 1rem; border-radius: 10px;
-  text-decoration: none; color: #1e293b;
+  text-decoration: none; color: var(--text);
   font-size: 0.95rem; font-weight: 500;
   transition: background 0.15s, color 0.15s;
 }
-.sb-link:hover, .sb-link.active { background: #eff6ff; color: #1a6fe8; }
-.sb-divider { height: 1px; background: #e2e8f0; margin: 0.5rem 0; }
+.sb-link:hover, .sb-link.active { background: var(--primary-light); color: var(--primary); }
+.sb-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
 .sb-wish-badge {
   margin-left: auto; background: #e11d48; color: white;
   font-size: 0.65rem; font-weight: 800;
@@ -191,16 +192,16 @@ body { background: var(--dark2); }
 .sidebar-social a {
   display: flex; align-items: center; justify-content: center;
   width: 38px; height: 38px; border-radius: 10px;
-  background: #f1f5f9; transition: background 0.2s;
+  background: var(--bg2); transition: background 0.2s;
 }
-.sidebar-social a:hover { background: #dbeafe; }
+.sidebar-social a:hover { background: var(--primary-light); }
 .sidebar-toggle {
   display: flex !important; align-items: center; justify-content: center;
   background: none; border: none; font-size: 1.4rem; cursor: pointer;
   color: var(--text); padding: 0.3rem 0.5rem;
   border-radius: 8px; transition: background 0.15s;
 }
-.sidebar-toggle:hover { background: #eff6ff; }
+.sidebar-toggle:hover { background: var(--primary-light); }
 </style>
 
 <!-- SIDEBAR OVERLAY -->
@@ -211,10 +212,10 @@ body { background: var(--dark2); }
     <button class="sidebar-close" onclick="closeSidebar()">✕</button>
   </div>
   <nav class="sidebar-nav">
-    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="index.html" class="sb-link active">🏠 Home</a>
     <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
-    <a href="wishlist.html" class="sb-link">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
-    <a href="owner.html" class="sb-link active">📋 List Property</a>
+    <a href="wishlist.html" class="sb-link" id="sbWishLink">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="owner.html" class="sb-link">📋 List Property</a>
     <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
     <a href="about.html" class="sb-link">ℹ️ About Us</a>
     <div class="sb-divider"></div>
@@ -225,12 +226,26 @@ body { background: var(--dark2); }
     <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
     <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
     <div class="sb-divider"></div>
+    <a href="settings.html" class="sb-link">⚙️ Settings</a>
     <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <!-- Settings Icon -->
+    <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#1a1a2e;transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </a>
+  </div>
+  <!-- Dark/Light Mode Toggle in sidebar footer -->
+  <div style="padding:0.6rem 1.2rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--muted);" id="sideThemeLabel">☀️ Light Mode</span>
+    <label style="position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;">
+      <input type="checkbox" id="sidebarDarkToggle" onchange="toggleTheme(this.checked)" style="opacity:0;width:0;height:0;">
+      <div id="sideToggleTrack" style="position:absolute;inset:0;background:#d0ddef;border-radius:100px;transition:background 0.3s;"></div>
+      <div id="sideToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+    </label>
   </div>
 </aside>
 
@@ -1079,5 +1094,31 @@ window.lockLocation = function() {
 </script>
 <script src="config.js"></script>
 <script type="module" src="user-tracker.js"></script>
+<script>
+// ── Theme Toggle ───────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('flatzy_theme') || 'light';
+  applyTheme(saved, true);
+})();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  // sync sidebar toggle
+  const tog = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if(tog) tog.checked = mode === 'dark';
+  if(track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if(thumb) thumb.style.transform = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if(label) label.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+</script>
 </body>
 </html>
