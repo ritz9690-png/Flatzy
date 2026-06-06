@@ -519,6 +519,20 @@ nav.topnav::after {
       <div class="acc-panel">
         <div class="acc-panel-title">✏️ Edit Details</div>
         <div class="edit-form-grid">
+
+          <!-- Profile Photo Upload -->
+          <div class="form-group" style="align-items:center;flex-direction:row;gap:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
+            <div id="editAvatarPreview" class="acc-avatar" style="width:72px;height:72px;font-size:1.8rem;flex-shrink:0;cursor:pointer;" onclick="document.getElementById('profilePhotoInput').click()">
+              U
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:0.9rem;color:var(--text);margin-bottom:0.3rem;">Profile Photo</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">JPG/PNG · Max 5MB</div>
+              <button type="button" onclick="document.getElementById('profilePhotoInput').click()" style="padding:0.45rem 1rem;background:var(--primary-light);color:var(--primary);border:1.5px solid var(--primary);border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit;">📷 Change Photo</button>
+              <input type="file" id="profilePhotoInput" accept="image/*" style="display:none" onchange="handleProfilePhotoChange(this)">
+            </div>
+          </div>
+
           <div class="form-group">
             <label class="form-label">Mobile Number</label>
             <div class="phone-row">
@@ -650,25 +664,38 @@ nav.topnav::after {
   </main>
 </div>
 
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
 <script>
+// ── Firebase Init ──────────────────────────────────────
+if (!firebase.apps.length) {
+  firebase.initializeApp(window.FIREBASE_CONFIG || {
+    apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+    authDomain: "flatzyhomes.firebaseapp.com",
+    projectId: "flatzyhomes",
+    storageBucket: "flatzyhomes.firebasestorage.app",
+    messagingSenderId: "519957313457",
+    appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+  });
+}
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
 // ── Theme ──────────────────────────────────────────────
-const savedTheme = localStorage.getItem('flatzy_theme') || 'light';
-applyTheme(savedTheme);
+applyTheme(localStorage.getItem('flatzy_theme') || 'light');
 
 function applyTheme(mode) {
-  const link = document.getElementById('theme-css');
-  link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  document.getElementById('theme-css').href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
   localStorage.setItem('flatzy_theme', mode);
-  document.body.classList.toggle('dark-mode', mode === 'dark');
   const tog = document.getElementById('darkToggle');
   const lbl = document.getElementById('themeLabel');
   if(tog) tog.checked = mode === 'dark';
   if(lbl) lbl.textContent = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
 }
-
-function toggleTheme(isDark) {
-  applyTheme(isDark ? 'dark' : 'light');
-}
+function toggleTheme(isDark) { applyTheme(isDark ? 'dark' : 'light'); }
 
 // ── Section nav ────────────────────────────────────────
 function showSection(id, mobileTabEl) {
@@ -678,7 +705,6 @@ function showSection(id, mobileTabEl) {
   if(sec) sec.classList.add('active');
   const navLink = document.getElementById('nav-' + id);
   if(navLink) navLink.classList.add('active');
-  // mobile tabs
   if(mobileTabEl) {
     document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
     mobileTabEl.classList.add('active');
@@ -686,43 +712,81 @@ function showSection(id, mobileTabEl) {
   window.scrollTo(0,0);
 }
 
+// ── Cloudinary Config ──────────────────────────────────
+const CLOUD_NAME   = 'dhl8byas2';
+const UPLOAD_PRESET = 'flatzy_upload';
+
 // ── Profile ─────────────────────────────────────────────
-let profile = JSON.parse(localStorage.getItem('flatzy_profile') || '{}');
+let currentUser = null;
+let selectedGender = '';
+let uploadedProfilePhotoUrl = null; // new photo chosen but not yet saved
 
-function loadProfile() {
-  // Try firebase user first
-  const name = profile.name || (window.flatzyUser && window.flatzyUser.displayName) || 'User';
-  const phone = profile.phone || '';
-  const email = profile.email || (window.flatzyUser && window.flatzyUser.email) || '';
-  const gender = profile.gender || '';
-  const dob = profile.dob || '';
-  const location = profile.location || '';
-
-  // Set sidebar/mobile initials
-  const initial = name.charAt(0).toUpperCase();
+function renderAvatar(photoURL, name) {
+  const initial = (name || 'U').charAt(0).toUpperCase();
   ['sideAvatarLetter','mobileAvatarLetter'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.textContent = initial;
+    if(!el) return;
+    if(photoURL) {
+      el.innerHTML = `<img src="${photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    } else {
+      el.textContent = initial;
+    }
   });
+  // Also update avatar in edit form preview
+  const editAvEl = document.getElementById('editAvatarPreview');
+  if(editAvEl) {
+    if(photoURL) editAvEl.innerHTML = `<img src="${photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    else editAvEl.textContent = initial;
+  }
+}
+
+async function loadProfile() {
+  if(!currentUser) return;
+
+  // Always fill name/email from Google Auth
+  const googleName  = currentUser.displayName || '';
+  const googleEmail = currentUser.email || '';
+  const googlePhoto = currentUser.photoURL || '';
+
+  let name = googleName, email = googleEmail, phone = '', gender = '', dob = '', loc = '', photoURL = googlePhoto;
+
+  // Load from Firestore
+  try {
+    const snap = await db.collection('users').doc(currentUser.uid).get();
+    if(snap.exists) {
+      const d = snap.data();
+      name     = d.name     || googleName;
+      email    = d.email    || googleEmail;
+      phone    = d.phone    || '';
+      gender   = d.gender   || '';
+      dob      = d.dob      || '';
+      loc      = d.location || '';
+      photoURL = d.photoURL || googlePhoto;
+    }
+  } catch(e) { console.warn('Firestore load error:', e); }
+
+  // Update sidebar names
   ['sideUserName','mobileUserName'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.textContent = name.length > 12 ? name.split(' ')[0] : name;
+    if(el) el.textContent = name ? (name.length > 12 ? name.split(' ')[0] : name) : 'User';
   });
 
-  // Display fields
-  setDisp('disp-name', name);
-  setDisp('disp-phone', phone ? '+91 ' + phone : null);
-  setDisp('disp-email', email);
-  setDisp('disp-gender', gender);
-  setDisp('disp-dob', dob);
-  setDisp('disp-location', location);
+  renderAvatar(photoURL, name);
 
-  // Form inputs
-  document.getElementById('inp-name').value = name !== 'User' ? name : '';
-  document.getElementById('inp-phone').value = phone;
-  document.getElementById('inp-email').value = email;
-  document.getElementById('inp-dob').value = dob;
-  document.getElementById('inp-location').value = location;
+  // Profile display section
+  setDisp('disp-name',     name);
+  setDisp('disp-phone',    phone ? '+91 ' + phone : null);
+  setDisp('disp-email',    email);
+  setDisp('disp-gender',   gender);
+  setDisp('disp-dob',      dob);
+  setDisp('disp-location', loc);
+
+  // Edit form fill
+  document.getElementById('inp-name').value     = name;
+  document.getElementById('inp-phone').value    = phone;
+  document.getElementById('inp-email').value    = email;
+  document.getElementById('inp-dob').value      = dob;
+  document.getElementById('inp-location').value = loc;
   if(gender) selectGender(gender, true);
 }
 
@@ -730,10 +794,9 @@ function setDisp(id, val) {
   const el = document.getElementById(id);
   if(!el) return;
   if(val) { el.textContent = val; el.style.color = ''; }
-  else { el.innerHTML = '<span class="profile-field-empty">– not added –</span>'; }
+  else    { el.innerHTML = '<span class="profile-field-empty">– not added –</span>'; }
 }
 
-let selectedGender = '';
 function selectGender(g, silent) {
   selectedGender = g;
   ['Male','Female','Other'].forEach(x => {
@@ -742,55 +805,153 @@ function selectGender(g, silent) {
   });
 }
 
-function saveProfile() {
-  profile.name     = document.getElementById('inp-name').value.trim();
-  profile.phone    = document.getElementById('inp-phone').value.trim();
-  profile.email    = document.getElementById('inp-email').value.trim();
-  profile.gender   = selectedGender;
-  profile.dob      = document.getElementById('inp-dob').value;
-  profile.location = document.getElementById('inp-location').value.trim();
-  localStorage.setItem('flatzy_profile', JSON.stringify(profile));
-  loadProfile();
-  showSection('profile');
-  // show toast if available
-  if(window.showToast) showToast('✅ Profile saved!');
-  else alert('Profile saved!');
+// ── Profile Photo Upload ────────────────────────────────
+async function handleProfilePhotoChange(input) {
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5 * 1024 * 1024) {
+    showToastMsg('❌ Photo too large! Max 5MB'); return;
+  }
+
+  const editAvEl = document.getElementById('editAvatarPreview');
+  if(editAvEl) editAvEl.innerHTML = '<span style="font-size:0.75rem;color:var(--muted);">⏳</span>';
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', UPLOAD_PRESET);
+
+  try {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+      method: 'POST', body: formData
+    });
+    const data = await res.json();
+    if(data.secure_url) {
+      uploadedProfilePhotoUrl = data.secure_url;
+      if(editAvEl) editAvEl.innerHTML = `<img src="${data.secure_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      showToastMsg('✅ Photo ready! Click Save to apply.');
+    } else throw new Error(data.error?.message || 'Upload failed');
+  } catch(e) {
+    showToastMsg('❌ Photo upload failed. Try again.');
+    if(editAvEl) editAvEl.textContent = (currentUser?.displayName||'U').charAt(0).toUpperCase();
+  }
 }
 
-// ── Saved properties ───────────────────────────────────
-function loadSaved() {
-  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+async function saveProfile() {
+  if(!currentUser) return;
+
+  const name  = document.getElementById('inp-name').value.trim();
+  const phone = document.getElementById('inp-phone').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  const dob   = document.getElementById('inp-dob').value;
+  const loc   = document.getElementById('inp-location').value.trim();
+
+  // Build data object — only update photoURL if new one was uploaded
+  const data = { name, phone, email, gender: selectedGender, dob, location: loc, updatedAt: new Date().toISOString() };
+  if(uploadedProfilePhotoUrl) data.photoURL = uploadedProfilePhotoUrl;
+
+  try {
+    await db.collection('users').doc(currentUser.uid).set(data, { merge: true });
+    uploadedProfilePhotoUrl = null; // reset after save
+    await loadProfile();
+    showSection('profile');
+    showToastMsg('✅ Profile saved!');
+  } catch(e) {
+    showToastMsg('❌ Save failed: ' + e.message);
+  }
+}
+
+function showToastMsg(msg) {
+  if(window.showToast) { window.showToast(msg); return; }
+  // Fallback simple toast
+  let t = document.getElementById('settingsToast');
+  if(!t) {
+    t = document.createElement('div');
+    t.id = 'settingsToast';
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:white;padding:0.7rem 1.4rem;border-radius:10px;font-size:0.88rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity 0.3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2800);
+}
+
+// ── Saved properties — Firestore se fetch ─────────────
+async function loadSaved() {
   const wrap = document.getElementById('savedPropsWrap');
   if(!wrap) return;
-  if(!wl.length) return; // keep empty state
-  wrap.innerHTML = wl.map(p => `
-    <div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 0;border-bottom:1px solid var(--border);">
-      <div style="width:56px;height:56px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🏠</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-weight:700;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title || 'Property'}</div>
-        <div style="font-size:0.78rem;color:var(--muted);">${p.area || ''} • ₹${p.rent || '—'}/mo</div>
-      </div>
-      <a href="rent.html" style="flex-shrink:0;font-size:0.8rem;color:var(--primary);font-weight:700;text-decoration:none;">View →</a>
-    </div>
-  `).join('');
+
+  // localStorage se IDs lo
+  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+  if(!wl.length) return; // empty state already in HTML
+
+  // IDs hain ya objects hain check karo
+  const ids = wl.map(item => typeof item === 'string' ? item : item.id).filter(Boolean);
+  if(!ids.length) return;
+
+  wrap.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);">⏳ Loading...</div>';
+
+  try {
+    // Firestore se batch fetch (max 10 per query)
+    const chunks = [];
+    for(let i = 0; i < ids.length; i += 10) chunks.push(ids.slice(i, i+10));
+
+    let props = [];
+    for(const chunk of chunks) {
+      const snap = await db.collection('properties').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+      snap.forEach(doc => props.push({ id: doc.id, ...doc.data() }));
+    }
+
+    if(!props.length) {
+      wrap.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--muted);">
+        <div style="font-size:3rem;margin-bottom:1rem;">❤️</div>
+        <div style="font-weight:700;margin-bottom:0.5rem;">No saved properties found</div>
+        <a href="rent.html" class="save-btn" style="text-decoration:none;display:inline-block;padding:0.7rem 1.6rem;width:auto;">🔍 Browse Properties</a>
+      </div>`;
+      return;
+    }
+
+    wrap.innerHTML = props.map(p => {
+      const img = (p.photos && p.photos[0]) ? `<img src="${p.photos[0]}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🏠';
+      return `
+      <div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 0;border-bottom:1px solid var(--border);">
+        <div style="width:56px;height:56px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;overflow:hidden;">${img}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title || 'Property'}</div>
+          <div style="font-size:0.78rem;color:var(--muted);">${p.area || ''} • ₹${p.rent ? p.rent.toLocaleString('en-IN') : '—'}/mo</div>
+        </div>
+        <a href="rent.html#${p.id}" style="flex-shrink:0;font-size:0.8rem;color:var(--primary);font-weight:700;text-decoration:none;">View →</a>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('Wishlist fetch error:', e);
+    wrap.innerHTML = '<div style="padding:1rem;color:var(--muted);font-size:0.85rem;">⚠️ Could not load saved properties.</div>';
+  }
 }
 
 // ── Logout ─────────────────────────────────────────────
 function doLogout() {
   if(confirm('Logout from Flatzy?')) {
-    localStorage.removeItem('flatzy_user');
-    localStorage.removeItem('flatzy_profile');
-    window.location = 'index.html';
+    auth.signOut().then(() => {
+      localStorage.removeItem('flatzy_user');
+      window.location = 'index.html';
+    });
   }
 }
 
-// ── Init ───────────────────────────────────────────────
-loadProfile();
-loadSaved();
+// ── Auth state — run everything after user is known ────
+auth.onAuthStateChanged(async user => {
+  if(!user) {
+    window.location = 'login.html';
+    return;
+  }
+  currentUser = user;
 
-// Handle URL hash navigation
-const hash = location.hash.replace('#','');
-if(hash) showSection(hash);
+  await loadProfile();
+  loadSaved();
+
+  // URL hash navigation
+  const hash = location.hash.replace('#','');
+  if(hash) showSection(hash);
+});
 </script>
 </body>
 </html>
