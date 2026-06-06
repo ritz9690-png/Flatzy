@@ -35,19 +35,19 @@ body { background: var(--dark2); }
 .owner-header p { color: rgba(255,255,255,0.65); font-size: 0.9rem; }
 .owner-tabs { display: flex; gap: 0; background: rgba(255,255,255,0.1); border-radius: 12px; padding: 4px; margin-top: 1.5rem; width: fit-content; }
 .otab { padding: 0.6rem 1.4rem; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: 'Syne',sans-serif; font-weight: 700; font-size: 0.88rem; cursor: pointer; border-radius: 9px; transition: all 0.2s; }
-.otab.active { background: white; color: var(--primary); }
+.otab.active { background: var(--primary); color: #0A0A0A; }
 
 /* CONTENT */
 .owner-content { padding: 2rem 5%; }
 
 /* STATS */
 .owner-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 1rem; margin-bottom: 2rem; }
-.ostat { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 1.2rem; box-shadow: var(--shadow-sm); }
+.ostat { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 1.2rem; box-shadow: var(--shadow-sm); }
 .ostat .num { font-family: 'Syne',sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
 .ostat .lbl { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
 
 /* ADD PROPERTY FORM */
-.add-form-card { background: white; border: 1.5px solid var(--border); border-radius: 18px; padding: 2rem; box-shadow: var(--shadow-sm); }
+.add-form-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 2rem; box-shadow: var(--shadow-sm); }
 .add-form-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; }
 .form-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
 .form-section:last-child { border-bottom: none; margin-bottom: 0; }
@@ -94,7 +94,7 @@ body { background: var(--dark2); }
 
 /* LISTINGS TABLE */
 .listings-list { display: flex; flex-direction: column; gap: 1rem; }
-.listing-row { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 1.2rem; display: flex; gap: 1rem; align-items: center; box-shadow: var(--shadow-sm); transition: border-color 0.2s; }
+.listing-row { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 1.2rem; display: flex; gap: 1rem; align-items: center; box-shadow: var(--shadow-sm); transition: border-color 0.2s; }
 .listing-row:hover { border-color: var(--primary); }
 .listing-emoji { font-size: 2.5rem; width: 54px; text-align: center; flex-shrink: 0; }
 .listing-info { flex: 1; }
@@ -203,78 +203,66 @@ body { background: var(--dark2); }
 }
 .sidebar-toggle:hover { background: var(--primary-light); }
 
-/* ══ DARK MODE — Owner Dashboard (Obsidian+Gold theme) ══
-   Light mode: zero changes. All overrides scoped to body.dark-mode
-   ══════════════════════════════════════════════════════ */
+/* ══ OWNER DASHBOARD — uses CSS variables from flatzy-dark.css / flatzy-light.css ══
+   All colors use var() tokens so they automatically swap when theme file swaps.
+   ══════════════════════════════════════════════════════════════════════════════ */
 
 /* Stat cards */
-body.dark-mode .ostat                  { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
-body.dark-mode .ostat .lbl             { color: #a89f8c !important; }
+.ostat                  { background: var(--card); border-color: var(--border); }
+.ostat .lbl             { color: var(--muted); }
 
 /* Active tab */
-body.dark-mode .otab.active            { background: #C9A84C !important; color: #0A0A0A !important; }
-body.dark-mode .otab                   { color: rgba(247,243,236,0.55) !important; }
+.otab.active            { background: var(--primary); color: #0A0A0A; }
+.otab                   { color: rgba(255,255,255,0.6); }
 
 /* Form card */
-body.dark-mode .add-form-card          { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
-body.dark-mode .add-form-card h3       { color: #F7F3EC !important; }
+.add-form-card          { background: var(--card); border-color: var(--border); }
+.add-form-card h3       { color: var(--text); }
 
 /* Form sections */
-body.dark-mode .form-section           { border-bottom-color: rgba(201,168,76,0.12) !important; }
-body.dark-mode .form-section-title     { color: #C9A84C !important; }
-
-/* Form inputs/selects/textarea */
-body.dark-mode .add-form-card input,
-body.dark-mode .add-form-card select,
-body.dark-mode .add-form-card textarea { background: #141414 !important; border-color: rgba(201,168,76,0.2) !important; color: #F7F3EC !important; }
-body.dark-mode .add-form-card input::placeholder,
-body.dark-mode .add-form-card textarea::placeholder { color: #6b6b6b !important; }
-body.dark-mode .add-form-card input:focus,
-body.dark-mode .add-form-card select:focus,
-body.dark-mode .add-form-card textarea:focus { border-color: #C9A84C !important; box-shadow: 0 0 0 3px rgba(201,168,76,0.12) !important; }
-body.dark-mode .add-form-card label    { color: #a89f8c !important; }
-
-/* Area dropdown */
-body.dark-mode #areaDropdown           { background: #181818 !important; border-color: rgba(201,168,76,0.2) !important; color: #F7F3EC !important; }
-body.dark-mode #areaDropdown div       { color: #F7F3EC !important; }
-body.dark-mode #areaDropdown div:hover { background: rgba(201,168,76,0.1) !important; }
+.form-section           { border-bottom-color: var(--border); }
+.form-section-title     { color: var(--primary); }
 
 /* Amenity labels */
-body.dark-mode .amenity-label          { background: #141414 !important; border-color: rgba(201,168,76,0.15) !important; color: #a89f8c !important; }
-body.dark-mode .amenity-label:hover    { border-color: #C9A84C !important; color: #C9A84C !important; background: rgba(201,168,76,0.08) !important; }
+.amenity-label          { background: var(--bg2); border-color: var(--border); color: var(--muted); }
+.amenity-label:hover    { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-/* Photo / Video drop zones */
-body.dark-mode .photo-drop             { background: #141414 !important; border-color: rgba(201,168,76,0.2) !important; color: #a89f8c !important; }
-body.dark-mode .photo-drop:hover       { border-color: #C9A84C !important; background: rgba(201,168,76,0.08) !important; }
-body.dark-mode .video-drop             { background: #141414 !important; color: #a89f8c !important; }
-body.dark-mode .video-drop:hover       { background: #1a1a1a !important; }
+/* Photo drop zone */
+.photo-drop             { background: var(--bg2); border-color: var(--border); color: var(--muted); }
+.photo-drop:hover       { border-color: var(--primary); background: var(--primary-light); }
+
+/* Video drop zone */
+.video-drop             { background: var(--bg2); }
+.video-drop:hover       { background: var(--bg3); }
 
 /* Listing rows */
-body.dark-mode .listing-row            { background: #181818 !important; border-color: rgba(201,168,76,0.15) !important; }
-body.dark-mode .listing-row:hover      { border-color: rgba(201,168,76,0.45) !important; }
-body.dark-mode .listing-title          { color: #F7F3EC !important; }
-body.dark-mode .listing-meta           { color: #a89f8c !important; }
-body.dark-mode .listing-meta *         { color: #a89f8c !important; }
+.listing-row            { background: var(--card); border-color: var(--border); }
+.listing-row:hover      { border-color: var(--border-strong, var(--primary)); }
+.listing-title          { color: var(--text); }
+.listing-meta           { color: var(--muted); }
+.listing-meta *         { color: var(--muted); }
 
-/* Call / WhatsApp inline buttons in listing */
-body.dark-mode .listing-row a[href^="tel:"]    { background: rgba(201,168,76,0.1) !important; color: #C9A84C !important; border-color: rgba(201,168,76,0.3) !important; }
-body.dark-mode .listing-row a[href^="https://wa.me"] { background: rgba(16,185,129,0.12) !important; color: #10B981 !important; border-color: rgba(16,185,129,0.25) !important; }
-
-/* Views/inquiries text inside listing */
-body.dark-mode .listing-row [style*="color:var(--muted)"] { color: #a89f8c !important; }
+/* Area dropdown */
+#areaDropdown           { background: var(--card); border-color: var(--border); color: var(--text); }
+#areaDropdown div       { color: var(--text); }
+#areaDropdown div:hover { background: var(--primary-light); }
 
 /* Analytics table */
-body.dark-mode #analyticsTable [style*="font-weight:700"] { color: #F7F3EC !important; }
-body.dark-mode #analyticsTable [style*="border-bottom"]   { border-bottom-color: rgba(201,168,76,0.12) !important; }
+#analyticsTable         { color: var(--text); }
 
-/* Sidebar */
-body.dark-mode .sidebar                { background: #0f0f0f !important; }
-body.dark-mode .sb-link               { color: #F7F3EC !important; }
-body.dark-mode .sb-link:hover,
-body.dark-mode .sb-link.active        { background: rgba(201,168,76,0.1) !important; color: #C9A84C !important; }
-body.dark-mode .sb-divider            { background: rgba(201,168,76,0.12) !important; }
-body.dark-mode .sidebar-social        { border-top-color: rgba(201,168,76,0.12) !important; }
-body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
+/* Location picker buttons */
+.loc-btn {
+  flex: 1; min-width: 130px; padding: 0.5rem 0.8rem;
+  background: var(--primary-light); border: 1.5px solid var(--primary); color: var(--primary);
+  border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer;
+}
+
+/* Lock location info box */
+.loc-locked-info {
+  background: rgba(16,185,129,0.15); border: 1.5px solid rgba(16,185,129,0.4);
+  border-radius: 8px; padding: 0.6rem 0.8rem;
+  font-size: 0.82rem; color: var(--green, #10B981); font-weight: 600;
+}
 </style>
 
 <!-- SIDEBAR OVERLAY -->
@@ -408,8 +396,8 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
         <div class="form-group" id="locationPickerWrap">
           <label>📍 Property Location <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(optional — helps tenants find nearby places)</span></label>
           <div style="display:flex;gap:0.5rem;margin-bottom:0.6rem;flex-wrap:wrap;">
-            <button type="button" onclick="useCurrentLocation()" style="flex:1;min-width:130px;padding:0.5rem 0.8rem;background:#eff6ff;border:1.5px solid #1a6fe8;color:#1a6fe8;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">📡 Use Current Location</button>
-            <button type="button" onclick="searchManualLocation()" style="flex:1;min-width:130px;padding:0.5rem 0.8rem;background:#eff6ff;border:1.5px solid #1a6fe8;color:#1a6fe8;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">🔍 Search Location</button>
+            <button type="button" onclick="useCurrentLocation()" class="loc-btn">📡 Use Current Location</button>
+            <button type="button" onclick="searchManualLocation()" class="loc-btn">🔍 Search Location</button>
           </div>
           <input type="text" id="manualLocationInput" placeholder="Type area/address to search… e.g. YCCE Nagpur"
             style="width:100%;padding:0.5rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.88rem;font-family:inherit;box-sizing:border-box;display:none;margin-bottom:0.5rem;" />
@@ -418,7 +406,7 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
           <div id="locLockWrap" style="display:none;">
             <button type="button" onclick="lockLocation()" style="width:100%;padding:0.55rem;background:#059669;color:white;border:none;border-radius:8px;font-weight:800;font-size:0.88rem;cursor:pointer;font-family:inherit;">🔒 Lock This Location</button>
           </div>
-          <div id="locLockedInfo" style="display:none;background:#d1fae5;border:1.5px solid #059669;border-radius:8px;padding:0.6rem 0.8rem;font-size:0.82rem;color:#065f46;font-weight:600;"></div>
+          <div id="locLockedInfo" class="loc-locked-info" style="display:none;"></div>
         </div>
       </div>
 
@@ -618,11 +606,11 @@ async function renderListings() {
     const callBtn = phone ? `
         <div style="margin-top:0.5rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
           <a href="tel:${phone}" onclick="trackInquiry('${p.id}')"
-            style="display:inline-flex;align-items:center;gap:0.3rem;background:#eff6ff;color:#1a6fe8;border:1px solid #bfdbfe;border-radius:7px;padding:0.3rem 0.7rem;font-size:0.78rem;font-weight:700;text-decoration:none;">
+            style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--primary-light);color:var(--primary);border:1px solid var(--border);border-radius:7px;padding:0.3rem 0.7rem;font-size:0.78rem;font-weight:700;text-decoration:none;">
             \u{1F4DE} Call
           </a>
           <a href="https://wa.me/91${phone}" target="_blank" onclick="trackInquiry('${p.id}')"
-            style="display:inline-flex;align-items:center;gap:0.3rem;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:7px;padding:0.3rem 0.7rem;font-size:0.78rem;font-weight:700;text-decoration:none;">
+            style="display:inline-flex;align-items:center;gap:0.3rem;background:rgba(16,185,129,0.12);color:var(--green,#10B981);border:1px solid rgba(16,185,129,0.25);border-radius:7px;padding:0.3rem 0.7rem;font-size:0.78rem;font-weight:700;text-decoration:none;">
             \u{1F4AC} WhatsApp
           </a>
         </div>` : '';
@@ -928,19 +916,19 @@ function buildAreaDropdown(filter='') {
     const matched = q ? areas.filter(a => a.toLowerCase().includes(q)) : areas;
     if (!matched.length) return;
     anyResult = true;
-    html += `<div style="padding:0.4rem 0.8rem;font-size:0.72rem;font-weight:700;color:#1a6fe8;text-transform:uppercase;letter-spacing:0.8px;background:#f0f6ff;border-bottom:1px solid #e5eaf2;">${group}</div>`;
+    html += `<div style="padding:0.4rem 0.8rem;font-size:0.72rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.8px;background:var(--primary-light);border-bottom:1px solid var(--border);">${group}</div>`;
     matched.forEach(a => {
-      html += `<div class="area-opt" data-val="${a}" style="padding:0.55rem 1rem;cursor:pointer;font-size:0.88rem;color:#1e293b;transition:background 0.12s;" onmousedown="selectArea('${a}')" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">${a}</div>`;
+      html += `<div class="area-opt" data-val="${a}" style="padding:0.55rem 1rem;cursor:pointer;font-size:0.88rem;color:var(--text);transition:background 0.12s;" onmousedown="selectArea('${a}')" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background=''">${a}</div>`;
     });
   });
   if (!anyResult) {
-    html = `<div style="padding:0.8rem 1rem;color:#94a3b8;font-size:0.85rem;">No area found</div>`;
+    html = `<div style="padding:0.8rem 1rem;color:var(--muted);font-size:0.85rem;">No area found</div>`;
     if (q) {
       const displayQ = filter.trim();
       html += `<div class="area-opt area-add-new" data-val="${displayQ}"
-        style="padding:0.65rem 1rem;cursor:pointer;font-size:0.88rem;color:#1a6fe8;font-weight:700;background:#eff6ff;border-top:1px solid #e5eaf2;display:flex;align-items:center;gap:0.5rem;"
+        style="padding:0.65rem 1rem;cursor:pointer;font-size:0.88rem;color:var(--primary);font-weight:700;background:var(--primary-light);border-top:1px solid var(--border);display:flex;align-items:center;gap:0.5rem;"
         onmousedown="addNewArea('${displayQ.replace(/'/g,"\\'")}')"
-        onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+        onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--primary-light)'">
         <span style="font-size:1rem;">➕</span> Add "<strong>${displayQ}</strong>" as new area
       </div>`;
     }
@@ -1178,7 +1166,6 @@ function applyTheme(mode, silent) {
   const link = document.getElementById('theme-css');
   if(link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
   localStorage.setItem('flatzy_theme', mode);
-  // sync sidebar toggle
   const tog = document.getElementById('sidebarDarkToggle');
   const track = document.getElementById('sideToggleTrack');
   const thumb = document.getElementById('sideToggleThumb');
