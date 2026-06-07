@@ -9,7 +9,7 @@
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -59,6 +59,8 @@ onAuthStateChanged(auth, async (user) => {
 
   window._db       = db;
   window._authUser = user;
+  window._fsGetDocs   = getDocs;
+  window._fsCollection = collection;
 
   // Show Google profile photo in avatar if no custom photo uploaded
   const customPhoto = localStorage.getItem('flatzy_profile_photo');
@@ -79,6 +81,9 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   if (typeof window._loadProfileUI === 'function') window._loadProfileUI(merged);
+
+  // Re-load saved properties now that Firestore is available
+  loadSaved();
 });
 
 // Save profile to Firestore + localStorage
@@ -923,30 +928,48 @@ function saveProfile() {
 }
 
 // ── Saved properties ───────────────────────────────────
-function loadSaved() {
-  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+async function loadSaved() {
+  const wl   = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
   const wrap = document.getElementById('savedPropsWrap');
-  if(!wrap) return;
-  if(!wl.length) return; // keep empty state
-  wrap.innerHTML = wl.map(p => {
-    const title = p.title || p.propertyTitle || p.name || p.propertyName || 'Property';
-    const rent  = p.rent  || p.monthlyRent   || p.price || p.rentAmount  || '';
-    const area  = p.area  || p.locality      || p.location || p.address  || '';
-    const photo = p.photo || p.image         || p.thumbnail || (p.photos && p.photos[0]) || '';
-    const id    = p.id    || p.propertyId    || '';
-    const imgHtml = photo
-      ? '<img src="' + photo + '" alt="' + title + '" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;">'
-      : '<div style="width:56px;height:56px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🏠</div>';
-    const href = id ? 'rent.html?id=' + id : 'rent.html';
-    const rentStr = rent ? '₹' + rent + '/mo' : '';
-    const sep = area && rentStr ? ' • ' : '';
+  if (!wrap) return;
+  if (!wl.length) return; // keep empty state visible
+
+  // Show loading state
+  wrap.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">Loading saved properties…</div>';
+
+  let propsMap = {};
+
+  // Fetch from Firestore if available
+  if (window._db && window._fsGetDocs && window._fsCollection) {
+    try {
+      const snap = await window._fsGetDocs(window._fsCollection(window._db, 'properties'));
+      snap.docs.forEach(d => { propsMap[d.id] = { id: d.id, ...d.data() }; });
+    } catch(e) { console.warn('Firestore fetch failed:', e.message); }
+  }
+
+  // Match wishlist IDs to fetched properties
+  const saved = wl.map(id => propsMap[id]).filter(Boolean);
+
+  if (!saved.length) {
+    wrap.innerHTML = '<div style="text-align:center;padding:3rem 1rem;color:var(--muted);"><div style="font-size:3rem;margin-bottom:1rem;">❤️</div><div style="font-weight:700;margin-bottom:0.5rem;">No saved properties yet</div><div style="font-size:0.85rem;margin-bottom:1.5rem;">Browse properties and tap ❤️ to save them here</div><a href="rent.html" class="save-btn" style="text-decoration:none;display:inline-block;padding:0.7rem 1.6rem;width:auto;">🔍 Browse Properties</a></div>';
+    return;
+  }
+
+  wrap.innerHTML = saved.map(p => {
+    const title   = p.title    || 'Property';
+    const rent    = p.rent     ? '₹' + Number(p.rent).toLocaleString('en-IN') + '/mo' : '';
+    const area    = p.area     || '';
+    const imgHtml = p.mainPhoto
+      ? '<img src="' + p.mainPhoto + '" alt="' + title + '" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;">'
+      : '<div style="width:56px;height:56px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">' + (p.emoji || '🏠') + '</div>';
+    const sep = area && rent ? ' • ' : '';
     return '<div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 0;border-bottom:1px solid var(--border);">'
       + imgHtml
       + '<div style="flex:1;min-width:0;">'
       + '<div style="font-weight:700;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + title + '</div>'
-      + '<div style="font-size:0.78rem;color:var(--muted);">' + area + sep + rentStr + '</div>'
+      + '<div style="font-size:0.78rem;color:var(--muted);">' + area + sep + rent + '</div>'
       + '</div>'
-      + '<a href="' + href + '" style="flex-shrink:0;font-size:0.8rem;color:var(--primary);font-weight:700;text-decoration:none;">View \u2192</a>'
+      + '<a href="view.html?id=' + p.id + '" style="flex-shrink:0;font-size:0.8rem;color:var(--primary);font-weight:700;text-decoration:none;">View \u2192</a>'
       + '</div>';
   }).join('');
 }
