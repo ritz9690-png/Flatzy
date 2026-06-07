@@ -1641,15 +1641,41 @@ window.openNotifications = function() {
   window.location = 'whats-new.html';
 };
 
-// Show badge if not seen in last 3 days
-(function checkNotifBadge() {
-  const lastSeen = parseInt(localStorage.getItem('flatzy_notif_seen') || '0');
-  const threeDays = 3 * 24 * 60 * 60 * 1000;
-  if (Date.now() - lastSeen > threeDays) {
-    ['notifBadge','notifBadgeUser'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('show');
+// ── Firestore-based bell badge: show if new property added since last seen ──
+(async function checkNotifBadge() {
+  try {
+    const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const _app = getApps().length ? getApps()[0] : initializeApp({
+      apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+      authDomain: "flatzyhomes.firebaseapp.com",
+      projectId: "flatzyhomes",
+      storageBucket: "flatzyhomes.firebasestorage.app",
+      messagingSenderId: "519957313457",
+      appId: "1:519957313457:web:1ffc1685819120edd7ef90"
     });
+    const _db = getFirestore(_app);
+    const metaSnap = await getDoc(doc(_db, 'meta', 'lastPropertyAdded'));
+    if (metaSnap.exists()) {
+      const lastAdded = metaSnap.data().timestamp; // ISO string or millis
+      const lastSeen = parseInt(localStorage.getItem('flatzy_notif_seen') || '0');
+      const addedMs = typeof lastAdded === 'string' ? new Date(lastAdded).getTime() : lastAdded;
+      if (addedMs > lastSeen) {
+        ['notifBadge','notifBadgeUser'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('show');
+        });
+      }
+    }
+  } catch(e) {
+    // Fallback: show badge if not seen in 3 days
+    const lastSeen = parseInt(localStorage.getItem('flatzy_notif_seen') || '0');
+    if (Date.now() - lastSeen > 3 * 24 * 60 * 60 * 1000) {
+      ['notifBadge','notifBadgeUser'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('show');
+      });
+    }
   }
 })();
 

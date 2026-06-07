@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, setDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
@@ -433,7 +433,7 @@ window.toggleSidebar = function() {
 window._refFilter  = 'all';
 window._userFilter = 'all';
 
-const ALL_TABS = ['listings','owners','users','referrals','referrers','storage','areas','locverify','nolocation'];
+const ALL_TABS = ['listings','owners','users','referrals','referrers','storage','areas','locverify','nolocation','push'];
 
 window.switchTab = function(tab) {
   ALL_TABS.forEach(t => {
@@ -454,6 +454,7 @@ window.switchTab = function(tab) {
   if (tab === 'areas'     && !window._areasLoaded)      loadAreas();
   if (tab === 'locverify'   && !window._locverifyLoaded)  loadLocVerify();
   if (tab === 'nolocation'  && !window._nolocationLoaded) loadNoLocation();
+  if (tab === 'push'        && !window._pushLoaded)       loadPushTab();
 };
 
 // ─── Load Users ───────────────────────────────────────────────────────────────
@@ -1478,5 +1479,121 @@ window.loadListings = async function() {
     renderNoLocationStats();
     filterNoLocation();
   }
+};
+
+// ─── meta/lastPropertyAdded updater ─────────────────────────────────────────
+// Call this any time a property is added or goes live (from owner.html or when
+// admin approves). Also exposed as window.updateLastPropertyAdded for use in
+// owner.html after successful submit.
+window.updateLastPropertyAdded = async function() {
+  try {
+    await setDoc(doc(db, 'meta', 'lastPropertyAdded'), {
+      timestamp: new Date().toISOString()
+    }, { merge: true });
+  } catch(e) { console.warn('meta update failed', e.message); }
+};
+
+// Hook: when admin location-approves a property, update lastPropertyAdded
+// so the bell badge fires for users
+const _origSetLocationStatus = window.setLocationStatus;
+if (_origSetLocationStatus) {
+  window.setLocationStatus = async function(propId, status) {
+    await _origSetLocationStatus(propId, status);
+    if (status === 'approved') window.updateLastPropertyAdded();
+  };
+}
+const _origLvSetStatus = window.lvSetStatus;
+if (_origLvSetStatus) {
+  window.lvSetStatus = async function(propId, status) {
+    await _origLvSetStatus(propId, status);
+    if (status === 'approved') window.updateLastPropertyAdded();
+  };
+}
+
+// ─── Push Notifications Tab ───────────────────────────────────────────────────
+window._pushLoaded = false;
+
+window.loadPushTab = async function() {
+  window._pushLoaded = true;
+  const container = document.getElementById('pushTabStats');
+  if (!container) return;
+  container.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">⏳ FCM tokens load ho rahe hain…</p>';
+  try {
+    const snap = await getDocs(collection(db, 'fcmTokens'));
+    const tokens = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    container.innerHTML = `
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:1rem 1.5rem;flex:1;min-width:140px;">
+          <div style="font-size:1.6rem;font-weight:800;color:var(--primary)">${tokens.length}</div>
+          <div style="font-size:0.78rem;color:var(--muted);font-weight:600;">Total FCM Tokens</div>
+        </div>
+        <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:1rem 1.5rem;flex:1;min-width:140px;">
+          <div style="font-size:1.6rem;font-weight:800;color:#16a34a">${tokens.filter(t=>t.subscribedAt && (Date.now()-new Date(t.subscribedAt).getTime()) < 30*24*60*60*1000).length}</div>
+          <div style="font-size:0.78rem;color:var(--muted);font-weight:600;">Active (30-day)</div>
+        </div>
+      </div>
+      <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:0.8rem 1rem;font-size:0.8rem;color:#92400e;margin-bottom:1rem;line-height:1.6;">
+        ⚠️ <b>FCM push notifications ke liye Firebase Cloud Function ya server-side API chahiye.</b>
+        Browser se directly push nahi bhej sakte (security restriction). Niche wala button ek
+        <b>Firestore broadcast document</b> create karta hai — service worker ya Cloud Function
+        use kar ke actual push bhej sakte ho.
+      </div>`;
+    window._pushTokens = tokens;
+  } catch(e) {
+    container.innerHTML = `<p style="color:red;font-size:0.85rem;">Error: ${e.message}</p>`;
+  }
+};
+
+window.sendPushToAll = async function() {
+  const title = document.getElementById('pushTitle').value.trim();
+  const body  = document.getElementById('pushBody').value.trim();
+  if (!title || !body) { showToast('Title aur body dono bharo ❌', 'error'); return; }
+
+  const btn = document.getElementById('sendPushBtn');
+  btn.disabled = true; btn.textContent = '⏳ Bhej raha hai…';
+
+  try {
+    // 1. Write broadcast doc to Firestore (service worker / Cloud Function picks this up)
+    const broadcastRef = await addDoc(collection(db, 'broadcasts'), {
+      title,
+      body,
+      link: 'whats-new.html',
+      sentAt: new Date().toISOString(),
+      sentBy: auth.currentUser?.email || 'admin',
+      tokenCount: window._pushTokens?.length || 0
+    });
+
+    // 2. Also write a notification entry for all users (notifications collection)
+    await addDoc(collection(db, 'notifications'), {
+      title,
+      body,
+      link: 'whats-new.html',
+      timestamp: new Date().toISOString(),
+      read: false,
+      global: true   // visible to all users
+    });
+
+    // 3. Update meta/lastPropertyAdded so bell badge fires
+    await window.updateLastPropertyAdded();
+
+    showToast(`✅ Broadcast bheja! ${window._pushTokens?.length || 0} tokens ko.`);
+    document.getElementById('pushTitle').value = '';
+    document.getElementById('pushBody').value = '';
+    document.getElementById('pushPreview').style.display = 'none';
+  } catch(e) {
+    showToast('Send failed: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '📡 Send Push to All Users';
+  }
+};
+
+window.previewPush = function() {
+  const title = document.getElementById('pushTitle').value.trim();
+  const body  = document.getElementById('pushBody').value.trim();
+  const preview = document.getElementById('pushPreview');
+  if (!title && !body) { preview.style.display = 'none'; return; }
+  preview.style.display = 'block';
+  document.getElementById('ppTitle').textContent = title || '(no title)';
+  document.getElementById('ppBody').textContent  = body  || '(no body)';
 };
 

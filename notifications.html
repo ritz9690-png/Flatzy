@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications – Flatzy Nagpur</title>
+<link rel="icon" type="image/png" href="favicon.jpeg">
+<link id="theme-css" rel="stylesheet" href="flatzy-light.css">
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: var(--bg); }
+
+/* ── SIDEBAR TOGGLE (same as settings.html) ── */
+.sidebar-toggle {
+  display: flex !important; align-items: center; justify-content: center;
+  background: none; border: none; font-size: 1.4rem; cursor: pointer;
+  color: var(--text); padding: 0.3rem 0.5rem; border-radius: 8px;
+  transition: background 0.15s;
+}
+
+/* ── BELL BADGE ── */
+.notif-bell-btn {
+  position: relative; background: none; border: none;
+  cursor: pointer; padding: 0.3rem 0.4rem; border-radius: 8px;
+  font-size: 1.25rem; line-height: 1; transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center; color: var(--text);
+}
+.notif-bell-btn:hover { background: var(--primary-light); }
+.notif-badge {
+  position: absolute; top: 0px; right: 0px;
+  background: var(--red, #ef4444); color: white;
+  font-size: 0.58rem; font-weight: 800;
+  border-radius: 50%; width: 16px; height: 16px;
+  display: none; align-items: center; justify-content: center;
+  border: 2px solid white;
+}
+.notif-badge.show { display: flex; }
+
+/* ── PAGE HERO ── */
+.page-hero {
+  margin-top: var(--nav-h);
+  background: linear-gradient(135deg, #0F1C2E 0%, #1A3A6E 60%, #1a6fe8 100%);
+  padding: 3rem 5% 2.5rem; text-align: center; position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 70% 50%,rgba(96,180,255,0.15) 0%,transparent 60%);
+  pointer-events:none;
+}
+.page-hero h1 { font-size: clamp(1.8rem,4vw,2.5rem); font-weight:800; color:white; letter-spacing:-1px; margin-bottom:0.5rem; }
+.page-hero p  { color:rgba(255,255,255,0.7); font-size:0.92rem; max-width:460px; margin:0 auto; line-height:1.7; }
+
+/* ── NOTIFICATIONS WRAP ── */
+.notifs-wrap { max-width: 720px; margin: 0 auto; padding: 2rem 5% 6rem; }
+
+/* ── HEADER ROW ── */
+.notifs-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem;
+}
+.notifs-title {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.unread-count-pill {
+  background: var(--red, #ef4444); color: white;
+  font-size: 0.72rem; font-weight: 800; border-radius: 20px;
+  padding: 0.15rem 0.55rem; display: none;
+}
+.unread-count-pill.show { display: inline-block; }
+.mark-all-btn {
+  background: var(--primary-light); color: var(--primary); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 0.5rem 1rem; font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.mark-all-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.mark-all-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* ── NOTIFICATION ITEMS ── */
+.notif-list { display: flex; flex-direction: column; gap: 0.8rem; }
+
+.notif-item {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 1.2rem 1.4rem;
+  display: flex; gap: 1rem; align-items: flex-start;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.notif-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,111,232,0.1); }
+.notif-item.unread {
+  border-left: 3px solid var(--primary);
+  background: var(--primary-light, #eff6ff);
+}
+.notif-item.unread .notif-title { font-weight: 800; color: var(--text); }
+.notif-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--primary); flex-shrink: 0; margin-top: 0.4rem;
+  display: none;
+}
+.notif-item.unread .notif-dot { display: block; }
+.notif-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+.notif-content { flex: 1; min-width: 0; }
+.notif-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; line-height: 1.4; }
+.notif-body  { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+.notif-time  { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; font-weight: 600; }
+.notif-link-arrow { font-size: 0.8rem; color: var(--primary); margin-top: 0.5rem; font-weight: 700; }
+
+/* ── EMPTY STATE ── */
+.empty-notif {
+  text-align: center; padding: 3rem 1rem;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 20px;
+}
+.empty-notif .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+.empty-notif h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem; }
+.empty-notif p  { font-size: 0.85rem; color: var(--muted); }
+
+/* ── LOADING SKELETON ── */
+.notif-skeleton {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 1.2rem 1.4rem; margin-bottom: 0.8rem;
+}
+.skel { background: var(--border); border-radius: 6px; animation: skel-pulse 1.5s ease-in-out infinite; }
+.skel-title { height: 14px; width: 60%; margin-bottom: 0.6rem; }
+.skel-body  { height: 11px; width: 90%; margin-bottom: 0.4rem; }
+.skel-time  { height: 10px; width: 30%; }
+@keyframes skel-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+@media(max-width:480px) {
+  .notifs-wrap { padding: 1.5rem 4% 5rem; }
+  .notif-item { padding: 1rem 1rem; }
+}
+</style>
+</head>
+<body class="has-bottom-nav">
+<script>(function(){
+  const m = localStorage.getItem('flatzy_theme') || 'light';
+  const l = document.getElementById('theme-css');
+  if(l) l.href = m === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+})();</script>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Flat<span>zy</span></div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sb-link">🏠 Home</a>
+    <a href="rent.html" class="sb-link">🔍 Browse Properties</a>
+    <a href="wishlist.html" class="sb-link">❤️ Saved Properties <span class="sb-wish-badge" id="sbWishBadge"></span></a>
+    <a href="owner.html" class="sb-link">📋 List Property</a>
+    <a href="refer.html" class="sb-link">🎁 Refer &amp; Earn</a>
+    <a href="about.html" class="sb-link">ℹ️ About Us</a>
+    <div class="sb-divider"></div>
+    <a href="faq.html" class="sb-link">❓ FAQ</a>
+    <a href="services.html" class="sb-link">⭐ Our Services</a>
+    <a href="whats-new.html" class="sb-link">🆕 What's New</a>
+    <a href="notifications.html" class="sb-link active">🔔 Notifications</a>
+    <div class="sb-divider"></div>
+    <a href="legal.html?tab=policy" class="sb-link">🔒 Privacy Policy</a>
+    <a href="legal.html?tab=terms" class="sb-link">📄 Terms &amp; Conditions</a>
+    <div class="sb-divider"></div>
+    <a href="settings.html" class="sb-link">⚙️ Settings</a>
+    <a href="admin.html" class="sb-link" style="opacity:0.55;font-size:0.85rem;">🛠️ Admin Panel</a>
+  </nav>
+  <div class="sidebar-social">
+    <a href="https://wa.me/917387798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#1a1a2e;transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </a>
+  </div>
+  <!-- Dark/Light Toggle -->
+  <div class="sidebar-theme-toggle">
+    <span id="sideThemeLabel" style="font-size:0.8rem;font-weight:700;color:var(--muted);">☀️ Light Mode</span>
+    <div id="sideToggleTrack" onclick="toggleTheme(document.getElementById('sidebarDarkToggle').checked ? false : true)"
+      style="width:40px;height:20px;border-radius:20px;background:#d0ddef;cursor:pointer;position:relative;transition:background 0.3s;flex-shrink:0;">
+      <div id="sideToggleThumb"
+        style="width:16px;height:16px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+    </div>
+    <input type="checkbox" id="sidebarDarkToggle" style="display:none" onchange="toggleTheme(this.checked)">
+  </div>
+</aside>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">
+    <img src="favicon.jpeg" alt="Flatzy Logo" style="height:40px;width:auto;display:block;">
+    <span>Flat<span style="color:#0ea5e9;">zy</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="rent.html">Browse</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:0.5rem;">
+    <button class="notif-bell-btn" id="bellBtn" onclick="window.location='notifications.html'" title="Notifications">
+      🔔<span class="notif-badge" id="notifBadge"></span>
+    </button>
+    <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <h1>🔔 Notifications</h1>
+  <p>Flatzy ke saare updates, new listings, aur announcements ek jagah pe</p>
+</div>
+
+<!-- CONTENT -->
+<div class="notifs-wrap">
+  <div class="notifs-header">
+    <div class="notifs-title">
+      All Notifications
+      <span class="unread-count-pill" id="unreadPill">0 unread</span>
+    </div>
+    <button class="mark-all-btn" id="markAllBtn" onclick="markAllRead()">✅ Mark all as read</button>
+  </div>
+
+  <!-- Skeleton loading -->
+  <div id="loadingSkel">
+    <div class="notif-skeleton"><div class="skel skel-title"></div><div class="skel skel-body"></div><div class="skel skel-time"></div></div>
+    <div class="notif-skeleton"><div class="skel skel-title"></div><div class="skel skel-body"></div><div class="skel skel-time"></div></div>
+    <div class="notif-skeleton"><div class="skel skel-title"></div><div class="skel skel-body"></div><div class="skel skel-time"></div></div>
+  </div>
+
+  <div class="notif-list" id="notifList" style="display:none;"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span>Home</a>
+  <a href="rent.html" class="bn-item"><span class="bn-icon">🔍</span>Browse</a>
+  <a href="owner.html" class="bn-item">
+    <span class="bn-icon" style="background:var(--primary);color:white;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-top:-14px;box-shadow:0 4px 16px rgba(26,111,232,0.4);">+</span>Post
+  </a>
+  <a href="refer.html" class="bn-item"><span class="bn-icon">🎁</span>Refer</a>
+  <a href="notifications.html" class="bn-item active"><span class="bn-icon">🔔</span>Alerts</a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── FIREBASE + LOGIC ── -->
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, writeBatch, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+};
+
+const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+let allNotifs   = [];
+
+// ── Format timestamp ──────────────────────────────────────────────────────────
+function timeAgo(isoStr) {
+  if (!isoStr) return '';
+  const diff = Date.now() - new Date(isoStr).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1)  return 'Abhi abhi';
+  if (m < 60) return `${m} min pehle`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} ghante pehle`;
+  const d = Math.floor(h / 24);
+  if (d === 1) return 'Kal';
+  if (d < 7)  return `${d} din pehle`;
+  return new Date(isoStr).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+
+// ── Icon for notification type ────────────────────────────────────────────────
+function notifIcon(n) {
+  const title = (n.title || '').toLowerCase();
+  if (title.includes('listing') || title.includes('property') || title.includes('flat')) return '🏠';
+  if (title.includes('refer') || title.includes('earn'))  return '🎁';
+  if (title.includes('promo') || title.includes('offer')) return '🎉';
+  if (title.includes('update') || title.includes('new'))  return '🆕';
+  return '🔔';
+}
+
+// ── Render notifications ───────────────────────────────────────────────────────
+function render(notifs) {
+  const list = document.getElementById('notifList');
+  const skel = document.getElementById('loadingSkel');
+  skel.style.display = 'none';
+  list.style.display = 'flex';
+
+  if (!notifs.length) {
+    list.innerHTML = `<div class="empty-notif">
+      <div class="empty-icon">🔔</div>
+      <h3>Koi notifications nahi</h3>
+      <p>Nayi listings aur updates yahan dikhenge. Enable push notifications for instant alerts!</p>
+    </div>`;
+    return;
+  }
+
+  const unread = notifs.filter(n => !n.read);
+  const pill   = document.getElementById('unreadPill');
+  const markBtn = document.getElementById('markAllBtn');
+  if (unread.length) {
+    pill.textContent = unread.length + ' unread';
+    pill.classList.add('show');
+    markBtn.disabled = false;
+  } else {
+    pill.classList.remove('show');
+    markBtn.disabled = true;
+  }
+
+  // Bell badge on this page itself
+  const badge = document.getElementById('notifBadge');
+  if (badge) {
+    badge.textContent = unread.length || '';
+    badge.classList.toggle('show', unread.length > 0);
+  }
+
+  list.innerHTML = notifs.map(n => `
+    <div class="notif-item${n.read ? '' : ' unread'}" onclick="handleNotifClick('${n.id}','${n.link||''}')">
+      <div class="notif-dot"></div>
+      <div class="notif-icon">${notifIcon(n)}</div>
+      <div class="notif-content">
+        <div class="notif-title">${n.title || 'Flatzy Update'}</div>
+        ${n.body ? `<div class="notif-body">${n.body}</div>` : ''}
+        <div class="notif-time">${timeAgo(n.timestamp)}</div>
+        ${n.link ? `<div class="notif-link-arrow">→ Dekhna hai? Tap karo</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Handle notification click ─────────────────────────────────────────────────
+window.handleNotifClick = async function(id, link) {
+  // Mark as read in Firestore
+  try {
+    await updateDoc(doc(db, 'notifications', id), { read: true });
+  } catch(e) { /* ignore */ }
+  // Navigate
+  if (link && link !== 'undefined' && link.trim()) {
+    window.location = link;
+  }
+};
+
+// ── Mark all as read ──────────────────────────────────────────────────────────
+window.markAllRead = async function() {
+  const btn = document.getElementById('markAllBtn');
+  btn.disabled = true; btn.textContent = '⏳ Updating…';
+  try {
+    const unread = allNotifs.filter(n => !n.read);
+    const batch  = writeBatch(db);
+    unread.forEach(n => batch.update(doc(db, 'notifications', n.id), { read: true }));
+    await batch.commit();
+    // Also mark flatzy_notif_seen so bell badge hides on other pages
+    localStorage.setItem('flatzy_notif_seen', Date.now());
+    showToast('✅ Sab notifications read ho gayi!');
+    btn.textContent = '✅ Mark all as read';
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+    btn.disabled = false; btn.textContent = '✅ Mark all as read';
+  }
+};
+
+// ── Load notifications (global ones for now; per-user coming soon) ────────────
+function loadNotifications() {
+  const q = query(collection(db, 'notifications'), orderBy('timestamp', 'desc'));
+  onSnapshot(q, snap => {
+    allNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    render(allNotifs);
+    // Update bell badge across all badges on this page
+    const unreadCount = allNotifs.filter(n => !n.read).length;
+    ['notifBadge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = unreadCount || '';
+        el.classList.toggle('show', unreadCount > 0);
+      }
+    });
+  }, err => {
+    document.getElementById('loadingSkel').style.display = 'none';
+    document.getElementById('notifList').style.display = 'flex';
+    document.getElementById('notifList').innerHTML = `<div class="empty-notif">
+      <div class="empty-icon">⚠️</div>
+      <h3>Load nahi ho raha</h3>
+      <p>${err.message}</p>
+    </div>`;
+  });
+}
+
+// ── Mark this page as "seen" so bell badge clears ────────────────────────────
+localStorage.setItem('flatzy_notif_seen', Date.now());
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  loadNotifications();
+});
+</script>
+
+<script src="config.js"></script>
+<script type="module" src="user-tracker.js"></script>
+
+<script>
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (type === 'error' ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  const wl = JSON.parse(localStorage.getItem('flatzy_wishlist') || '[]');
+  const badge = document.getElementById('sbWishBadge');
+  if (badge) { badge.textContent = wl.length; badge.style.display = wl.length ? 'flex' : 'none'; }
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+(function initTheme() { applyTheme(localStorage.getItem('flatzy_theme') || 'light', true); })();
+
+function applyTheme(mode, silent) {
+  const link = document.getElementById('theme-css');
+  if (link) link.href = mode === 'dark' ? 'flatzy-dark.css' : 'flatzy-light.css';
+  localStorage.setItem('flatzy_theme', mode);
+  document.body.classList.toggle('dark-mode', mode === 'dark');
+  const tog   = document.getElementById('sidebarDarkToggle');
+  const track = document.getElementById('sideToggleTrack');
+  const thumb = document.getElementById('sideToggleThumb');
+  const label = document.getElementById('sideThemeLabel');
+  if (tog)   tog.checked = mode === 'dark';
+  if (track) track.style.background = mode === 'dark' ? '#4a9fff' : '#d0ddef';
+  if (thumb) thumb.style.transform  = mode === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  if (label) label.textContent      = mode === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+function toggleTheme(isDark) { applyTheme(isDark ? 'dark' : 'light'); }
+</script>
+</body>
+</html>
