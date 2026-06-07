@@ -6,6 +6,98 @@
 <title>My Account – Flatzy Nagpur</title>
 <link id="theme-css" rel="stylesheet" href="flatzy-light.css">
 <link rel="icon" type="image/png" href="favicon.jpeg">
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA1ChJCaBHpAPnvdK7Z7dbST7bTViuBrWg",
+  authDomain: "flatzyhomes.firebaseapp.com",
+  projectId: "flatzyhomes",
+  storageBucket: "flatzyhomes.firebasestorage.app",
+  messagingSenderId: "519957313457",
+  appId: "1:519957313457:web:1ffc1685819120edd7ef90"
+};
+
+const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// Wait for auth then fetch from Firestore users collection
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  window.flatzyUser = user;
+
+  // Fetch from Firestore users collection
+  let fsData = {};
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (snap.exists()) fsData = snap.data();
+  } catch(e) { console.warn('Firestore fetch failed:', e.message); }
+
+  // Also check flatzy_user localStorage (set by login.html)
+  const lsUser    = JSON.parse(localStorage.getItem('flatzy_user')    || '{}');
+  const lsProfile = JSON.parse(localStorage.getItem('flatzy_profile') || '{}');
+
+  // Merge order: Firestore > Firebase Auth > flatzy_user localStorage > flatzy_profile localStorage
+  const merged = {
+    name:     fsData.name     || user.displayName   || lsUser.name     || lsProfile.name     || '',
+    phone:    fsData.phone    || (user.phoneNumber || '').replace('+91','').trim() || lsProfile.phone || '',
+    email:    fsData.email    || user.email          || lsUser.email    || lsProfile.email    || '',
+    gender:   fsData.gender   || lsProfile.gender   || '',
+    dob:      fsData.dob      || lsProfile.dob      || '',
+    location: fsData.location || lsProfile.location || '',
+    // Google profile photo from Firestore or Firebase auth
+    photo:    fsData.photo    || user.photoURL       || lsUser.photo    || '',
+  };
+
+  localStorage.setItem('flatzy_profile', JSON.stringify(merged));
+
+  window._db       = db;
+  window._authUser = user;
+
+  // Show Google profile photo in avatar if no custom photo uploaded
+  const customPhoto = localStorage.getItem('flatzy_profile_photo');
+  if (!customPhoto && merged.photo) {
+    ['sideAvatarLetter','mobileAvatarLetter'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.backgroundImage = `url(${merged.photo})`;
+      el.style.backgroundSize  = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.textContent = '';
+    });
+    // Also update photoPreview in edit section
+    const preview = document.getElementById('photoPreview');
+    if (preview) { preview.src = merged.photo; preview.style.display = 'block'; }
+    const placeholder = document.getElementById('photoPlaceholder');
+    if (placeholder) placeholder.style.display = 'none';
+  }
+
+  if (typeof window._loadProfileUI === 'function') window._loadProfileUI(merged);
+});
+
+// Save profile to Firestore + localStorage
+window._saveToFirestore = async function(profileData) {
+  const user = window._authUser;
+  if (!user || !window._db) return;
+  try {
+    await setDoc(doc(window._db, 'users', user.uid), {
+      name: profileData.name,
+      phone: profileData.phone,
+      email: profileData.email,
+      gender: profileData.gender,
+      dob: profileData.dob,
+      location: profileData.location,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch(e) { console.warn('Firestore save failed:', e.message); }
+};
+</script>
 <style>
 /* ── SETTINGS PAGE STYLES ─────────────────────────────── */
 :root {
@@ -518,6 +610,25 @@ nav.topnav::after {
       </div>
       <div class="acc-panel">
         <div class="acc-panel-title">✏️ Edit Details</div>
+
+        <!-- Profile Photo Upload -->
+        <div style="display:flex;align-items:center;gap:1.2rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
+          <div style="position:relative;flex-shrink:0;">
+            <div id="photoPlaceholder" style="width:72px;height:72px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:white;font-family:'Syne',sans-serif;font-weight:800;">📷</div>
+            <img id="photoPreview" src="" alt="Profile" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;position:absolute;top:0;left:0;">
+            <button onclick="triggerPhotoPicker()" style="position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;background:var(--primary);border:none;color:white;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✏️</button>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:0.92rem;color:var(--text);margin-bottom:0.3rem;">Profile Photo</div>
+            <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+              <button onclick="triggerPhotoPicker()" style="font-size:0.8rem;padding:0.3rem 0.85rem;border-radius:8px;border:1.5px solid var(--primary);color:var(--primary);background:none;cursor:pointer;font-weight:600;">📤 Upload</button>
+              <button onclick="removeProfilePhoto()" style="font-size:0.8rem;padding:0.3rem 0.85rem;border-radius:8px;border:1.5px solid var(--border);color:var(--muted);background:none;cursor:pointer;">🗑️ Remove</button>
+            </div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:0.3rem;">JPG/PNG, max 2MB</div>
+          </div>
+          <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="onPhotoSelected(this)">
+        </div>
+
         <div class="edit-form-grid">
           <div class="form-group">
             <label class="form-label">Mobile Number</label>
@@ -689,16 +800,63 @@ function showSection(id, mobileTabEl) {
 // ── Profile ─────────────────────────────────────────────
 let profile = JSON.parse(localStorage.getItem('flatzy_profile') || '{}');
 
+// Profile photo helpers
+function saveProfilePhoto(dataUrl) {
+  localStorage.setItem('flatzy_profile_photo', dataUrl);
+  applyProfilePhoto(dataUrl);
+}
+function applyProfilePhoto(dataUrl) {
+  ['sideAvatarLetter','mobileAvatarLetter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.backgroundImage = `url(${dataUrl})`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.textContent = '';
+  });
+  const preview = document.getElementById('photoPreview');
+  if (preview) { preview.src = dataUrl; preview.style.display = 'block'; }
+  const placeholder = document.getElementById('photoPlaceholder');
+  if (placeholder) placeholder.style.display = 'none';
+}
+function removeProfilePhoto() {
+  localStorage.removeItem('flatzy_profile_photo');
+  ['sideAvatarLetter','mobileAvatarLetter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.backgroundImage = '';
+    el.textContent = (profile.name || 'U').charAt(0).toUpperCase();
+  });
+  const preview = document.getElementById('photoPreview');
+  if (preview) { preview.src = ''; preview.style.display = 'none'; }
+  const placeholder = document.getElementById('photoPlaceholder');
+  if (placeholder) placeholder.style.display = 'flex';
+}
+function triggerPhotoPicker() { document.getElementById('photoInput').click(); }
+function onPhotoSelected(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { alert('Photo must be under 2MB'); return; }
+  const reader = new FileReader();
+  reader.onload = e => saveProfilePhoto(e.target.result);
+  reader.readAsDataURL(file);
+}
+
+// Called by Firebase module once auth + Firestore data is ready
+window._loadProfileUI = function(merged) {
+  profile = merged;
+  localStorage.setItem('flatzy_profile', JSON.stringify(profile));
+  loadProfile();
+};
+
 function loadProfile() {
-  // Try firebase user first
-  const name = profile.name || (window.flatzyUser && window.flatzyUser.displayName) || 'User';
-  const phone = profile.phone || '';
-  const email = profile.email || (window.flatzyUser && window.flatzyUser.email) || '';
-  const gender = profile.gender || '';
-  const dob = profile.dob || '';
+  const name     = profile.name     || 'User';
+  const phone    = profile.phone    || '';
+  const email    = profile.email    || '';
+  const gender   = profile.gender   || '';
+  const dob      = profile.dob      || '';
   const location = profile.location || '';
 
-  // Set sidebar/mobile initials
   const initial = name.charAt(0).toUpperCase();
   ['sideAvatarLetter','mobileAvatarLetter'].forEach(id => {
     const el = document.getElementById(id);
@@ -709,22 +867,26 @@ function loadProfile() {
     if(el) el.textContent = name.length > 12 ? name.split(' ')[0] : name;
   });
 
-  // Display fields
-  setDisp('disp-name', name);
-  setDisp('disp-phone', phone ? '+91 ' + phone : null);
-  setDisp('disp-email', email);
-  setDisp('disp-gender', gender);
-  setDisp('disp-dob', dob);
+  const savedPhoto = localStorage.getItem('flatzy_profile_photo');
+  if (savedPhoto) applyProfilePhoto(savedPhoto);
+
+  setDisp('disp-name',     name);
+  setDisp('disp-phone',    phone ? '+91 ' + phone : null);
+  setDisp('disp-email',    email);
+  setDisp('disp-gender',   gender);
+  setDisp('disp-dob',      dob);
   setDisp('disp-location', location);
 
-  // Form inputs
-  document.getElementById('inp-name').value = name !== 'User' ? name : '';
-  document.getElementById('inp-phone').value = phone;
-  document.getElementById('inp-email').value = email;
-  document.getElementById('inp-dob').value = dob;
+  document.getElementById('inp-name').value     = name !== 'User' ? name : '';
+  document.getElementById('inp-phone').value    = phone;
+  document.getElementById('inp-email').value    = email;
+  document.getElementById('inp-dob').value      = dob;
   document.getElementById('inp-location').value = location;
   if(gender) selectGender(gender, true);
 }
+
+// Also load from localStorage immediately so UI isn't blank while Firebase loads
+loadProfile();
 
 function setDisp(id, val) {
   const el = document.getElementById(id);
@@ -750,9 +912,12 @@ function saveProfile() {
   profile.dob      = document.getElementById('inp-dob').value;
   profile.location = document.getElementById('inp-location').value.trim();
   localStorage.setItem('flatzy_profile', JSON.stringify(profile));
+
+  // Save to Firestore too
+  if (typeof window._saveToFirestore === 'function') window._saveToFirestore(profile);
+
   loadProfile();
   showSection('profile');
-  // show toast if available
   if(window.showToast) showToast('✅ Profile saved!');
   else alert('Profile saved!');
 }
@@ -785,7 +950,6 @@ function doLogout() {
 }
 
 // ── Init ───────────────────────────────────────────────
-loadProfile();
 loadSaved();
 
 // Handle URL hash navigation
