@@ -404,35 +404,21 @@ Div.social-strip-track {
 
 /* FREE SERVICES STRIP */
 .free-services-strip {
-    width: 100%;
-    box-sizing: border-box;
-    background: linear-gradient(90deg,#065f46,#047857,#065f46);
-    padding: 12px 5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-
-    /* IMPORTANT */
-    flex-wrap: nowrap;
-
-    margin: 0;
-    overflow: hidden;
+  overflow: hidden; background: #16a34a; padding: 0.6rem 0;
 }
-.free-services-strip {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
+.free-services-track {
+  display: flex; gap: 3rem; width: max-content;
+  animation: services 18s linear infinite;
 }
-
-.free-services-strip a {
-    color: #fff;
-    text-decoration: underline;
+.free-services-strip:hover .free-services-track {
+  animation-play-state: paused;
 }
-.free-services-strip span,
-.free-services-strip a {
-    white-space: nowrap;
+.free-services-strip span, .free-services-strip a {
+  color: white; font-size: 0.8rem; font-weight: 600;
+  white-space: nowrap; opacity: 0.95;
 }
+.free-services-strip a { opacity: 0.75; text-decoration: underline; }
+@keyframes services { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 /* APP BANNER */
 .app-banner {
   display: flex; align-items: center; gap: 3rem;
@@ -642,16 +628,24 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
 
 <!-- FREE SERVICES STRIP -->
 <div class="free-services-strip">
+  <div class="free-services-track">
     <span>🚚 Free Shifting on Move-In</span>
     <span>✦</span>
-
     <span>🧹 Free First Cleaning</span>
     <span>✦</span>
-
     <span>✅ Verified Listings</span>
     <span>✦</span>
-
     <a href="legal.html">*T&C Apply</a>
+    <span>✦</span>
+    <span>🚚 Free Shifting on Move-In</span>
+    <span>✦</span>
+    <span>🧹 Free First Cleaning</span>
+    <span>✦</span>
+    <span>✅ Verified Listings</span>
+    <span>✦</span>
+    <a href="legal.html">*T&C Apply</a>
+    <span>✦</span>
+  </div>
 </div>
 
 <!-- SEARCH -->
