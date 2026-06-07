@@ -1540,7 +1540,18 @@ window.loadPushTab = async function() {
       </div>`;
     window._pushTokens = tokens;
   } catch(e) {
-    container.innerHTML = `<p style="color:red;font-size:0.85rem;">Error: ${e.message}</p>`;
+    // Show 0 tokens gracefully (collection might not exist yet)
+    container.innerHTML = `
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:1rem 1.5rem;flex:1;min-width:140px;">
+          <div style="font-size:1.6rem;font-weight:800;color:var(--primary)">0</div>
+          <div style="font-size:0.78rem;color:var(--muted);font-weight:600;">Total FCM Tokens</div>
+        </div>
+        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:0.8rem 1rem;font-size:0.8rem;color:#92400e;flex:2;min-width:200px;line-height:1.6;">
+          ℹ️ Abhi tak kisi ne push notifications enable nahi kiya. Users jab whats-new.html pe "Enable Notifications" click karenge tab tokens yahan dikhenge.
+        </div>
+      </div>`;
+    window._pushTokens = [];
   }
 };
 
