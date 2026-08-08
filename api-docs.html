@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flatzy API Documentation</title>
+<style>
+  :root { --primary:#1a6fe8; --bg:#0a0f1a; --card:#10192b; --border:#223349; --text:#e6edf7; --muted:#8ba0bd; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  .wrap { max-width:860px; margin:0 auto; padding:3rem 1.5rem; }
+  h1 { font-size:2rem; margin-bottom:0.3rem; }
+  .sub { color:var(--muted); margin-bottom:2.5rem; }
+  h2 { font-size:1.25rem; margin-top:2.5rem; color:var(--primary); }
+  .endpoint { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.2rem 1.4rem; margin:1rem 0; }
+  .method { display:inline-block; background:var(--primary); color:white; font-weight:700; font-size:.75rem; padding:.2rem .6rem; border-radius:5px; margin-right:.6rem; letter-spacing:.5px; }
+  .path { font-family:'Consolas',monospace; font-size:.95rem; word-break:break-all; }
+  .desc { color:var(--muted); margin-top:.6rem; font-size:.9rem; }
+  pre { background:#060b14; border:1px solid var(--border); border-radius:8px; padding:1rem; overflow-x:auto; font-size:.82rem; color:#9fd0ff; white-space:pre-wrap; word-break:break-all; }
+  code { font-family:'Consolas',monospace; }
+  table { width:100%; border-collapse:collapse; margin-top:.8rem; font-size:.85rem; }
+  th,td { text-align:left; padding:.5rem .7rem; border-bottom:1px solid var(--border); }
+  th { color:var(--muted); font-weight:600; }
+  .badge { background:rgba(26,111,232,.15); color:#6fa8f5; padding:.15rem .5rem; border-radius:5px; font-size:.75rem; }
+  .try-box { margin-top:1rem; }
+  .try-box button { background:var(--primary); color:#fff; border:none; padding:.6rem 1.2rem; border-radius:8px; font-weight:600; cursor:pointer; font-size:.9rem; }
+  .try-box button:hover { opacity:.9; }
+  #result { margin-top:1rem; max-height:400px; overflow:auto; }
+  .note { background:rgba(26,111,232,.08); border:1px solid rgba(26,111,232,.25); border-radius:8px; padding:1rem 1.2rem; font-size:.85rem; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏠 Flatzy Public API</h1>
+  <p class="sub">Live REST API for Nagpur property listings — powered directly by Firestore. Any business (CRM, aggregator, broker platform) can pull Flatzy's verified listings in real time.</p>
+
+  <h2>Authentication</h2>
+  <p class="desc">Every request needs Flatzy's partner API key as a query parameter. This is a Flatzy-issued key (not a Firebase credential) — it's checked server-side, and the underlying Firebase credentials never reach the client or browser.</p>
+  <pre><code>?key=flatzy_hackathon_2026</code></pre>
+
+  <h2>Endpoint</h2>
+  <div class="endpoint">
+    <span class="method">GET</span><span class="path">/properties</span>
+    <div class="desc">Returns all property listings from Flatzy's live database.</div>
+    <pre><code>https://yellow-river-109c.flatzyhomes.workers.dev/?key=flatzy_hackathon_2026</code></pre>
+
+    <div class="try-box">
+      <button onclick="tryApi()">▶ Try it live</button>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <h2>Single Property</h2>
+  <div class="endpoint">
+    <span class="method">GET</span><span class="path">/properties/:id</span>
+    <div class="desc">Fetch one property by its document ID. (Coming soon — currently returns full list.)</div>
+    <pre><code>https://yellow-river-109c.flatzyhomes.workers.dev/?key=flatzy_hackathon_2026&id=PROPERTY_ID</code></pre>
+  </div>
+
+  <h2>Response fields</h2>
+  <table>
+    <tr><th>Field</th><th>Description</th></tr>
+    <tr><td>type</td><td>Flat / PG / Hostel</td></tr>
+    <tr><td>area</td><td>Locality in Nagpur, e.g. Wanadongri</td></tr>
+    <tr><td>furnish</td><td>Furnished / Unfurnished</td></tr>
+    <tr><td>tenants</td><td>Preferred tenant type</td></tr>
+    <tr><td>amenities</td><td>Array of available amenities</td></tr>
+    <tr><td>ownerName / ownerEmail</td><td>Listing owner contact</td></tr>
+    <tr><td>videoUrl</td><td>Cloudinary video tour URL</td></tr>
+    <tr><td>lat</td><td>Latitude for map placement</td></tr>
+    <tr><td>postedAt / updatedAt</td><td>Timestamps</td></tr>
+    <tr><td>locationStatus</td><td>approved / pending — filter for "approved" only in production use</td></tr>
+  </table>
+
+  <div class="note">
+    ⓘ Response comes in Firestore's native format (each value wrapped as <code>{"stringValue": "..."}</code>). Partner integrations should map/flatten this on their side, or Flatzy can offer a lightweight transform layer later as the API matures.
+  </div>
+
+  <h2>Why this matters</h2>
+  <p class="desc">This turns Flatzy from a standalone website into a data source — other Nagpur-focused platforms and business tools can build directly on top of Flatzy's verified listings.</p>
+</div>
+
+<script>
+async function tryApi() {
+  const resultBox = document.getElementById('result');
+  resultBox.innerHTML = '<pre>Loading...</pre>';
+  try {
+    const res = await fetch('https://yellow-river-109c.flatzyhomes.workers.dev/?key=flatzy_hackathon_2026');
+    const data = await res.json();
+    resultBox.innerHTML = '<pre>' + JSON.stringify(data, null, 2).replace(/</g,'&lt;') + '</pre>';
+  } catch (e) {
+    resultBox.innerHTML = '<pre>Error: ' + e.message + '</pre>';
+  }
+}
+</script>
+</body>
+</html>

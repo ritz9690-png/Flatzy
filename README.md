@@ -25,6 +25,7 @@ No app download needed — works entirely in the browser.
 - Referral system — earn rewards by inviting friends
 - Notifications & activity feed
 - Light / Dark theme
+- **Live Google Reviews** — real Google Business reviews pulled via API and shown directly on the site (auto-refreshing, no manual copy-paste)
 
 ### 🏡 For Owners
 - List property via WhatsApp (instant, no form needed)
@@ -101,6 +102,7 @@ Flatzy/
 | Database | Firestore (NoSQL) |
 | Hosting | Firebase Hosting |
 | Media | Cloudinary (photo uploads) |
+| API Security | Cloudflare Workers (proxy layer — hides Firebase key from public API) |
 | Fonts | Google Fonts (Syne + DM Sans) |
 
 ---
@@ -151,6 +153,38 @@ const CLOUD_API_SECRET = 'your_cloudinary_api_secret';
 | `/refer-earn` | `refer.html` |
 | `/admin` | `admin.html` |
 | `/about` | `about.html` |
+
+---
+
+## 🌐 Public API & Security (Cloudflare Worker Proxy)
+
+Flatzy exposes a public REST API (`/api-docs`) so partner platforms (CRMs, aggregators, broker tools) can pull verified Nagpur listings in real time.
+
+To keep the underlying Firebase Web API key private, all public API traffic is routed through a **Cloudflare Worker proxy** instead of hitting Firestore directly:
+
+- Partner apps call Flatzy's own endpoint with a Flatzy-issued key (not the Firebase key)
+- The Worker validates the key server-side, then fetches data from Firestore internally
+- The real Firebase credential never reaches the browser, docs page, or partner code
+- Free tier — no billing required, 100,000 requests/day included
+
+```
+Client → Cloudflare Worker (validates key) → Firestore → JSON response
+```
+
+**Live endpoint:**
+```
+GET https://yellow-river-109c.flatzyhomes.workers.dev/?key=YOUR_API_KEY
+```
+
+---
+
+## ⭐ Live Google Reviews
+
+The site pulls real Google Business reviews via the **Google Places API** and displays them live on relevant pages (e.g. homepage / about) instead of static/hardcoded testimonials.
+
+- Fetched server-side / at build-time to avoid exposing the Google API key on the client
+- Auto-reflects new reviews without manual updates
+- Shows reviewer name, rating, and comment as returned by Google
 
 ---
 

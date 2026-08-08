@@ -3,10 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flatzy Nagpur – Find Your Perfect Home</title>
+<title>Flatzy Nagpur | Trusted Platform for a Comfortable Stay</title>
+<meta name="description" content="Flatzy is Nagpur's trusted platform for a comfortable stay — verified flats, PGs and hostels in Wanadongri, Hingna, Digdoh, Kalamna, Butibori, Koradi. Direct owner contact on WhatsApp.">
+<meta name="keywords" content="Flatzy, Flatzy Nagpur, trusted platform Nagpur, comfortable stay Nagpur, verified flats Nagpur, rooms Nagpur, PG in Nagpur, hostel Nagpur, flats for rent Nagpur">
+<meta name="author" content="Flatzy">
+<link rel="canonical" href="https://flatzy.in/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Flatzy Nagpur">
+<meta property="og:title" content="Flatzy Nagpur | Trusted Platform for a Comfortable Stay">
+<meta property="og:description" content="Verified flats, PGs and hostels across Nagpur. Flatzy is your trusted platform for a comfortable stay — direct owner contact on WhatsApp.">
+<meta property="og:url" content="https://flatzy.in/">
+<meta property="og:image" content="https://flatzy.in/favicon.jpeg">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Flatzy Nagpur | Trusted Platform for a Comfortable Stay">
+<meta name="twitter:description" content="Verified flats, PGs and hostels across Nagpur. Trusted platform for a comfortable stay.">
+<meta name="twitter:image" content="https://flatzy.in/favicon.jpeg">
+<meta name="robots" content="index, follow">
+<meta name="geo.placename" content="Nagpur">
+<meta name="geo.region" content="IN-MH">
 <link id="theme-css" rel="stylesheet" href="flatzy-light.css">
 <link rel="stylesheet" href="style.css">
-<link rel="icon" type="image/png" href="favicon.jpeg">
+<link rel="icon" type="image/x-icon" href="https://flatzy.in/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://flatzy.in/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://flatzy.in/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="https://flatzy.in/favicon-48x48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://flatzy.in/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://flatzy.in/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://flatzy.in/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="https://flatzy.in/android-chrome-512x512.png">
+<link rel="manifest" href="https://flatzy.in/site.webmanifest">
 <style>
 /* ---- SOCIAL STRIP ---- */
 .card-nearby { font-size: 0.75rem; color: var(--primary); background: var(--primary-light); border-radius: 6px; padding: 0.18rem 0.5rem; margin: 0.2rem 0 0.4rem; display: inline-block; font-weight: 600; }
@@ -502,15 +528,126 @@ body.dark-mode .sb-link:hover         { background: rgba(201,168,76,0.10) !impor
 body.dark-mode .sb-divider            { background: rgba(201,168,76,0.15) !important; }
 body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  "name": "Flatzy Nagpur",
+  "alternateName": "Flatzy",
+  "url": "https://flatzy.in/",
+  "logo": "https://flatzy.in/favicon.jpeg",
+  "image": "https://flatzy.in/favicon.jpeg",
+  "description": "Flatzy is Nagpur's trusted platform for a comfortable stay — flats, PGs and hostels with direct owner contact.",
+  "areaServed": {
+    "@type": "City",
+    "name": "Nagpur"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Nagpur",
+    "addressRegion": "Maharashtra",
+    "addressCountry": "IN"
+  },
+  "sameAs": [
+    "https://www.instagram.com/flatzyhomes?igsh=bnpoZDh6Nmp0NGE3",
+    "https://www.linkedin.com/company/flatzyhomes"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Flatzy Nagpur",
+  "url": "https://flatzy.in/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://flatzy.in/rent.html?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 </head>
 <body class="has-bottom-nav">
+
+<!-- SPLASH / LOADING SCREEN -->
+<div id="flatzySplash">
+  <div class="splash-inner">
+    <div class="splash-logo-glow">
+      <img src="favicon.jpeg" alt="Flatzy" class="splash-logo-img">
+    </div>
+    <div class="splash-brand">Flat<span>zy</span></div>
+    <div class="splash-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+<style>
+#flatzySplash {
+  position: fixed; inset: 0; z-index: 99999;
+  background: #0a0f1a;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+#flatzySplash.splash-hide { opacity: 0; visibility: hidden; pointer-events: none; }
+.splash-inner { display: flex; flex-direction: column; align-items: center; }
+.splash-logo-glow {
+  width: 64px; height: 64px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(26,111,232,0.06);
+  box-shadow: 0 0 0 1px rgba(79,157,255,0.15), 0 0 24px 4px rgba(26,111,232,0.18);
+  animation: splashPulse 2.4s ease-in-out infinite;
+  margin-bottom: 1rem;
+}
+.splash-logo-img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+@keyframes splashPulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(79,157,255,0.15), 0 0 24px 4px rgba(26,111,232,0.18); }
+  50% { box-shadow: 0 0 0 1px rgba(79,157,255,0.28), 0 0 32px 8px rgba(26,111,232,0.28); }
+}
+.splash-brand {
+  font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700;
+  color: #e6edf7; letter-spacing: 0.2px; margin-bottom: 0.85rem;
+}
+.splash-brand span { color: #4f9dff; }
+.splash-dots { display: flex; gap: 5px; }
+.splash-dots span {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #2c4666; animation: splashDot 1.2s ease-in-out infinite;
+}
+.splash-dots span:nth-child(1) { animation-delay: 0s; }
+.splash-dots span:nth-child(2) { animation-delay: 0.15s; }
+.splash-dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes splashDot {
+  0%, 80%, 100% { background: #2c4666; transform: scale(1); }
+  40% { background: #4f9dff; transform: scale(1.2); }
+}
+</style>
+<script>
+(function () {
+  function hideSplash() {
+    var splash = document.getElementById('flatzySplash');
+    if (!splash) return;
+    splash.classList.add('splash-hide');
+    setTimeout(function () { splash.remove(); }, 650);
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(hideSplash, 500);
+  } else {
+    window.addEventListener('load', function () {
+      setTimeout(hideSplash, 500);
+    });
+  }
+  // Safety fallback in case load event is delayed
+  setTimeout(hideSplash, 4000);
+})();
+</script>
 
 <!-- SOCIAL STRIP -->
 <div class="social-strip-wrap">
   <div class="social-strip-track">
     <span>🏠 Welcome to Flatzy Nagpur</span>
     <span class="ssep">✦</span>
-    <a href="https://www.instagram.com/flatzyrentals" target="_blank" rel="noopener"><img src="instagram21.jpeg" width="14" height="14" style="border-radius:3px;vertical-align:middle;margin-right:3px;"> Follow on Instagram</a>
+    <a href="https://www.instagram.com/flatzyhomes?igsh=bnpoZDh6Nmp0NGE3" target="_blank" rel="noopener"><img src="instagram21.jpeg" width="14" height="14" style="border-radius:3px;vertical-align:middle;margin-right:3px;"> Follow on Instagram</a>
     <span class="ssep">✦</span>
     <a href="https://wa.me/918767798079" target="_blank" rel="noopener"><img src="whatsapp21.jpeg" width="14" height="14" style="border-radius:3px;vertical-align:middle;margin-right:3px;"> Chat on WhatsApp</a>
     <span class="ssep">✦</span>
@@ -518,7 +655,7 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
     <span class="ssep">✦</span>
     <span>🏠 Welcome to Flatzy Nagpur</span>
     <span class="ssep">✦</span>
-    <a href="https://www.instagram.com/flatzyrentals" target="_blank" rel="noopener"><img src="instagram21.jpeg" width="14" height="14" style="border-radius:3px;vertical-align:middle;margin-right:3px;"> Follow on Instagram</a>
+    <a href="https://www.instagram.com/flatzyhomes?igsh=bnpoZDh6Nmp0NGE3" target="_blank" rel="noopener"><img src="instagram21.jpeg" width="14" height="14" style="border-radius:3px;vertical-align:middle;margin-right:3px;"> Follow on Instagram</a>
     <span class="ssep">✦</span>
     <a href="https://wa.me/918767798079" target="_blank" rel="noopener"><img src="whatsapp21.jpeg" width="14" height="14" style="border-radius:3px;vertical-align:middle;margin-right:3px;"> Chat on WhatsApp</a>
     <span class="ssep">✦</span>
@@ -555,7 +692,7 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
   </nav>
   <div class="sidebar-social">
     <a href="https://wa.me/918767798079" target="_blank"><img src="whatsapp21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
-    <a href="https://www.instagram.com/flatzyrentals" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
+    <a href="https://www.instagram.com/flatzyhomes?igsh=bnpoZDh6Nmp0NGE3" target="_blank"><img src="instagram21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <a href="https://www.linkedin.com/company/flatzyhomes" target="_blank"><img src="linkdin21.jpeg" width="28" height="28" style="border-radius:6px;"></a>
     <!-- Settings Icon -->
     <a href="settings.html" title="Settings" style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg2);transition:background 0.2s;" onmouseover="this.style.background='#1a6fe8'" onmouseout="this.style.background='#1a1a2e'">
@@ -952,86 +1089,52 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
     <div class="section-title">What Our Users Say</div>
     <div class="section-sub">Real people, real experiences in Nagpur</div>
   </div>
-  <div class="testimonials-grid">
-    <div class="testi-card">
-      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"Found my flat in Wanadongri within 2 days!Flatzy is simply the best in Nagpur."</div>
-      <div class="testi-author">
-        <div class="testi-avatar">RK</div>
-        <div>
-          <div class="testi-name">Rahul Kapse</div>
-          <div class="testi-loc">📍 Wanadongri, Nagpur</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"I was shifting to Nagpur for my job at MIDC. Flatzy helped me find a 1BHK in Butibori in just one day. Amazing!"</div>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#7c3aed;">PD</div>
-        <div>
-          <div class="testi-name">Priya Deshpande</div>
-          <div class="testi-loc">📍 Butibori, Nagpur</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"As a property owner, listing on Flatzy was super easy. Got serious inquiries within hours. Highly recommend!"</div>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#059669;">VD</div>
-        <div>
-          <div class="testi-name">Vikas Deshmukh</div>
-          <div class="testi-loc">📍 Hingna, Nagpur</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"Flatzy ne mera time aur paisa dono bachaya! 2BHK Digdoh mein seedha owner se mila, Flatzy pe sab kuch transparent aur trusted hai."</div>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#dc2626;">AK</div>
-        <div>
-          <div class="testi-name">Amit Khedkar</div>
-          <div class="testi-loc">📍 Digdoh, Nagpur</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"I was new to Nagpur and very confused. Flatzy's team helped me via WhatsApp and found a girls PG in Kalamna the same evening!"</div>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#d97706;">SS</div>
-        <div>
-          <div class="testi-name">Sneha Shende</div>
-          <div class="testi-loc">📍 Kalamna, Nagpur</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"Best platform for Nagpur properties! Listings are genuine and owners are responsive. Found a furnished flat in Wanadongri in 3 days."</div>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#0891b2;">MR</div>
-        <div>
-          <div class="testi-name">Mohit Raut</div>
-          <div class="testi-loc">📍 Wanadongri, Nagpur</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <div class="testi-text">"Hostel dhundna kitna mushkil tha pehle. Flatzy pe 10 minute mein 3 options mile Butibori mein. Superb service!"</div>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#7c3aed;">NK</div>
-        <div>
-          <div class="testi-name">Nikhil Kolhe</div>
-          <div class="testi-loc">📍 Butibori, Nagpur</div>
-        </div>
-      </div>
-    </div>
+  <div class="google-reviews-widget-wrap" style="max-width:1100px; margin:0 auto; padding:0 1.2rem;">
+    <div id="featurable-6378552d-61d7-42b9-aadb-75aedbcec79a" data-featurable-async></div>
   </div>
 </section>
+<script src="https://featurable.com/assets/bundle.js" defer charset="UTF-8"></script>
+<script>
+// Hides Featurable's "Powered by" attribution badge.
+// Note: this badge is part of Featurable's free-tier terms —
+// removing it may violate their ToS. Their paid plans remove it officially.
+(function () {
+  var container = document.getElementById('featurable-6378552d-61d7-42b9-aadb-75aedbcec79a');
+  if (!container) return;
+
+  function hideBadge(root) {
+    if (!root || !root.querySelectorAll) return false;
+    var found = false;
+    root.querySelectorAll('a[href*="featurable.com"]').forEach(function (el) {
+      var target = el.closest('div') || el;
+      target.style.setProperty('display', 'none', 'important');
+      found = true;
+    });
+    return found;
+  }
+
+  function scan() {
+    // Try light DOM first
+    if (hideBadge(container)) return true;
+    // Try any shadow roots inside the container
+    var all = container.querySelectorAll('*');
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].shadowRoot && hideBadge(all[i].shadowRoot)) return true;
+    }
+    return false;
+  }
+
+  // Widget renders asynchronously, so poll briefly, then keep watching for changes.
+  var attempts = 0;
+  var poll = setInterval(function () {
+    attempts++;
+    if (scan() || attempts > 40) clearInterval(poll); // ~20s max
+  }, 500);
+
+  var observer = new MutationObserver(function () { scan(); });
+  observer.observe(container, { childList: true, subtree: true });
+})();
+</script>
 
 <!-- APP DOWNLOAD (Colive-inspired) -->
 <section style="background:var(--bg2);">
@@ -1076,7 +1179,7 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
       <div class="footer-desc">Nagpur's trusted property platform. Find flats, PGs and hostels in Wanadongri, Hingna, Digdoh and more.</div>
       <div style="margin-top:1rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
         <a href="https://wa.me/918767798079" target="_blank" style="background:#25D366;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="whatsapp21.jpeg" width="16" height="16" style="border-radius:3px;"> WhatsApp</a>
-        <a href="https://www.instagram.com/flatzyrentals?igsh=ZjgxYmpkMXZoYWx4" target="_blank" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;"> Instagram</a>
+        <a href="https://www.instagram.com/flatzyhomes?igsh=bnpoZDh6Nmp0NGE3" target="_blank" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="instagram21.jpeg" width="16" height="16" style="border-radius:3px;"> Instagram</a>
         <a href="#" target="_blank" style="background:#0077B5;color:white;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:0.4rem;"><img src="linkdin21.jpeg" width="16" height="16" style="border-radius:3px;"> LinkedIn</a>
       </div>
     </div>
@@ -1158,6 +1261,7 @@ body.dark-mode .sidebar-social a      { background: #1a1a1a !important; }
         <button class="wa-option" onclick="waContact('I am looking for a Flat or PG in Nagpur. Please help me find the right property.')">🏠 Looking for Flat / PG</button>
         <button class="wa-option" onclick="waContact('I want to list my property on Flatzy Nagpur. Please guide me through the process.')">🏢 I want to List my Property</button>
         <button class="wa-option" onclick="waContact('I have a general enquiry about Flatzy Nagpur. Can you please help me?')">❓ General Enquiry</button>
+        <button class="wa-option" onclick="window.open('https://chat.whatsapp.com/BRq0B8hF6Nx4Lks332DPHu?s=sw&p=a&ilr=1', '_blank')">👥 Join Our WhatsApp Group</button>
       </div>
     </div>
     <a class="wa-popup-cta" onclick="waContact('Hi Flatzy! I found you on your website. Can you help me?')">
